@@ -1,0 +1,25 @@
+@font-face {
+    font-family: 'Special Elite';
+    src: url('assets/font/SpecialElite.woff') format('woff');
+}
+
+
+#index_body{
+    background-color:#1e2b30;
+    color:white;
+    font-family: 'Press Start 2P', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#bannerText{
+    color:teal;
+    text-align: center;
+    font-size: 45px;
+    font-weight: normal;
+    font-family: 'Special Elite';
+    margin: 0;
+    padding: 95px;
+    background-image: linear-gradient(to bottom, #000000, #1e2b30);
+}
+ 
