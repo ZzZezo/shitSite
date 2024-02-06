@@ -2,7 +2,40 @@
     font-family: 'Special Elite';
     src: url('assets/font/SpecialElite.woff') format('woff');
 }
+@font-face {
+    font-family: 'Bluescreen';
+    src: url('assets/font/bluescreen.woff') format('woff');
+}
 
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+#bluescreen_body{
+    background-color: blue;
+    font-family: 'Bluescreen';
+    font-size:28px;
+    color:white;
+}
+
+#bluescreen_p{
+    margin-left: 95px;
+}
+
+#bluescreen_h1{
+    color:blue;
+    background-color: #AAAAAA;
+    padding: 0px 15px;
+    font-size: 28px;
+    display: inline-block;
+    margin-top: 250px;
+}
+
+#blink {
+    animation: blink 1s infinite;
+}
 
 #index_body{
     background-color:#1e2b30;

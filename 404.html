@@ -1,1 +1,37 @@
-Totarsch
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOOS</title>
+</head>
+<body id="bluescreen_body">
+    <audio id="error_sound" autoplay>
+        <source src="assets/audio/error.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+
+    <div style="text-align: center;">
+        <h1 id="bluescreen_h1">Windows</h1><br>
+    </div>
+    <a id="bluescreen_p">Page not found. To continue:<br><br></a>
+    <a id="bluescreen_p">Press ALT+F4 to return to Windows, or<br><br></a>
+    <a id="bluescreen_p">Press CTRL+ALT+DEL to restart your computer. If you do this,<br></a>
+    <a id="bluescreen_p">you will lose any unsaved information in all open applications.<br><br></a>
+    <a id="bluescreen_p">Error: 404<br><br></a>
+    <div style="text-align: center;">
+        <a href="index.html" style="display: block; text-align: center; text-decoration: none; color: inherit;">Click here to continue <span id="blink">_</span></a>
+    </div>
+</body>
+
+<script>
+    window.addEventListener('load', function() {
+        var audio = document.getElementById("error_sound");
+        audio.play();
+    });
+</script>
+
+</html>
