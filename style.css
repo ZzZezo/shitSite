@@ -2,30 +2,47 @@
     font-family: 'Special Elite';
     src: url('assets/font/SpecialElite.woff') format('woff');
 }
+
 @font-face {
     font-family: 'Bluescreen';
     src: url('assets/font/bluescreen.woff') format('woff');
 }
 
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0; }
-    100% { opacity: 1; }
+@font-face {
+    font-family: 'Old Sans Serif';
+    src: url('assets/font/ms-sans-serif.woff') format('woff');
 }
 
-#bluescreen_body{
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+
+/* BLUESCREEN START */
+#bluescreen_body {
     background-color: blue;
     font-family: 'Bluescreen';
-    font-size:28px;
-    color:white;
+    font-size: 28px;
+    color: white;
 }
 
-#bluescreen_p{
+#bluescreen_p {
     margin-left: 95px;
 }
 
-#bluescreen_h1{
-    color:blue;
+#bluescreen_h1 {
+    color: blue;
     background-color: #AAAAAA;
     padding: 0px 15px;
     font-size: 28px;
@@ -37,16 +54,19 @@
     animation: blink 1s infinite;
 }
 
-#index_body{
-    background-color:#1e2b30;
-    color:white;
-    font-family: 'Press Start 2P', sans-serif;
+
+
+/* HOMEPAGE START */
+#index_body {
+    background-color: #1e2b30;
+    color: white;
+    font-family: 'Old Sans Serif';
     margin: 0;
     padding: 0;
 }
 
-#bannerText{
-    color:teal;
+#bannerText {
+    color: teal;
     text-align: center;
     font-size: 45px;
     font-weight: normal;
@@ -55,4 +75,49 @@
     padding: 95px;
     background-image: linear-gradient(to bottom, #000000, #1e2b30);
 }
- 
+
+
+
+/* COUNTDOWN START */
+#countdown_body {
+    background-color: teal;
+    color: black;
+    font-family: 'Bluescreen';
+}
+
+#countdown_numbers{
+    font-size: 100px;
+    font-weight: 1000;
+    text-align: center;
+    margin-top: 250px;
+}
+
+
+
+/* Windows 98 Button START */
+.win98-button {
+    background-color: #c0c0c0;
+    border: 2px outset #808080;
+    color: #000;
+    font-family: 'Old Sans Serif';
+    font-size: 12px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+  
+  .win98-button:hover {
+    background-color: #d3d3d3;
+  }
+  
+  .win98-button:active {
+    border-style: inset;
+  }
+  
+  .win98-button:disabled {
+    background-color: #f0f0f0;
+    border-color: #a0a0a0;
+    color: #808080;
+    cursor: not-allowed;
+  }
