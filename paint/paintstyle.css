@@ -1,0 +1,88 @@
+canvas {
+    float: right;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: cell; 
+  }
+
+#brushsizeinput
+{
+    width: 50px;
+}
+#hexinput
+{
+    width: 90px;
+}
+
+#canvassaveinput
+{
+    width:75px;
+    background-color: lightgray;
+}
+
+#colorButtonBox{
+    float: right;
+    padding-left: 55px;
+    padding-right: 55px;
+}
+
+#colorButton{
+    width: 30px;
+    height: 30px;
+}
+
+button{
+    margin-bottom: 5px;
+}
+
+.slider:hover {
+    opacity: 1;
+  }
+
+.slider {
+    appearance: none;
+    width: 80%;
+    height: 15px;
+    border-radius: 5px;  
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  } 
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%; 
+    cursor: pointer;
+  } 
+
+  #slideR::-webkit-slider-thumb {
+    background: #FF0000;
+  }
+  #slideG::-webkit-slider-thumb {
+    background: #00FF00;
+  }
+  #slideB::-webkit-slider-thumb {
+    background: #0000FF;
+  }
+
+  #currentcolorbox{
+    stroke-width:3;
+    stroke:rgb(0,0,0);
+  }
+
+
+canvas{
+    border:2px solid #000000;
+}
+
+#artlistheadline{
+    font-size:larger;
+    font-weight: bold;
+    color:red
+}

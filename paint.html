@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="paint/paintstyle.css">
+    <title>Paint</title>
+</head>
+
+<body>
+<div id="colorButtonBox">
+    <button id="colorButton" onclick='update_color("rgb(255, 0, 0)")' style="background-color: rgb(255, 0, 0);"></button>
+    <button id="colorButton" onclick='update_color("rgb(255, 215, 0)")' style="background-color:rgb(255, 215, 0);"></button>
+    <button id="colorButton" onclick='update_color("rgb(255, 215, 0)")' style="background-color:rgb(255, 215, 0);"></button>
+    <br>
+    <button id="colorButton" onclick='update_color("rgb(133, 4, 4)")' style="background-color: rgb(133, 4, 4);"></button>
+    <button id="colorButton" onclick='update_color("rgb(255, 165, 0)")' style="background-color: rgb(255, 165, 0);"></button>
+    <button id="colorButton" onclick='update_color("rgb(140, 88, 50)")' style="background-color: rgb(140, 88, 50);"></button>
+    <br>
+    <button id="colorButton" onclick='update_color("rgb(50, 205, 50)")' style="background-color: rgb(50, 205, 50);"></button>
+    <button id="colorButton" onclick='update_color("rgb(0, 255, 255)")' style="background-color: rgb(0, 255, 255);"></button>
+    <button id="colorButton" onclick='update_color("rgb(228, 71, 199)")' style="background-color: rgb(228, 71, 199);"></button>
+    <br>
+    <button id="colorButton" onclick='update_color("rgb(0, 128, 0)")' style="background-color: rgb(0, 128, 0);"></button>
+    <button id="colorButton" onclick='update_color("rgb(0, 0, 255)")' style="background-color: rgb(0, 0, 255);"></button>
+    <button id="colorButton" onclick='update_color("rgb(128, 0, 128)")' style="background-color: rgb(128, 0, 128);"></button>
+    <br>
+    <button id="colorButton" onclick='update_color("rgb(0, 0, 0)")' style="background-color: rgb(0, 0, 0);"></button>
+    <button id="colorButton" onclick='update_color("rgb(128, 128, 128)")' style="background-color: rgb(128, 128, 128);"></button>
+    <button id="colorButton" onclick='update_color("rgb(255, 255, 255)")' style="background-color: rgb(255, 255, 255);"></button>
+    <br>
+    <input type="text" value="#FF0000"id="hexinput" onkeyup="hexInputChanged()">
+    <br><br>
+    <svg width="100" height="100">
+        <rect width=100% height=100% id = "currentcolorbox"/>
+    </svg>
+    <br><br>
+    <l>Custom</l><br>
+    <div class="slidecontainer">
+        <br>
+        <input type="range" min="0" max="255" value="255" class="slider" id="slideR"><br><br>
+        <input type="range" min="0" max="255" value="0" class="slider" id="slideG"><br><br>
+        <input type="range" min="0" max="255" value="0" class="slider" id="slideB"><br><br>
+    </div>
+</div>
+<canvas id="myCanvas" width="200" height="100"
+        onmousemove="moveC(event)" 
+        onmousedown="mouseDown(event)" 
+        onmouseup="mouseUp(event)" 
+        onmouseleave="mouseUp(event)"
+></canvas>
+
+
+<br>
+<button id="test" class ="toolbutton" onclick='toolSwitch("brush");updateActiveTool(this)'>Brush</button>
+<button class ="toolbutton" onclick='toolSwitch("pen");updateActiveTool(this)'>Pen</button>
+<button class ="toolbutton" onclick='toolSwitch("line");updateActiveTool(this)'>Line</button>
+<button class ="toolbutton" onclick='toolSwitch("fill");updateActiveTool(this)'>Fill</button>
+<button class ="toolbutton" onclick='toolSwitch("pick");updateActiveTool(this)'>Pick Color</button>
+<button class ="toolbutton" onclick='toolSwitch("eraser");updateActiveTool(this)'>Eraser</button>
+<br> <br>
+<label style="padding-right: 5px;">Brush Size:</label>
+<input id="brushsizeinput" value = 50 onkeyup="toolSizeChanged()">
+<br> <br>
+<button onclick="undoCanvas();">Undo</button>
+<br>
+<button onclick="{const context = canvas.getContext('2d');context.clearRect(0, 0, canvas.width, canvas.height);saveCanvasUndo()}">Reset</button>
+<br><br>
+<button onclick="saveCanvas(savedCanvases.length)">Save</button>
+<button onclick="loadCanvas(idToLoad);">Load</button>
+<button onclick="deleteItem(idToLoad);">Delete</button>
+<button onclick="editItem(idToLoad);">Edit</button>
+<br>
+<input id="canvassaveinput" value = "" onkeyup='canvassaveinputupdated()'>
+<br>
+<br>
+<br>
+<label id="artlistheadline">List of all Images:</label>
+<div class="listOfArt" id="Artlist">
+    
+</div>  
+</body>
+<script src="paint/paintscript.js"></script>
+</html>
