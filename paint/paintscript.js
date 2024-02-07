@@ -32,7 +32,7 @@ var changes = 0;
 
 //saving
 var savedCanvases = []
-var idToLoad = 0
+var idToLoad = "nahhhbro"
 
 function mouseDown(event) { //called when mouse is currently clicked
   clicked = true;
@@ -67,6 +67,20 @@ function mouseUp(event) { //called when letting go of mouse and when leaving can
   if (clicked) {
     clicked = false;
   }
+}
+
+function updateActiveTool(activeButton) {
+  var buttons = document.querySelectorAll(".toolbutton");
+
+  buttons.forEach(button => {
+    button.style.backgroundColor = "#c0c0c0";
+  });
+
+  activeButton.style.backgroundColor = "lime"
+}
+
+function toolSwitch(switchTool){
+  tool = switchTool;
 }
 
 function update_color(color) {
@@ -131,7 +145,7 @@ function getColorFromValue() {
 
 for (var i = 0; i < sliderElements.length; i++) {
   var sliderElement = sliderElements[i];
-  sliderElement.addEventListener('input', function() {
+  sliderElement.addEventListener('input', function () {
     sliderValueR = slideR.value;
     sliderValueG = slideG.value;
     sliderValueB = slideB.value;
@@ -260,167 +274,194 @@ function undoCanvas() { //load the picture that was before last click
   var dataURL = oldCanvases[changes - 1];
   var img = new Image();
   img.src = dataURL;
-  img.onload = function() {
+  img.onload = function () {
     loader.drawImage(img, 0, 0);
   };
   oldCanvases.splice(changes)
   changes -= 1;
 }
 
-function canvassaveinputupdated(){
-    idToLoad = document.getElementById("canvassaveinput").value;
-    const onlyNumbersRegex = /^[0-9]+$/;
-    const containsOnlyNumbers = onlyNumbersRegex.test(idToLoad);
+function canvassaveinputupdated() {
+  idToLoad = document.getElementById("canvassaveinput").value;
+  const onlyNumbersRegex = /^[0-9]+$/;
+  const containsOnlyNumbers = onlyNumbersRegex.test(idToLoad);
 
-    if(containsOnlyNumbers){
-        idToLoad = parseInt(idToLoad);
-    }
-    else{
-        idToLoad = null;
-        document.getElementById("canvassaveinput").value = "";
-    }
+  if (containsOnlyNumbers) {
+    idToLoad = parseInt(idToLoad);
+  }
+  else {
+    idToLoad = null;
+    document.getElementById("canvassaveinput").value = "";
+  }
 }
 
 function saveCanvas(nr) {
-    if(!Number.isInteger(nr)){
-        alert("Bitte gib eine richtige ID ein.");
-        return;
-    }
-    var imageName = prompt("Wie möchtest du das Bild nennen?");
-    var author = prompt("Und wer bist du?");
+  if (!Number.isInteger(nr)) {
+    alert("Bitte gib eine richtige ID ein.");
+    return;
+  }
+  var imageName = prompt("Wie möchtest du das Bild nennen?");
+  var author = prompt("Und wer bist du?");
 
-    savedCanvases[nr] = canvas.toDataURL();
-    console.log(savedCanvases[nr]);
+  savedCanvases[nr] = canvas.toDataURL();
+  console.log(savedCanvases[nr]);
 
-    //showing on list
-    var boldNr = document.createElement("span");
-    boldNr.style.fontWeight = "bold";
-    boldNr.appendChild(document.createTextNode(nr));
+  //showing on list
+  var boldNr = document.createElement("span");
+  boldNr.style.fontWeight = "bold";
+  boldNr.appendChild(document.createTextNode(nr));
 
-    var textNode = document.createTextNode(": " + imageName + ", " + author);
-    var lineBreak = document.createElement("br");
+  var textNode = document.createTextNode(": " + imageName + ", " + author);
+  var lineBreak = document.createElement("br");
 
-    document.getElementById("Artlist").appendChild(boldNr);
-    document.getElementById("Artlist").appendChild(textNode);
-    document.getElementById("Artlist").appendChild(lineBreak);
+  document.getElementById("Artlist").appendChild(boldNr);
+  document.getElementById("Artlist").appendChild(textNode);
+  document.getElementById("Artlist").appendChild(lineBreak);
 
-    //saving to local storage
-    let key = nr;
-    localStorage.setItem(key,savedCanvases[nr]+"/z/z/z/name/z/z/z/"+imageName+"/z/z/z/author/z/z/z/"+author);
+  //saving to local storage
+  let key = nr;
+  localStorage.setItem(key, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + imageName + "/z/z/z/author/z/z/z/" + author);
 
-    alert("Saved your art at ID: " + nr + "\n\nYour Art may still be lost after refreshing the page.\nMake sure to save it otherwise if important.");
+  alert("Saved your art at ID: " + nr + "\n\nYour Art may still be lost after refreshing the page.\nMake sure to save it otherwise if important.");
 }
 
 
-function loadCanvas(nr){ //load a saved canvas
-    if(!Number.isInteger(nr)){
-        alert("Bitte gib eine richtige ID ein.");
-        return;
-    }
+function loadCanvas(nr) { //load a saved canvas
+  if (!Number.isInteger(nr)) {
+    alert("Bitte gib eine richtige ID ein.");
+    return;
+  }
 
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
-    var loader = canvas.getContext("2d");
-    var dataURL = savedCanvases[nr];
-    var img = new Image;
-    img.src = dataURL;
-    img.onload = function () {
-        loader.drawImage(img, 0, 0);
-    };
-}
-
-function editItem(nr){
-    if(!Number.isInteger(nr)){
-        alert("Bitte gib eine richtige ID ein.");
-        return;
-    }
-
-    var newimageName = prompt("Wie möchtest du das Bild WIRKLICH nennen?");
-    var newauthor = prompt("Und wer bist WIRKLICH du?");
-
-    localStorage.setItem(nr, savedCanvases[nr]+"/z/z/z/name/z/z/z/"+newimageName+"/z/z/z/author/z/z/z/"+newauthor);
-    updateArtlist();
-}
-
-function deleteItem(nr){
-    if(!Number.isInteger(nr)){
-        alert("Bitte gib eine richtige ID ein.");
-        return;
-    }
-
-    if(!confirm("Bist du sicher, dass du Bild "+nr+" löschen möchtest? \nDies kann nicht rückgängig gemacht werden.")){
-        return;
-    }
-
-    //copy local storage to Arrays
-    savedCanvases = [];
-    savedNames = [];
-    savedAuthores = [];
-    for(let i = 0; i <1000;i++){
-        if(localStorage.getItem(i)!=null){
-            let myItem = localStorage.getItem(i)
-            let parts = myItem.split("/z/z/z/");
-            let URL = parts[0];
-            savedCanvases[i] = URL;
-            savedNames[i]=parts[2];
-            savedAuthores[i]=parts[4];
-        }
-    }
-
-    //remove index nr from arrays
-    savedCanvases.splice(nr,1);
-    savedNames.splice(nr,1);
-    savedAuthores.splice(nr,1);
-
-    //clear localStorage
-    localStorage.clear();
-
-    //load arrays into localStorage
-    for(let i = 0; i <1000;i++){
-        if(savedCanvases[i]!=null){
-            localStorage.setItem(i,savedCanvases[i]+"/z/z/z/name/z/z/z/"+savedNames[i]+"/z/z/z/author/z/z/z/"+savedAuthores[i]);
-        }
-    }
-
-    // localStorage.clear();
-    updateArtlist();
-}
-
-function updateArtlist(){
-    document.getElementById("Artlist").innerHTML="";
-    for(let i = 0; i <1000;i++){
-        if(localStorage.getItem(i)!=null){
-            let myItem = localStorage.getItem(i)
-            let parts = myItem.split("/z/z/z/");
-            let URL = parts[0];
-            let imageName = parts[2];
-            let author = parts[4];
-
-            //showing on list
-            var boldNr = document.createElement("span");
-            boldNr.style.fontWeight = "bold";
-            boldNr.appendChild(document.createTextNode(i));
-
-            var textNode = document.createTextNode(": " + imageName + ", " + author);
-            var lineBreak = document.createElement("br");
-
-            document.getElementById("Artlist").appendChild(boldNr);
-            document.getElementById("Artlist").appendChild(textNode);
-            document.getElementById("Artlist").appendChild(lineBreak);
-
-            savedCanvases[i] = URL;
-        }
-    }
-}
-
-window.onload = function() {
   const context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height);
+
+  var loader = canvas.getContext("2d");
+  var dataURL = savedCanvases[nr];
+  var img = new Image;
+  img.src = dataURL;
+  img.onload = function () {
+    loader.drawImage(img, 0, 0);
+  };
+}
+
+function editItem(nr) {
+  if (!Number.isInteger(nr)) {
+    alert("Bitte gib eine richtige ID ein.");
+    return;
+  }
+
+  var newimageName = prompt("Wie möchtest du das Bild WIRKLICH nennen?");
+  var newauthor = prompt("Und wer bist WIRKLICH du?");
+
+  localStorage.setItem(nr, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + newimageName + "/z/z/z/author/z/z/z/" + newauthor);
+  updateArtlist();
+}
+
+function deleteItem(nr) {
+  if (!Number.isInteger(nr)) {
+    alert("Bitte gib eine richtige ID ein.");
+    return;
+  }
+
+  if (!confirm("Bist du sicher, dass du Bild " + nr + " löschen möchtest? \nDies kann nicht rückgängig gemacht werden.")) {
+    return;
+  }
+
+  //copy local storage to Arrays
+  savedCanvases = [];
+  savedNames = [];
+  savedAuthores = [];
+  for (let i = 0; i < 1000; i++) {
+    if (localStorage.getItem(i) != null) {
+      let myItem = localStorage.getItem(i)
+      let parts = myItem.split("/z/z/z/");
+      let URL = parts[0];
+      savedCanvases[i] = URL;
+      savedNames[i] = parts[2];
+      savedAuthores[i] = parts[4];
+    }
+  }
+
+  //remove index nr from arrays
+  savedCanvases.splice(nr, 1);
+  savedNames.splice(nr, 1);
+  savedAuthores.splice(nr, 1);
+
+  //clear localStorage
+  localStorage.clear();
+
+  //load arrays into localStorage
+  for (let i = 0; i < 1000; i++) {
+    if (savedCanvases[i] != null) {
+      localStorage.setItem(i, savedCanvases[i] + "/z/z/z/name/z/z/z/" + savedNames[i] + "/z/z/z/author/z/z/z/" + savedAuthores[i]);
+    }
+  }
+
+  // localStorage.clear();
+  updateArtlist();
+}
+
+
+function exportImage(){
+  var nr = parseInt(document.getElementById("imexportinput").value);
+
+  if (!Number.isInteger(nr)) {
+    alert("Bitte gib in das untere Textfeld die ID des Bildes ein.");
+    return;
+  }
+  navigator.clipboard.writeText(savedCanvases[nr]);
+  alert("Der Code wurde in die Zwischenablage kopiert.")
+}
+
+function importImage(){
+  var loader = canvas.getContext("2d");
+  var dataURL = document.getElementById("imexportinput").value;
+  var img = new Image;
+  img.src = dataURL;
+  img.onload = function () {
+    loader.drawImage(img, 0, 0);
+  };
+}
+
+function updateArtlist() {
+  document.getElementById("Artlist").innerHTML = "";
+  for (let i = 0; i < 1000; i++) {
+    if (localStorage.getItem(i) != null) {
+      let myItem = localStorage.getItem(i)
+      let parts = myItem.split("/z/z/z/");
+      let URL = parts[0];
+      let imageName = parts[2];
+      let author = parts[4];
+
+      //showing on list
+      var boldNr = document.createElement("span");
+      boldNr.style.fontWeight = "bold";
+      boldNr.appendChild(document.createTextNode(i));
+
+      var textNode = document.createTextNode(": " + imageName + ", " + author);
+      var lineBreak = document.createElement("br");
+
+      document.getElementById("Artlist").appendChild(boldNr);
+      document.getElementById("Artlist").appendChild(textNode);
+      document.getElementById("Artlist").appendChild(lineBreak);
+
+      savedCanvases[i] = URL;
+    }
+  }
+}
+
+window.onload = function () {
+  const context = canvas.getContext('2d');
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "white";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  toolSwitch("brush");
+  updateActiveTool(document.getElementById("test"));
 
   updateArtlist();
 }
 
-window.onbeforeunload = function(event) {
+window.onbeforeunload = function (event) {
   // if(savedCanvases.length>=1)return confirm("PENIS")
 }

@@ -1,88 +1,144 @@
+@font-face {
+  font-family: 'Old Sans Serif';
+  src: url('../assets/font/ms-sans-serif.woff') format('woff');
+}
+
+html{
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+body{
+  font-family: "Old Sans Serif";
+  background-color: rgba(0, 128, 128, 0.479);
+}
+
 canvas {
-    float: right;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    cursor: cell; 
-  }
-
-#brushsizeinput
-{
-    width: 50px;
-}
-#hexinput
-{
-    width: 90px;
+  float: right;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: cell;
 }
 
-#canvassaveinput
-{
-    width:75px;
-    background-color: lightgray;
+#brushsizeinput {
+  width: 50px;
 }
 
-#colorButtonBox{
-    float: right;
-    padding-left: 55px;
-    padding-right: 55px;
+#hexinput {
+  width: 90px;
 }
 
-#colorButton{
-    width: 30px;
-    height: 30px;
+#colorButtonBox {
+  float: right;
+  padding-left: 55px;
+  padding-right: 55px;
 }
 
-button{
-    margin-bottom: 5px;
+#colorButton {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 2px;
+}
+
+.toolbutton {
+  background-color: #c0c0c0;
+  border: 2px outset #808080;
+  color: #000;
+  font-family: 'Old Sans Serif';
+  font-size: 12px;
+  padding: 5px 8px;
+  cursor: pointer;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 5px;
+}
+
+.toolbutton:hover {
+  background-color: #d3d3d3;
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+.toolbutton:active {
+  border-style: inset;
+}
+
+.toolbutton:disabled {
+  background-color: #f0f0f0;
+  border-color: #a0a0a0;
+  color: #808080;
+  cursor: not-allowed;
+}
+
+.tool_input {
+  padding: 5px;
+  border: 2px inset #808080;
+  font-family: "MS Sans Serif", Geneva, sans-serif; /* Windows 98 system font */
+  font-size: 12px;
+}
+
+.tool_input:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: #000; /* Change border color on focus */
+}
+
+.tool_input:hover{
+  cursor: url('../assets/images/old_pointer.png'), auto;
 }
 
 .slider:hover {
-    opacity: 1;
-  }
-
-.slider {
-    appearance: none;
-    width: 80%;
-    height: 15px;
-    border-radius: 5px;  
-    background: #d3d3d3;
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-  } 
-  
-  .slider::-webkit-slider-thumb {
-    appearance: none;
-    appearance: none;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%; 
-    cursor: pointer;
-  } 
-
-  #slideR::-webkit-slider-thumb {
-    background: #FF0000;
-  }
-  #slideG::-webkit-slider-thumb {
-    background: #00FF00;
-  }
-  #slideB::-webkit-slider-thumb {
-    background: #0000FF;
-  }
-
-  #currentcolorbox{
-    stroke-width:3;
-    stroke:rgb(0,0,0);
-  }
-
-
-canvas{
-    border:2px solid #000000;
+  opacity: 1;
 }
 
-#artlistheadline{
-    font-size:larger;
-    font-weight: bold;
-    color:red
+.slider {
+  appearance: none;
+  width: 80%;
+  height: 15px;
+  border-radius: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+#slideR::-webkit-slider-thumb {
+  background: #FF0000;
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+#slideG::-webkit-slider-thumb {
+  background: #00FF00;
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+#slideB::-webkit-slider-thumb {
+  background: #0000FF;
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+#currentcolorbox {
+  stroke-width: 3;
+  stroke: rgb(0, 0, 0);
+}
+
+
+canvas {
+  border: 2px solid #000000;
+}
+
+#artlistheadline {
+  font-size: larger;
+  font-weight: bold;
+  color: red
 }
