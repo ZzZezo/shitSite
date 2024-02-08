@@ -9,12 +9,6 @@ var possibleTimes=[
 function updateCountdown(){
     var now = new Date();
 
-    //dienstag anders wegen mathe:
-    var dayOfWeek = now.getDay();
-    if(dayOfWeek==2)possibleTimes[3]="15.50" //"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"; (deswegen ist 2 dienstag)
-
-    var pauseTime = getPauseTime(now);
-    
     var timeuntil = pauseTime.getTime() - now.getTime();
     
     var hours = Math.floor(timeuntil/(1000*60*60))
@@ -28,7 +22,8 @@ function updateCountdown(){
     var output = totalseconds + " Sekunden";
     if(dayOfWeek==0||dayOfWeek==6) output = "Du bist frei."
     if(dayOfWeek==5&&besttime!="9.05")output = "Du bist frei."
-    if(totalseconds<=0)output="Morgen."
+    if(totalseconds<0)output="Freiheit."
+    if(totalseconds<-1000)output="Morgen."
     document.getElementById("countdown_numbers").innerHTML = output;
 }
 
@@ -54,6 +49,12 @@ function getPauseTime(now){
     return pauseTime;
 }
 
+
+var now = new Date();
+//dienstag anders wegen mathe:
+var dayOfWeek = now.getDay();
+if(dayOfWeek==2)possibleTimes[3]="15.50" //"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"; (deswegen ist 2 dienstag)
+var pauseTime = getPauseTime(now);
 
 // Aktualisieren (alle 1 s (1000ms))
 setInterval(updateCountdown,1000);
