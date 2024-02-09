@@ -6,6 +6,8 @@ var possibleTimes=[
     "16.40",
 ]
 
+var besttime;
+
 function updateCountdown(){
     var now = new Date();
 
@@ -30,7 +32,7 @@ function updateCountdown(){
 function getPauseTime(now){
     var currentTimeInMin = now.getHours()*60+now.getMinutes();
     var shortestMinuteDistance = Infinity;
-    var besttime = "00.00";
+    besttime = "00.00";
 
     possibleTimes.forEach(time => {
         var timeArr = time.split(".");
