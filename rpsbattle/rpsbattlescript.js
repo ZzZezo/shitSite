@@ -103,7 +103,7 @@ class Entity{
                 if(this.name == "Paper" && otherEntity.name == "Rock") otherEntity.destroy();
                 if(this.name == "Scissors" && otherEntity.name == "Paper") otherEntity.destroy();
             }
-            else if(collisionMode == "Replacement"){
+            else if(collisionMode == "Replacement"){ //so fuckin buggy nahhh
                 let exitCH = false;
                 if(this.name == "Rock" && otherEntity.name == "Paper" &! exitCH){
                     this.name = otherEntity.name;
