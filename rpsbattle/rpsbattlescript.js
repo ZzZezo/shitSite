@@ -1,4 +1,5 @@
 const battlefield = document.getElementById('battlefield');
+let entities;
 const puffer = 5; // how far away from edge the object will bounce
 const numEntities = 15; // Number of entities
 const collisionMode = "Deletion" //"Deletion" or "Replacement"
@@ -178,12 +179,14 @@ class Entity{
 }
 
 // Create multiple entities
-const entities = [];
-for (let i = 0; i < numEntities; i++) {
-    const battlefieldRect = battlefield.getBoundingClientRect();
-    entities.push(new Entity(battlefield, puffer,entities, entityName = "Rock", startX = Math.random()*(battlefieldRect.width-50), startY = Math.random()*(battlefieldRect.height-50), speed = 0.75*(i/5)+1, color = 'gray'));
-    entities.push(new Entity(battlefield, puffer,entities, entityName = "Paper", startX = Math.random()*(battlefieldRect.width-50), startY = Math.random()*(battlefieldRect.height-50), speed = 0.75*(i/5)+1, color = 'white'));
-    entities.push(new Entity(battlefield, puffer,entities, entityName = "Scissors", startX = Math.random()*(battlefieldRect.width-50), startY = Math.random()*(battlefieldRect.height-50), speed = 0.75*(i/5)+1, color = 'red'));
+function CreateMultipleEntities(){
+    entities = [];
+    for (let i = 0; i < numEntities; i++) {
+        const battlefieldRect = battlefield.getBoundingClientRect();
+        entities.push(new Entity(battlefield, puffer,entities, entityName = "Rock", startX = Math.random()*(battlefieldRect.width-50), startY = Math.random()*(battlefieldRect.height-50), speed = 1.5, color = 'gray'));
+        entities.push(new Entity(battlefield, puffer,entities, entityName = "Paper", startX = Math.random()*(battlefieldRect.width-50), startY = Math.random()*(battlefieldRect.height-50), speed = 1.5, color = 'white'));
+        entities.push(new Entity(battlefield, puffer,entities, entityName = "Scissors", startX = Math.random()*(battlefieldRect.width-50), startY = Math.random()*(battlefieldRect.height-50), speed = 1.5, color = 'red'));
+    }
 }
 
 // Function to continuously update the positions of all entities (animation loop)
@@ -197,4 +200,17 @@ function animate() {
 }
 
 // Start the animation loop 
-animate();
+function startAnimationLoop(){
+    CreateMultipleEntities();
+    animate();
+}
+
+
+
+
+
+//BUTTONS etc.
+document.getElementById("startbutton").addEventListener("click", function() {
+    startAnimationLoop();
+    this.style.display = "none";
+});
