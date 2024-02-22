@@ -2,6 +2,8 @@ const battlefield = document.getElementById('battlefield');
 let entities = [];
 let tickAmnt = 0; //how many ticks the game run
 let paused = false;
+let stopwatchInterval;
+let elapsedTime = 0;
 
 //modifyable for dev:
 const puffer = 5; // how far away from edge the object will bounce
@@ -220,6 +222,12 @@ function stopSimulation(){
 
     document.getElementById("startbutton").style.display = "inline";
     document.getElementById("stopButton").style.display="none";
+    document.getElementById("stopwatch").style.display = "none";
+
+    //stop timer
+    clearInterval(stopwatchInterval);
+    elapsedTime = 0;
+    updateStopwatch();
 }
 
 //update the positions of all entities each tick (animation loop)
@@ -235,6 +243,19 @@ function animate() {
     else{
         animate();
     }
+}
+
+//update timer
+function updateStopwatch() {
+    elapsedTime++;
+    const hours = Math.floor(elapsedTime / 3600);
+    const minutes = Math.floor((elapsedTime % 3600) / 60);
+    const seconds = elapsedTime % 60;
+    document.getElementById('stopwatch').innerText = formatTime(hours) + ':' + formatTime(minutes) + ':' + formatTime(seconds);
+}
+
+function formatTime(time) {
+    return time < 10 ? '0' + time : time;
 }
 
 // Start the animation loop 
@@ -264,7 +285,12 @@ document.getElementById("startbutton").addEventListener("click", function () {
 
     console.log(entitySpeed);
     
+    //blend in objects
     startAnimationLoop();
     this.style.display = "none";
     document.getElementById("stopButton").style.display="block";
+    document.getElementById("stopwatch").style.display = "inline-block";
+
+    //start timer
+    stopwatchInterval = setInterval(updateStopwatch, 1000);
 });

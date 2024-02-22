@@ -68,6 +68,17 @@ label{
     padding-left: 25px;
 }
 
+#stopwatch{
+    margin-left: 25px;
+    margin-bottom: 10px;
+    font-size: 25px;
+    background-color: teal;
+    color:#b6dcdc;
+    padding: 5px 10px;
+    border-radius: 10px; /* Rounded corners for a smoother look */
+    display: none;
+}
+
 /* Windows 98 Button START */
 .win98-button {
     background-color: #c0c0c0;
