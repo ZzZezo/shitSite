@@ -18,7 +18,7 @@ let entitySpeed = 1.5;
 
 
 class Entity {
-    constructor(battlefield, puffer, entities, entityName = "No name", startX, startY, speed = 2, color, size = 35) {
+    constructor(battlefield, puffer, entities, entityName = "No name", startX, startY, speed = 2, color, size = 35,imgpath) {
         this.name = entityName;
         this.battlefield = battlefield;
         this.puffer = puffer;
@@ -27,7 +27,22 @@ class Entity {
         this.element.classList.add('Entity');
         this.element.style.width = size + 'px'; // Initial width
         this.element.style.height = size + 'px'; // Initial height
-        this.element.style.backgroundColor = color; // Initial color
+        this.element.style.backgroundColor = 'transparent'; // Set background color to transparent
+        this.element.style.border = '1px solid ' + "transparent"; // Add 1px border with specified color
+
+        //icon:
+        // Create and style the icon
+        let icon = document.createElement('img');
+        icon.src = imgpath;
+        icon.style.width = '95%';
+        icon.style.height = '95%';
+        icon.style.position = 'absolute';
+        icon.style.top = '50%';
+        icon.style.left = '50%';
+        icon.style.transform = 'translate(-50%, -50%)';
+        // Append the icon to the square container
+        this.element.appendChild(icon);
+
         this.battlefield.appendChild(this.element);
 
         // Initialize position and velocity
@@ -120,6 +135,7 @@ class Entity {
             otherEntity.y += otherEntity.vy;
         }
         else {
+            // console.log("Recorded collisison between "+this.name+" and "+otherEntity.name+" at Gametick "+tickAmnt);
             if (collisionMode == "Deletion") {
                 if (this.name == "Rock" && otherEntity.name == "Paper") this.destroy();
                 if (this.name == "Paper" && otherEntity.name == "Scissors") this.destroy();
@@ -153,6 +169,12 @@ class Entity {
                 otherEntity.y += otherEntity.vy;
             }
         }
+
+        let arr_of_ecounters = document.getElementsByClassName("entitycounter")
+        arr_of_ecounters[0].innerHTML = "Schere: "+ countEntities("Scissors");
+        arr_of_ecounters[1].innerHTML = "Stein: "+ countEntities("Rock");
+        arr_of_ecounters[2].innerHTML = "Papier: "+ countEntities("Paper");
+
     }
 
     bounce_off(otherEntity){
@@ -188,6 +210,7 @@ class Entity {
     copyProperties(otherEntity) {
         this.element.style.backgroundColor = otherEntity.element.style.backgroundColor;
         this.name = otherEntity.name;
+        this.element.querySelector('img').src = otherEntity.element.querySelector('img').src
     }
 
 }
@@ -201,15 +224,24 @@ function DeleteAllEntities(){
     }
 }
 
+//count how many entities
+function countEntities(ename){
+    let counter = 0;
+    entities.forEach(entity => {
+        if(entity.name==ename)counter++;
+    });
+    return counter;
+}
 
 // Create multiple entities
 function CreateMultipleEntities() {
     entities = [];
     for (let i = 0; i < numEntities; i++) {
         const battlefieldRect = battlefield.getBoundingClientRect();
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Rock", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'gray', size = entitySize));
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Paper", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize));
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Scissors", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'red', size = entitySize));
+        entities.push(new Entity(battlefield, puffer, entities, entityName = "Rock", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'gray', size = entitySize, imgpath = "assets/images/rock.png"));
+        entities.push(new Entity(battlefield, puffer, entities, entityName = "Paper", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = "assets/images/paper.png"));
+        entities.push(new Entity(battlefield, puffer, entities, entityName = "Scissors", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'red', size = entitySize, imgpath = "assets/images/scissors.png"));
+        // console.log("Alle erstellt "+(i+1)+" mal.")
     }
 }
 
@@ -223,6 +255,9 @@ function stopSimulation(){
     document.getElementById("startbutton").style.display = "inline";
     document.getElementById("stopButton").style.display="none";
     document.getElementById("stopwatch").style.display = "none";
+    Array.from(document.getElementsByClassName("entitycounter")).forEach(elem => elem.style.display = "none ");
+
+    tickAmnt = 0;
 
     //stop timer
     clearInterval(stopwatchInterval);
@@ -283,13 +318,20 @@ document.getElementById("startbutton").addEventListener("click", function () {
     entitySpeed = document.getElementById("EntitySpeedInput").value;
     document.getElementById("EntitySpeedInput").disabled = true;
 
-    console.log(entitySpeed);
+    // console.log(entitySpeed);
+
+    //set value to counters (bc only happebs at collision normally):
+    let arr_of_ecounters = document.getElementsByClassName("entitycounter")
+    arr_of_ecounters[0].innerHTML = "Schere: "+ countEntities("Scissors");
+    arr_of_ecounters[1].innerHTML = "Stein: "+ countEntities("Rock");
+    arr_of_ecounters[2].innerHTML = "Papier: "+ countEntities("Paper");
     
     //blend in objects
     startAnimationLoop();
     this.style.display = "none";
     document.getElementById("stopButton").style.display="block";
     document.getElementById("stopwatch").style.display = "inline-block";
+    Array.from(document.getElementsByClassName("entitycounter")).forEach(elem => elem.style.display = "block");
 
     //start timer
     stopwatchInterval = setInterval(updateStopwatch, 1000);
