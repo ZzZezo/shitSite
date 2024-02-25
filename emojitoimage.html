@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emoji to Image</title>
+</head>
+<body>
+
+<div id="emojiContainer"></div>
+
+<script>
+// Function to convert emoji string to image
+function emojiToImage(emoji) {
+  // Get the code point of the emoji character
+  var codePoint = emoji.codePointAt(0).toString(16);
+  // Replace emoji string with corresponding image URL
+  var emojiImageUrl = 'https://twemoji.maxcdn.com/v/latest/72x72/' + codePoint + '.png';
+  // Create img element
+  var imgElement = document.createElement('img');
+  // Set src attribute to emoji image URL
+  imgElement.src = emojiImageUrl;
+  // Append image to container
+  document.getElementById('emojiContainer').appendChild(imgElement);
+}
+
+// Test the function with an emoji character
+emojiToImage(prompt("What Emoji do you wanna convert?"));
+</script>
+
+</body>
+<style>
+  @font-face {
+    font-family: 'Old Sans Serif';
+    src: url('assets/font/ms-sans-serif.woff') format('woff');
+  }
+
+  html,body{
+    background-color: teal;
+    font-family: "Old Sans Serif";
+    cursor: url('assets/images/old_pointer.png'), auto;
+  }
+</style>
+</html>

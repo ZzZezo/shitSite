@@ -241,10 +241,36 @@ function CreateMultipleEntities() {
     entities = [];
     for (let i = 0; i < numEntities; i++) {
         const battlefieldRect = battlefield.getBoundingClientRect();
+        //schere, stein, papier:
         entities.push(new Entity(battlefield, puffer, entities, entityName = "Schere", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'red', size = entitySize, imgpath = "assets/images/scissors.png",dangerousEntities=["Stein"],victimEntities=["Papier"]));
         entities.push(new Entity(battlefield, puffer, entities, entityName = "Stein", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'gray', size = entitySize, imgpath = "assets/images/rock.png",dangerousEntities=["Papier"],victimEntities=["Schere"]));
         entities.push(new Entity(battlefield, puffer, entities, entityName = "Papier", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = "assets/images/paper.png",dangerousEntities=["Schere"],victimEntities=["Stein"]));
-        // console.log("Alle erstellt "+(i+1)+" mal.")
+    }
+    //pushCustomEntity("SCHIZO",emojiToImage(prompt("What Emoji do you wanna convert?")),[],["Schere","Stein","Papier"])
+}
+
+function emojiToImage(emoji) {
+    var codePoint = emoji.codePointAt(0).toString(16);
+    var emojiImageUrl = 'https://twemoji.maxcdn.com/v/latest/72x72/' + codePoint + '.png';
+    return emojiImageUrl;
+}
+
+function pushCustomEntity(name,image,dangerousEntities,victimEntities){
+
+    entities.forEach(entity => {
+        if(dangerousEntities.includes(entity.name)){
+            //true if the current entity is dangerous to the one new to created
+            entity.victimEntities.push(name);
+        }
+        if(victimEntities.includes(entity.name)){
+            //true if the new entity to create is dangerous to the current entity
+            entity.dangerousEntities.push(name);
+        }
+    });
+
+    for (let i = 0; i < numEntities; i++) {
+        const battlefieldRect = battlefield.getBoundingClientRect();
+        entities.push(new Entity(battlefield, puffer, entities, entityName = name, startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = image,dangerousEntities=dangerousEntities,victimEntities=victimEntities));
     }
 }
 
