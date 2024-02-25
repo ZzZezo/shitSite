@@ -4,6 +4,7 @@ let tickAmnt = 0; //how many ticks the game run
 let paused = false;
 let stopwatchInterval;
 let elapsedTime = 0;
+let EntitiesTakingPart = []
 
 //modifyable for dev:
 const puffer = 5; // how far away from edge the object will bounce
@@ -18,7 +19,7 @@ let entitySpeed = 1.5;
 
 
 class Entity {
-    constructor(battlefield, puffer, entities, entityName = "No name", startX, startY, speed = 2, color, size = 35,imgpath) {
+    constructor(battlefield, puffer, entities, entityName = "No name", startX, startY, speed = 2, color, size = 35,imgpath,dangerousEntities,victimEntities) {
         this.name = entityName;
         this.battlefield = battlefield;
         this.puffer = puffer;
@@ -50,6 +51,14 @@ class Entity {
         this.y = startY;
         this.vx = speed * Math.random() * 2.5 - 1;
         this.vy = speed * Math.random() * 2.5 - 1;
+
+        
+        //SET UP OF GAME MECHANIC!
+        this.dangerousEntities = dangerousEntities;
+        this.victimEntities = victimEntities;
+        if(!EntitiesTakingPart.includes(this.name)){
+            EntitiesTakingPart.push(this.name);
+        }
 
 
         this.collisionHandled = false; // Flag to track whether collision has been handled for this entity in this frame
@@ -137,22 +146,13 @@ class Entity {
         else {
             // console.log("Recorded collisison between "+this.name+" and "+otherEntity.name+" at Gametick "+tickAmnt);
             if (collisionMode == "Deletion") {
-                if (this.name == "Rock" && otherEntity.name == "Paper") this.destroy();
-                if (this.name == "Paper" && otherEntity.name == "Scissors") this.destroy();
-                if (this.name == "Scissors" && otherEntity.name == "Rock") this.destroy();
-
-                if (this.name == "Rock" && otherEntity.name == "Scissors") otherEntity.destroy();
-                if (this.name == "Paper" && otherEntity.name == "Rock") otherEntity.destroy();
-                if (this.name == "Scissors" && otherEntity.name == "Paper") otherEntity.destroy();
+                if (this.dangerousEntities.includes(otherEntity.name)) this.destroy();
+                else if (this.victimEntities.includes(otherEntity.name)) otherEntity.destroy();
             }
 
             else if (collisionMode == "Replacement") { //so fuckin buggy nahhh
-                if (this.name == "Rock" && otherEntity.name == "Paper") this.copyProperties(otherEntity);
-                if (this.name == "Paper" && otherEntity.name == "Scissors") this.copyProperties(otherEntity);
-                if (this.name == "Scissors" && otherEntity.name == "Rock") this.copyProperties(otherEntity);
-                if (this.name == "Rock" && otherEntity.name == "Scissors") otherEntity.copyProperties(this);
-                if (this.name == "Paper" && otherEntity.name == "Rock") otherEntity.copyProperties(this);
-                if (this.name == "Scissors" && otherEntity.name == "Paper") otherEntity.copyProperties(this);
+                if (this.dangerousEntities.includes(otherEntity.name)) this.copyProperties(otherEntity);
+                else if (this.victimEntities.includes(otherEntity.name)) otherEntity.copyProperties(this);
 
                 // Swap velocities to simulate bouncing off each other
                 const tempVx = this.vx;
@@ -170,11 +170,12 @@ class Entity {
             }
         }
 
-        let arr_of_ecounters = document.getElementsByClassName("entitycounter")
-        arr_of_ecounters[0].innerHTML = "Schere: "+ countEntities("Scissors");
-        arr_of_ecounters[1].innerHTML = "Stein: "+ countEntities("Rock");
-        arr_of_ecounters[2].innerHTML = "Papier: "+ countEntities("Paper");
-
+        var container_of_ecounters = document.getElementById("entitycounterContainer");
+        let nthChildIndex = 0;
+        EntitiesTakingPart.forEach(element => {
+            container_of_ecounters.children[nthChildIndex].textContent = element +": " + countEntities(element);
+            nthChildIndex ++;
+        });
     }
 
     bounce_off(otherEntity){
@@ -211,6 +212,8 @@ class Entity {
         this.element.style.backgroundColor = otherEntity.element.style.backgroundColor;
         this.name = otherEntity.name;
         this.element.querySelector('img').src = otherEntity.element.querySelector('img').src
+        this.dangerousEntities = otherEntity.dangerousEntities;
+        this.victimEntities = otherEntity.victimEntities;
     }
 
 }
@@ -238,9 +241,9 @@ function CreateMultipleEntities() {
     entities = [];
     for (let i = 0; i < numEntities; i++) {
         const battlefieldRect = battlefield.getBoundingClientRect();
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Rock", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'gray', size = entitySize, imgpath = "assets/images/rock.png"));
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Paper", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = "assets/images/paper.png"));
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Scissors", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'red', size = entitySize, imgpath = "assets/images/scissors.png"));
+        entities.push(new Entity(battlefield, puffer, entities, entityName = "Schere", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'red', size = entitySize, imgpath = "assets/images/scissors.png",dangerousEntities=["Stein"],victimEntities=["Papier"]));
+        entities.push(new Entity(battlefield, puffer, entities, entityName = "Stein", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'gray', size = entitySize, imgpath = "assets/images/rock.png",dangerousEntities=["Papier"],victimEntities=["Schere"]));
+        entities.push(new Entity(battlefield, puffer, entities, entityName = "Papier", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = "assets/images/paper.png",dangerousEntities=["Schere"],victimEntities=["Stein"]));
         // console.log("Alle erstellt "+(i+1)+" mal.")
     }
 }
@@ -259,11 +262,20 @@ function stopSimulation(){
 
     tickAmnt = 0;
 
+    clearEntityCounterContainer();
+
     //stop timer
     clearInterval(stopwatchInterval);
     elapsedTime = 0;
     updateStopwatch();
 }
+
+function clearEntityCounterContainer() {
+    var container = document.getElementById("entitycounterContainer");
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+  }
 
 //update the positions of all entities each tick (animation loop)
 function animate() {
@@ -320,19 +332,24 @@ document.getElementById("startbutton").addEventListener("click", function () {
 
     // console.log(entitySpeed);
 
-    //set value to counters (bc only happebs at collision normally):
-    let arr_of_ecounters = document.getElementsByClassName("entitycounter")
-    arr_of_ecounters[0].innerHTML = "Schere: "+ countEntities("Scissors");
-    arr_of_ecounters[1].innerHTML = "Stein: "+ countEntities("Rock");
-    arr_of_ecounters[2].innerHTML = "Papier: "+ countEntities("Paper");
-    
     //blend in objects
     startAnimationLoop();
     this.style.display = "none";
     document.getElementById("stopButton").style.display="block";
     document.getElementById("stopwatch").style.display = "inline-block";
-    Array.from(document.getElementsByClassName("entitycounter")).forEach(elem => elem.style.display = "block");
 
+    //set value to counters (bc only happebs at collision normally):
+    var container_of_ecounters = document.getElementById("entitycounterContainer");
+    EntitiesTakingPart.forEach(element => {
+        console.log(element);
+        var paragraph = document.createElement('p');
+        paragraph.textContent = element +": " + countEntities(element);
+        paragraph.classList.add('entitycounter');
+        container_of_ecounters.appendChild(paragraph);
+    });
+
+    Array.from(document.getElementsByClassName("entitycounter")).forEach(elem => elem.style.display = "block");
+    
     //start timer
     stopwatchInterval = setInterval(updateStopwatch, 1000);
 });
