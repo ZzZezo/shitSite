@@ -1,10 +1,11 @@
 const battlefield = document.getElementById('battlefield');
 let entities = [];
 let tickAmnt = 0; //how many ticks the game run
-let paused = false;
+let paused = true;
 let stopwatchInterval;
 let elapsedTime = 0;
 let EntitiesTakingPart = []
+let AllEntitiesExisting = [] //all entities created by player + default ones (contains entity templates)
 
 //modifyable for dev:
 const puffer = 5; // how far away from edge the object will bounce
@@ -218,6 +219,55 @@ class Entity {
 
 }
 
+class EntityTemplate{
+    constructor(name,image,dangerousEntities,victimEntities){
+        this.name = name;
+        this.imgpath = image;
+        this.dangerousEntities = dangerousEntities;
+        this.victimEntities = victimEntities;
+        this.enabled = true;
+        this.createToggleBox();
+    }
+
+    createToggleBox(){
+        var elementbox = document.getElementById("elementbox");
+        //create square around:
+        var div = document.createElement("div");
+        div.classList.add("elementToggle");
+        //create img inside:
+        var img = document.createElement("img");
+        img.src = this.imgpath;
+        //append img element to the square
+        div.appendChild(img);
+        //append div to elementbox
+        elementbox.appendChild(div);
+
+        div.connectedEntity = this;
+
+        div.addEventListener("click", function() {
+            if(!paused)return;
+            this.elementimg = this.children[0];
+            //what happens when the square is clicked:
+            if(this.enabled==null)this.enabled=true;
+            if(this.enabled){
+                this.enabled = false;
+                this.style.borderColor = "gray";
+                this.elementimg.style.filter = 'grayscale(100%)';
+            }
+            else{
+                this.enabled = true;
+                this.style.borderColor = "teal";
+                this.elementimg.style.filter = 'none';
+            }
+            this.connectedEntity.toggleStatus();
+        });
+    }
+
+    toggleStatus(){
+        this.enabled = !this.enabled;
+    }
+}
+
 //deletes all entities
 function DeleteAllEntities(){
     if(entities!=[]){
@@ -242,11 +292,16 @@ function CreateMultipleEntities() {
     for (let i = 0; i < numEntities; i++) {
         const battlefieldRect = battlefield.getBoundingClientRect();
         //schere, stein, papier:
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Schere", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'red', size = entitySize, imgpath = "assets/images/scissors.png",dangerousEntities=["Stein"],victimEntities=["Papier"]));
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Stein", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'gray', size = entitySize, imgpath = "assets/images/rock.png",dangerousEntities=["Papier"],victimEntities=["Schere"]));
-        entities.push(new Entity(battlefield, puffer, entities, entityName = "Papier", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = "assets/images/paper.png",dangerousEntities=["Schere"],victimEntities=["Stein"]));
+        // if(EntitiesTakingPart.includes("Schere"))entities.push(new Entity(battlefield, puffer, entities, entityName = "Schere", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'red', size = entitySize, imgpath = "assets/images/scissors.png",dangerousEntities=["Stein"],victimEntities=["Papier"]));
+        // if(EntitiesTakingPart.includes("Stein"))entities.push(new Entity(battlefield, puffer, entities, entityName = "Stein", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'gray', size = entitySize, imgpath = "assets/images/rock.png",dangerousEntities=["Papier"],victimEntities=["Schere"]));
+        // if(EntitiesTakingPart.includes("Papier"))entities.push(new Entity(battlefield, puffer, entities, entityName = "Papier", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = "assets/images/paper.png",dangerousEntities=["Schere"],victimEntities=["Stein"]));
     }
     //pushCustomEntity("SCHIZO",emojiToImage(prompt("What Emoji do you wanna convert?")),[],["Schere","Stein","Papier"])
+    AllEntitiesExisting.forEach(template => {
+        if(template.enabled){
+            pushCustomEntity(template.name,template.imgpath,template.dangerousEntities,template.victimEntities);
+        }
+    });
 }
 
 function emojiToImage(emoji) {
@@ -289,6 +344,8 @@ function stopSimulation(){
     tickAmnt = 0;
 
     clearEntityCounterContainer();
+    EntitiesTakingPart = []
+    
 
     //stop timer
     clearInterval(stopwatchInterval);
@@ -314,7 +371,7 @@ function animate() {
         requestAnimationFrame(animate);
     }
     else{
-        animate();
+        //animate();
     }
 }
 
@@ -356,6 +413,7 @@ document.getElementById("startbutton").addEventListener("click", function () {
     entitySpeed = document.getElementById("EntitySpeedInput").value;
     document.getElementById("EntitySpeedInput").disabled = true;
 
+
     // console.log(entitySpeed);
 
     //blend in objects
@@ -367,7 +425,7 @@ document.getElementById("startbutton").addEventListener("click", function () {
     //set value to counters (bc only happebs at collision normally):
     var container_of_ecounters = document.getElementById("entitycounterContainer");
     EntitiesTakingPart.forEach(element => {
-        console.log(element);
+        //console.log(element);
         var paragraph = document.createElement('p');
         paragraph.textContent = element +": " + countEntities(element);
         paragraph.classList.add('entitycounter');
@@ -376,6 +434,15 @@ document.getElementById("startbutton").addEventListener("click", function () {
 
     Array.from(document.getElementsByClassName("entitycounter")).forEach(elem => elem.style.display = "block");
     
+
     //start timer
     stopwatchInterval = setInterval(updateStopwatch, 1000);
 });
+
+
+//code to run itself yykyk (not a function etc)
+//DEFAULT ENTITIES
+AllEntitiesExisting.push(new EntityTemplate("Schere","assets/images/scissors.png",["Stein"],["Papier"]));
+AllEntitiesExisting.push(new EntityTemplate("Stein","assets/images/rock.png",["Papier"],["Schere"]));
+AllEntitiesExisting.push(new EntityTemplate("Papier","assets/images/paper.png",["Schere"],["Stein"]));
+AllEntitiesExisting.push(new EntityTemplate("Herz",emojiToImage("♥️"),[],[]));
