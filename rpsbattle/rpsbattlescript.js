@@ -239,8 +239,10 @@ class EntityTemplate{
         img.src = this.imgpath;
         //append img element to the square
         div.appendChild(img);
-        //append div to elementbox
-        elementbox.appendChild(div);
+        //Get amount of existing squares
+        var count = elementbox.getElementsByClassName("elementToggle").length;
+        //append div to elementbox (before the last (the + ))
+        elementbox.insertBefore(div, elementbox.children[count - 1]);
 
         div.connectedEntity = this;
 
@@ -439,6 +441,26 @@ document.getElementById("startbutton").addEventListener("click", function () {
     stopwatchInterval = setInterval(updateStopwatch, 1000);
 });
 
+document.getElementById("PLUS_icon_elementbox").addEventListener("click", function () {
+    //what happens on plus icon pressed (bro u know what this means idk why im commenting it)
+    let newElementName = prompt("Wie möchtest du das neue Element nennen?");
+    let newElementImg = emojiToImage(prompt("Welchen Emoji möchtest du nutzen?"));
+    let newElementDangerous = []
+    let newElementVictims = []
+    AllEntitiesExisting.forEach(element => {
+        if(confirm("add "+element.name+" to Dangerous?")){
+            newElementDangerous.push(element.name);
+        }
+        else{
+            if(confirm("add "+element.name+" to Victims?")){
+                newElementVictims.push(element.name);
+            }
+        }
+    });
+
+    AllEntitiesExisting.push(new EntityTemplate(newElementName,newElementImg,newElementDangerous,newElementVictims));
+
+});
 
 //code to run itself yykyk (not a function etc)
 //DEFAULT ENTITIES
