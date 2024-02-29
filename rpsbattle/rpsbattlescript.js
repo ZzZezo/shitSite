@@ -2,6 +2,7 @@ const battlefield = document.getElementById('battlefield');
 let entities = [];
 let tickAmnt = 0; //how many ticks the game run
 let paused = true;
+let inpopup = false;
 let stopwatchInterval;
 let elapsedTime = 0;
 let EntitiesTakingPart = []
@@ -152,8 +153,14 @@ class Entity {
             }
 
             else if (collisionMode == "Replacement") { //so fuckin buggy nahhh
-                if (this.dangerousEntities.includes(otherEntity.name)) this.copyProperties(otherEntity);
-                else if (this.victimEntities.includes(otherEntity.name)) otherEntity.copyProperties(this);
+                if(this.name == "Herz" || otherEntity.name == "Herz"){
+                    if(this.name == "Herz") otherEntity.copyProperties(this);
+                    else if(otherEntity.name == "Herz") this.copyProperties(otherEntity);
+                }
+                else{
+                    if (this.dangerousEntities.includes(otherEntity.name)) this.copyProperties(otherEntity);
+                    else if (this.victimEntities.includes(otherEntity.name)) otherEntity.copyProperties(this);
+                }
 
                 // Swap velocities to simulate bouncing off each other
                 const tempVx = this.vx;
@@ -248,6 +255,7 @@ class EntityTemplate{
 
         div.addEventListener("click", function() {
             if(!paused)return;
+            if(inpopup)return;
             this.elementimg = this.children[0];
             //what happens when the square is clicked:
             if(this.enabled==null)this.enabled=true;
@@ -414,6 +422,8 @@ function chosenOption(option){
 document.getElementById("startbutton").addEventListener("click", function () {
     //everthing start button shoudl do
 
+    if(inpopup)return;
+
     document.getElementById("stopButton").style.display="block";
 
     numEntities = document.getElementById("EntityNumberInput").value;
@@ -453,6 +463,13 @@ document.getElementById("startbutton").addEventListener("click", function () {
 
 document.getElementById("PLUS_icon_elementbox").addEventListener("click", async function () {
     if (!paused) return;
+    if (inpopup) return;
+
+    document.getElementById("startbutton").disabled = true;
+    document.getElementById("EntityNumberInput").disabled = true;
+    document.getElementById("EntitySizeInput").disabled = true;
+    document.getElementById("EntitySpeedInput").disabled = true;
+    inpopup = true;
 
     let newElementName = prompt("Wie möchtest du das neue Element nennen?");
     if (!newElementName) return; // Handle cancellation
@@ -468,16 +485,23 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", async 
         if (index >= AllEntitiesExisting.length) {
             // Base case: all elements processed, add the new entity and exit
             AllEntitiesExisting.push(new EntityTemplate(newElementName, newElementImg, newElementDangerous, newElementVictims));
+            
+            document.getElementById("startbutton").disabled = false;
+            document.getElementById("EntityNumberInput").disabled = false;
+            document.getElementById("EntitySizeInput").disabled = false;
+            document.getElementById("EntitySpeedInput").disabled = false;
+            inpopup = false;
+            
             return;
         }
-        
+
         let element = AllEntitiesExisting[index];
         let popup = document.getElementById("popup");
         popup.style.display = "block";
 
         popup.children[2].children[0].innerText = newElementName;
         popup.children[2].children[0].onclick = function () {
-            newElementVictims.push(element.name);
+            if(element.name!="Herz")newElementVictims.push(element.name);
             document.getElementById("RPSBcontainer").style.display = "flex";
             popup.style.display = "none";
             // After handling current element, process the next one recursively
@@ -485,7 +509,7 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", async 
         }
         popup.children[2].children[1].innerText = element.name;
         popup.children[2].children[1].onclick = function () {
-            newElementDangerous.push(element.name);
+            if(element.name!="Herz")newElementDangerous.push(element.name);
             document.getElementById("RPSBcontainer").style.display = "flex";
             popup.style.display = "none";
             // After handling current element, process the next one recursively
