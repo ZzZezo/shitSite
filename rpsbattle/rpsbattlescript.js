@@ -398,6 +398,16 @@ function startAnimationLoop() {
     animate();
 }
 
+function chosenOption(option){
+    alert(option);
+
+
+    
+    document.getElementById("RPSBcontainer").style.display = "none";
+    popup = document.getElementById("popup");
+    popup.style.display = "block";
+}
+
 
 
 //BUTTONS etc.
@@ -441,26 +451,66 @@ document.getElementById("startbutton").addEventListener("click", function () {
     stopwatchInterval = setInterval(updateStopwatch, 1000);
 });
 
-document.getElementById("PLUS_icon_elementbox").addEventListener("click", function () {
-    //what happens on plus icon pressed (bro u know what this means idk why im commenting it)
+document.getElementById("PLUS_icon_elementbox").addEventListener("click", async function () {
+    if (!paused) return;
+
     let newElementName = prompt("Wie möchtest du das neue Element nennen?");
+    if (!newElementName) return; // Handle cancellation
+    
     let newElementImg = emojiToImage(prompt("Welchen Emoji möchtest du nutzen?"));
-    let newElementDangerous = []
-    let newElementVictims = []
-    AllEntitiesExisting.forEach(element => {
-        if(confirm("add "+element.name+" to Dangerous?")){
+    if (!newElementImg) return; // Handle cancellation
+    
+    let newElementDangerous = [];
+    let newElementVictims = [];
+
+    // Define a recursive function to process each element
+    async function processElement(index) {
+        if (index >= AllEntitiesExisting.length) {
+            // Base case: all elements processed, add the new entity and exit
+            AllEntitiesExisting.push(new EntityTemplate(newElementName, newElementImg, newElementDangerous, newElementVictims));
+            return;
+        }
+        
+        let element = AllEntitiesExisting[index];
+        let popup = document.getElementById("popup");
+        popup.style.display = "block";
+
+        popup.children[2].children[0].innerText = newElementName;
+        popup.children[2].children[0].onclick = function () {
+            newElementVictims.push(element.name);
+            document.getElementById("RPSBcontainer").style.display = "flex";
+            popup.style.display = "none";
+            // After handling current element, process the next one recursively
+            processElement(index + 1);
+        }
+        popup.children[2].children[1].innerText = element.name;
+        popup.children[2].children[1].onclick = function () {
             newElementDangerous.push(element.name);
+            document.getElementById("RPSBcontainer").style.display = "flex";
+            popup.style.display = "none";
+            // After handling current element, process the next one recursively
+            processElement(index + 1);
         }
-        else{
-            if(confirm("add "+element.name+" to Victims?")){
-                newElementVictims.push(element.name);
-            }
+
+        popup.children[0].children[1].onclick = function () {
+            document.getElementById("RPSBcontainer").style.display = "flex";
+            popup.style.display = "none";
+            // After handling current element, process the next one recursively
+            processElement(index + 1);
         }
-    });
+        
+        // Wait for user input before processing the next element
+        await new Promise(resolve => {
+            // This promise resolves when the user clicks a button in the popup
+            // It ensures the loop waits for user input before continuing
+        });
+    }
 
-    AllEntitiesExisting.push(new EntityTemplate(newElementName,newElementImg,newElementDangerous,newElementVictims));
-
+    // Start processing from the first element (index 0)
+    await processElement(0);
 });
+
+
 
 //code to run itself yykyk (not a function etc)
 //DEFAULT ENTITIES

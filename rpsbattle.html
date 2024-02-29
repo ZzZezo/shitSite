@@ -9,7 +9,7 @@
     <link rel="icon" href="assets/images/therock.png" type="image/x-icon">
 </head>
 <body>
-    <div class="RPSBcontainer">
+    <div class="RPSBcontainer" id="RPSBcontainer">
         <div class="Battlefield" id="battlefield">
             <!-- Where the Entities will be -->
             <button class="startbutton" id="startbutton">START</button>
@@ -44,6 +44,19 @@
 
         </div>
     </div>
+
+    <div class="popup" style="display: none;" id="popup">
+        <div class="popup-title-bar">
+          <div class="popup-title">Schnick Schnack Schnuck</div>
+          <button class="popup-close" onclick="closePopup()">X</button>
+        </div>
+        <div class="popup-text">Wer gewinnt dieses Duell??</div>
+        <div class="button-container">
+          <button class="popup-button">Schere</button>
+          <button class="popup-button">Stein</button>
+        </div>
+        <br>
+      </div>
 </body>
 <script src="rpsbattle/rpsbattlescript.js"></script>
 </html>

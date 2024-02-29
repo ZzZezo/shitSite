@@ -61,7 +61,7 @@
 
 /* HOMEPAGE START */
 #index_body {
-    background-color: teal;
+    background-color: #55aaaa;
     color: black;
     font-family: 'Old Sans Serif';
     margin: 0;
@@ -77,18 +77,18 @@
 }
 
 #bannerText {
-    color: rgb(43, 133, 133);
+    color: rgb(40, 132, 132);
     text-align: center;
     font-size: 45px;
     font-weight: normal;
     font-family: 'Special Elite';
     margin: 0;
     padding: 95px;
-    background-image: linear-gradient(to bottom, #000000, teal);
+    background-image: linear-gradient(to bottom, #000000, #55aaaa);
 }
 
 #bannerText_dark {
-    color: teal;
+    color: #55aaaa;
     text-align: center;
     font-size: 45px;
     font-weight: normal;
@@ -101,7 +101,7 @@
 
 /* COUNTDOWN START */
 #countdown_body {
-    background-color: teal;
+    background-color: #55aaaa;
     color: black;
     font-family: 'Bluescreen';
 }
