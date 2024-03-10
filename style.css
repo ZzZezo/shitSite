@@ -61,7 +61,7 @@
 
 /* HOMEPAGE START */
 #index_body {
-    background-color: #55aaaa;
+    background-color: teal;
     color: black;
     font-family: 'Old Sans Serif';
     margin: 0;
@@ -84,11 +84,11 @@
     font-family: 'Special Elite';
     margin: 0;
     padding: 95px;
-    background-image: linear-gradient(to bottom, #000000, #55aaaa);
+    background-image: linear-gradient(to bottom, #000000, teal);
 }
 
 #bannerText_dark {
-    color: #55aaaa;
+    color: teal;
     text-align: center;
     font-size: 45px;
     font-weight: normal;
@@ -101,7 +101,7 @@
 
 /* COUNTDOWN START */
 #countdown_body {
-    background-color: #55aaaa;
+    background-color: teal;
     color: black;
     font-family: 'Bluescreen';
 }
