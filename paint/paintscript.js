@@ -20,7 +20,7 @@ var clicked = false;
 
 var brush_size = 50;
 var tool = "brush"; //"pen","brush","line","eraser","fill","pick","none"
-var brush_color = "red";
+var brush_color = 'rgb(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ')';
 colorBox.style.fill = brush_color;
 var penLastX, penLastY;
 var lineLastX, lineLastY;
