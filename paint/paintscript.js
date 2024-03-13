@@ -403,19 +403,13 @@ function deleteItem(nr) {
 
 
 function exportImage(){
-  var nr = parseInt(document.getElementById("imexportinput").value);
-
-  if (!Number.isInteger(nr)) {
-    alert("Bitte gib in das untere Textfeld die ID des Bildes ein.");
-    return;
-  }
-  navigator.clipboard.writeText(savedCanvases[nr]);
+  navigator.clipboard.writeText(canvas.toDataURL());
   alert("Der Code wurde in die Zwischenablage kopiert.")
 }
 
 function importImage(){
   var loader = canvas.getContext("2d");
-  var dataURL = document.getElementById("imexportinput").value;
+  var dataURL = prompt("Füge hier den Code ein:");
   var img = new Image;
   img.src = dataURL;
   img.onload = function () {
