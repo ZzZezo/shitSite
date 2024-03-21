@@ -20,7 +20,12 @@ var clicked = false;
 
 var brush_size = 50;
 var tool = "brush"; //"pen","brush","line","eraser","fill","pick","none"
-var brush_color = 'rgb(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ')';
+
+slideR.value = Math.floor(Math.random() * 256)
+slideG.value = Math.floor(Math.random() * 256)
+slideB.value = Math.floor(Math.random() * 256)
+var brush_color = 'rgb(' + slideR.value + ',' + slideG.value + ',' + slideB.value + ')';
+
 colorBox.style.fill = brush_color;
 var penLastX, penLastY;
 var lineLastX, lineLastY;
