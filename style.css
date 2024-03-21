@@ -27,7 +27,7 @@
     }
 }
 
-.custom_cursor{
+.custom_cursor {
     cursor: url('assets/images/old_pointer.png'), auto;
 }
 
@@ -68,7 +68,7 @@
     padding: 0;
 }
 
-#index_body_dark{
+#index_body_dark {
     background-color: #1e2b30;
     color: white;
     font-family: 'Old Sans Serif';
@@ -166,11 +166,11 @@
     color: white;
 }
 
-.desktop_icon_link{
+.desktop_icon_link {
     cursor: url('assets/images/old_pointer.png'), auto;
 }
 
-.desktop_container{
+.desktop_container {
     margin-top: 75px;
     margin-left: 75px;
     margin-right: 75px;

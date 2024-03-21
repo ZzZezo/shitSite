@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="stylesheet" href="rpsbattle/rpsbattlestyle.css">
 
@@ -8,6 +9,7 @@
     <title>Schnick Schnack Schnuck</title>
     <link rel="icon" href="assets/images/therock.png" type="image/x-icon">
 </head>
+
 <body>
     <div class="RPSBcontainer" id="RPSBcontainer">
         <div class="Battlefield" id="battlefield">
@@ -18,45 +20,50 @@
             <p class="MenuText">Schnick Schnack Schnuck (Beta)</p>
             <div id="stopwatch">00:00:00</div><br>
             <div id="entitycounterContainer">
-                
+
             </div>
             <button class="win98-button" onclick="stopSimulation()" id="stopButton">Beenden.</button>
 
             <div id="elementbox">
                 <!-- where the elemet toggles will be inside (theyll be put here using js later lol) -->
                 <div class="elementToggle" id="PLUS_icon_elementbox" style="border-color: transparent">
-                    <img src="https://twemoji.maxcdn.com/v/latest/72x72/2795.png" alt="+" style="width: 110%; height: 110%;">
+                    <img src="https://twemoji.maxcdn.com/v/latest/72x72/2795.png" alt="+"
+                        style="width: 110%; height: 110%;">
                 </div>
             </div>
 
             <label for="EntityNumberInput">Entities each:</label>
-            <input class="win98-number-input" type="number" id="EntityNumberInput" name="EntityNumberInput" min="0" max="30" value="10"/>
+            <input class="win98-number-input" type="number" id="EntityNumberInput" name="EntityNumberInput" min="0"
+                max="30" value="10" />
             <br>
             <br>
             <br>
             <label for="EntitySizeInput">Entity Size:</label>
-            <input class="win98-number-input" type="number" id="EntitySizeInput" name="EntitySizeInput" min="5" max="100" value="35"/>
+            <input class="win98-number-input" type="number" id="EntitySizeInput" name="EntitySizeInput" min="5"
+                max="100" value="35" />
             <br>
             <br>
             <br>
             <label for="EntitySpeedInput">Entity Speed:</label>
-            <input class="win98-number-input" type="number" id="EntitySpeedInput" name="EntitySpeedInput" min="0.1" max="10" value="1"/>
+            <input class="win98-number-input" type="number" id="EntitySpeedInput" name="EntitySpeedInput" min="0.1"
+                max="10" value="1" />
 
         </div>
     </div>
 
     <div class="popup" style="display: none;" id="popup">
         <div class="popup-title-bar">
-          <div class="popup-title">Schnick Schnack Schnuck</div>
-          <button class="popup-close" onclick="closePopup()">X</button>
+            <div class="popup-title">Schnick Schnack Schnuck</div>
+            <button class="popup-close" onclick="closePopup()">X</button>
         </div>
         <div class="popup-text">Wer gewinnt dieses Duell??</div>
         <div class="button-container">
-          <button class="popup-button">Schere</button>
-          <button class="popup-button">Stein</button>
+            <button class="popup-button">Schere</button>
+            <button class="popup-button">Stein</button>
         </div>
         <br>
-      </div>
+    </div>
 </body>
 <script src="rpsbattle/rpsbattlescript.js"></script>
+
 </html>

@@ -21,7 +21,7 @@ let entitySpeed = 1.5;
 
 
 class Entity {
-    constructor(battlefield, puffer, entities, entityName = "No name", startX, startY, speed = 2, color, size = 35,imgpath,dangerousEntities,victimEntities) {
+    constructor(battlefield, puffer, entities, entityName = "No name", startX, startY, speed = 2, color, size = 35, imgpath, dangerousEntities, victimEntities) {
         this.name = entityName;
         this.battlefield = battlefield;
         this.puffer = puffer;
@@ -54,11 +54,11 @@ class Entity {
         this.vx = speed * Math.random() * 2.5 - 1;
         this.vy = speed * Math.random() * 2.5 - 1;
 
-        
+
         //SET UP OF GAME MECHANIC!
         this.dangerousEntities = dangerousEntities;
         this.victimEntities = victimEntities;
-        if(!EntitiesTakingPart.includes(this.name)){
+        if (!EntitiesTakingPart.includes(this.name)) {
             EntitiesTakingPart.push(this.name);
         }
 
@@ -76,7 +76,7 @@ class Entity {
         // Get the dimensions of the battlefield
         const battlefieldRect = this.battlefield.getBoundingClientRect();
 
-// this part is stolen from chatGPT in its entirety. i am far from being ashamed of stealing AI Code, but i have enough honor to flag it as such, when i do use it. (also idk if this code is even needed, normally it shouldnt be cuz i already implemented that but also im kinda too lazy to check what the code does and if its actually needed. chatgpt said that could be cool if i did that thats the only reason why i have this in here idfk)
+        // this part is stolen from chatGPT in its entirety. i am far from being ashamed of stealing AI Code, but i have enough honor to flag it as such, when i do use it. (also idk if this code is even needed, normally it shouldnt be cuz i already implemented that but also im kinda too lazy to check what the code does and if its actually needed. chatgpt said that could be cool if i did that thats the only reason why i have this in here idfk)
         // Check if entity is going out of bounds and correct its position
         if (this.x < 0) {
             this.x = 0; // Set x coordinate to the left boundary
@@ -94,7 +94,7 @@ class Entity {
             this.y = battlefieldRect.height - this.element.offsetHeight; // Set y coordinate to the bottom boundary
             this.vy *= -1; // Reverse y velocity to bounce off the boundary
         }
-// this part is stolen from chatGPT in its entirety. i am far from being ashamed of stealing AI Code, but i have enough honor to flag it as such, when i do use it. (also idk if this code is even needed, normally it shouldnt be cuz i already implemented that but also im kinda too lazy to check what the code does and if its actually needed. chatgpt said that could be cool if i did that thats the only reason why i have this in here idfk)
+        // this part is stolen from chatGPT in its entirety. i am far from being ashamed of stealing AI Code, but i have enough honor to flag it as such, when i do use it. (also idk if this code is even needed, normally it shouldnt be cuz i already implemented that but also im kinda too lazy to check what the code does and if its actually needed. chatgpt said that could be cool if i did that thats the only reason why i have this in here idfk)
 
         // Reset collision handling flag for this frame
         this.collisionHandled = false;
@@ -153,11 +153,11 @@ class Entity {
             }
 
             else if (collisionMode == "Replacement") { //so fuckin buggy nahhh
-                if(this.name == "Herz" || otherEntity.name == "Herz"){
-                    if(this.name == "Herz") otherEntity.copyProperties(this);
-                    else if(otherEntity.name == "Herz") this.copyProperties(otherEntity);
+                if (this.name == "Herz" || otherEntity.name == "Herz") {
+                    if (this.name == "Herz") otherEntity.copyProperties(this);
+                    else if (otherEntity.name == "Herz") this.copyProperties(otherEntity);
                 }
-                else{
+                else {
                     if (this.dangerousEntities.includes(otherEntity.name)) this.copyProperties(otherEntity);
                     else if (this.victimEntities.includes(otherEntity.name)) otherEntity.copyProperties(this);
                 }
@@ -181,12 +181,12 @@ class Entity {
         var container_of_ecounters = document.getElementById("entitycounterContainer");
         let nthChildIndex = 0;
         EntitiesTakingPart.forEach(element => {
-            container_of_ecounters.children[nthChildIndex].textContent = element +": " + countEntities(element);
-            nthChildIndex ++;
+            container_of_ecounters.children[nthChildIndex].textContent = element + ": " + countEntities(element);
+            nthChildIndex++;
         });
     }
 
-    bounce_off(otherEntity){
+    bounce_off(otherEntity) {
         // Swap velocities to simulate bouncing off each other
         const tempVx = this.vx;
         const tempVy = this.vy;
@@ -226,8 +226,8 @@ class Entity {
 
 }
 
-class EntityTemplate{
-    constructor(name,image,dangerousEntities,victimEntities){
+class EntityTemplate {
+    constructor(name, image, dangerousEntities, victimEntities) {
         this.name = name;
         this.imgpath = image;
         this.dangerousEntities = dangerousEntities;
@@ -236,7 +236,7 @@ class EntityTemplate{
         this.createToggleBox();
     }
 
-    createToggleBox(){
+    createToggleBox() {
         var elementbox = document.getElementById("elementbox");
         //create square around:
         var div = document.createElement("div");
@@ -253,18 +253,18 @@ class EntityTemplate{
 
         div.connectedEntity = this;
 
-        div.addEventListener("click", function() {
-            if(!paused)return;
-            if(inpopup)return;
+        div.addEventListener("click", function () {
+            if (!paused) return;
+            if (inpopup) return;
             this.elementimg = this.children[0];
             //what happens when the square is clicked:
-            if(this.enabled==null)this.enabled=true;
-            if(this.enabled){
+            if (this.enabled == null) this.enabled = true;
+            if (this.enabled) {
                 this.enabled = false;
                 this.style.borderColor = "gray";
                 this.elementimg.style.filter = 'grayscale(100%)';
             }
-            else{
+            else {
                 this.enabled = true;
                 this.style.borderColor = "teal";
                 this.elementimg.style.filter = 'none';
@@ -273,14 +273,14 @@ class EntityTemplate{
         });
     }
 
-    toggleStatus(){
+    toggleStatus() {
         this.enabled = !this.enabled;
     }
 }
 
 //deletes all entities
-function DeleteAllEntities(){
-    if(entities!=[]){
+function DeleteAllEntities() {
+    if (entities != []) {
         entities.forEach(entity => {
             entity.element.remove();
         });
@@ -288,10 +288,10 @@ function DeleteAllEntities(){
 }
 
 //count how many entities
-function countEntities(ename){
+function countEntities(ename) {
     let counter = 0;
     entities.forEach(entity => {
-        if(entity.name==ename)counter++;
+        if (entity.name == ename) counter++;
     });
     return counter;
 }
@@ -308,8 +308,8 @@ function CreateMultipleEntities() {
     }
     //pushCustomEntity("SCHIZO",emojiToImage(prompt("What Emoji do you wanna convert?")),[],["Schere","Stein","Papier"])
     AllEntitiesExisting.forEach(template => {
-        if(template.enabled){
-            pushCustomEntity(template.name,template.imgpath,template.dangerousEntities,template.victimEntities);
+        if (template.enabled) {
+            pushCustomEntity(template.name, template.imgpath, template.dangerousEntities, template.victimEntities);
         }
     });
 }
@@ -320,14 +320,14 @@ function emojiToImage(emoji) {
     return emojiImageUrl;
 }
 
-function pushCustomEntity(name,image,dangerousEntities,victimEntities){
+function pushCustomEntity(name, image, dangerousEntities, victimEntities) {
 
     entities.forEach(entity => {
-        if(dangerousEntities.includes(entity.name)){
+        if (dangerousEntities.includes(entity.name)) {
             //true if the current entity is dangerous to the one new to created
             entity.victimEntities.push(name);
         }
-        if(victimEntities.includes(entity.name)){
+        if (victimEntities.includes(entity.name)) {
             //true if the new entity to create is dangerous to the current entity
             entity.dangerousEntities.push(name);
         }
@@ -335,11 +335,11 @@ function pushCustomEntity(name,image,dangerousEntities,victimEntities){
 
     for (let i = 0; i < numEntities; i++) {
         const battlefieldRect = battlefield.getBoundingClientRect();
-        entities.push(new Entity(battlefield, puffer, entities, entityName = name, startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = image,dangerousEntities=dangerousEntities,victimEntities=victimEntities));
+        entities.push(new Entity(battlefield, puffer, entities, entityName = name, startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = image, dangerousEntities = dangerousEntities, victimEntities = victimEntities));
     }
 }
 
-function stopSimulation(){
+function stopSimulation() {
     DeleteAllEntities();
     paused = true;
     document.getElementById("EntityNumberInput").disabled = false;
@@ -347,7 +347,7 @@ function stopSimulation(){
     document.getElementById("EntitySpeedInput").disabled = false;
 
     document.getElementById("startbutton").style.display = "inline";
-    document.getElementById("stopButton").style.display="none";
+    document.getElementById("stopButton").style.display = "none";
     document.getElementById("stopwatch").style.display = "none";
     Array.from(document.getElementsByClassName("entitycounter")).forEach(elem => elem.style.display = "none ");
 
@@ -355,7 +355,7 @@ function stopSimulation(){
 
     clearEntityCounterContainer();
     EntitiesTakingPart = []
-    
+
 
     //stop timer
     clearInterval(stopwatchInterval);
@@ -366,13 +366,13 @@ function stopSimulation(){
 function clearEntityCounterContainer() {
     var container = document.getElementById("entitycounterContainer");
     while (container.firstChild) {
-      container.removeChild(container.firstChild);
+        container.removeChild(container.firstChild);
     }
-  }
+}
 
 //update the positions of all entities each tick (animation loop)
 function animate() {
-    if(!paused){
+    if (!paused) {
         tickAmnt += 1;
 
         entities.forEach(entity => {
@@ -380,7 +380,7 @@ function animate() {
         });
         requestAnimationFrame(animate);
     }
-    else{
+    else {
         //animate();
     }
 }
@@ -402,15 +402,15 @@ function formatTime(time) {
 function startAnimationLoop() {
     DeleteAllEntities();
     CreateMultipleEntities();
-    paused=false;
+    paused = false;
     animate();
 }
 
-function chosenOption(option){
+function chosenOption(option) {
     alert(option);
 
 
-    
+
     document.getElementById("RPSBcontainer").style.display = "none";
     popup = document.getElementById("popup");
     popup.style.display = "block";
@@ -422,13 +422,13 @@ function chosenOption(option){
 document.getElementById("startbutton").addEventListener("click", function () {
     //everthing start button shoudl do
 
-    if(inpopup)return;
+    if (inpopup) return;
 
-    document.getElementById("stopButton").style.display="block";
+    document.getElementById("stopButton").style.display = "block";
 
     numEntities = document.getElementById("EntityNumberInput").value;
     document.getElementById("EntityNumberInput").disabled = true;
-    
+
     entitySize = document.getElementById("EntitySizeInput").value;
     document.getElementById("EntitySizeInput").disabled = true;
 
@@ -441,7 +441,7 @@ document.getElementById("startbutton").addEventListener("click", function () {
     //blend in objects
     startAnimationLoop();
     this.style.display = "none";
-    document.getElementById("stopButton").style.display="block";
+    document.getElementById("stopButton").style.display = "block";
     document.getElementById("stopwatch").style.display = "inline-block";
 
     //set value to counters (bc only happebs at collision normally):
@@ -449,13 +449,13 @@ document.getElementById("startbutton").addEventListener("click", function () {
     EntitiesTakingPart.forEach(element => {
         //console.log(element);
         var paragraph = document.createElement('p');
-        paragraph.textContent = element +": " + countEntities(element);
+        paragraph.textContent = element + ": " + countEntities(element);
         paragraph.classList.add('entitycounter');
         container_of_ecounters.appendChild(paragraph);
     });
 
     Array.from(document.getElementsByClassName("entitycounter")).forEach(elem => elem.style.display = "block");
-    
+
 
     //start timer
     stopwatchInterval = setInterval(updateStopwatch, 1000);
@@ -473,10 +473,10 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", async 
 
     let newElementName = prompt("Wie möchtest du das neue Element nennen?");
     if (!newElementName) return; // Handle cancellation
-    
+
     let newElementImg = emojiToImage(prompt("Welchen Emoji möchtest du nutzen?"));
     if (!newElementImg) return; // Handle cancellation
-    
+
     let newElementDangerous = [];
     let newElementVictims = [];
 
@@ -485,13 +485,13 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", async 
         if (index >= AllEntitiesExisting.length) {
             // Base case: all elements processed, add the new entity and exit
             AllEntitiesExisting.push(new EntityTemplate(newElementName, newElementImg, newElementDangerous, newElementVictims));
-            
+
             document.getElementById("startbutton").disabled = false;
             document.getElementById("EntityNumberInput").disabled = false;
             document.getElementById("EntitySizeInput").disabled = false;
             document.getElementById("EntitySpeedInput").disabled = false;
             inpopup = false;
-            
+
             return;
         }
 
@@ -501,7 +501,7 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", async 
 
         popup.children[2].children[0].innerText = newElementName;
         popup.children[2].children[0].onclick = function () {
-            if(element.name!="Herz")newElementVictims.push(element.name);
+            if (element.name != "Herz") newElementVictims.push(element.name);
             document.getElementById("RPSBcontainer").style.display = "flex";
             popup.style.display = "none";
             // After handling current element, process the next one recursively
@@ -509,7 +509,7 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", async 
         }
         popup.children[2].children[1].innerText = element.name;
         popup.children[2].children[1].onclick = function () {
-            if(element.name!="Herz")newElementDangerous.push(element.name);
+            if (element.name != "Herz") newElementDangerous.push(element.name);
             document.getElementById("RPSBcontainer").style.display = "flex";
             popup.style.display = "none";
             // After handling current element, process the next one recursively
@@ -522,7 +522,7 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", async 
             // After handling current element, process the next one recursively
             processElement(index + 1);
         }
-        
+
         // Wait for user input before processing the next element
         await new Promise(resolve => {
             // This promise resolves when the user clicks a button in the popup
@@ -538,7 +538,7 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", async 
 
 //code to run itself yykyk (not a function etc)
 //DEFAULT ENTITIES
-AllEntitiesExisting.push(new EntityTemplate("Schere","assets/images/scissors.png",["Stein"],["Papier"]));
-AllEntitiesExisting.push(new EntityTemplate("Stein","assets/images/rock.png",["Papier"],["Schere"]));
-AllEntitiesExisting.push(new EntityTemplate("Papier","assets/images/paper.png",["Schere"],["Stein"]));
-AllEntitiesExisting.push(new EntityTemplate("Herz",emojiToImage("♥️"),[],[]));
+AllEntitiesExisting.push(new EntityTemplate("Schere", "assets/images/scissors.png", ["Stein"], ["Papier"]));
+AllEntitiesExisting.push(new EntityTemplate("Stein", "assets/images/rock.png", ["Papier"], ["Schere"]));
+AllEntitiesExisting.push(new EntityTemplate("Papier", "assets/images/paper.png", ["Schere"], ["Stein"]));
+AllEntitiesExisting.push(new EntityTemplate("Herz", emojiToImage("♥️"), [], []));

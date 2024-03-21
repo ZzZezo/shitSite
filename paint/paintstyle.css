@@ -3,11 +3,11 @@
   src: url('../assets/font/ms-sans-serif.woff') format('woff');
 }
 
-html{
+html {
   cursor: url('../assets/images/old_pointer.png'), auto;
 }
 
-body{
+body {
   font-family: "Old Sans Serif";
   background-color: rgba(0, 128, 128, 0.479);
 }
@@ -72,16 +72,19 @@ canvas {
 .tool_input {
   padding: 5px;
   border: 2px inset #808080;
-  font-family: "MS Sans Serif", Geneva, sans-serif; /* Windows 98 system font */
+  font-family: "MS Sans Serif", Geneva, sans-serif;
+  /* Windows 98 system font */
   font-size: 12px;
 }
 
 .tool_input:focus {
-  outline: none; /* Remove default focus outline */
-  border-color: #000; /* Change border color on focus */
+  outline: none;
+  /* Remove default focus outline */
+  border-color: #000;
+  /* Change border color on focus */
 }
 
-.tool_input:hover{
+.tool_input:hover {
   cursor: url('../assets/images/old_pointer.png'), auto;
 }
 
