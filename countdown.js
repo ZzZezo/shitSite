@@ -22,8 +22,8 @@ function updateCountdown() {
     var totalseconds = seconds + totalminutes * 60
 
     var output = totalseconds + " Sekunden";
-    if (totalseconds < 0) output = "Freiheit."
     if (totalseconds < -1000) output = "Morgen."
+    if (totalseconds < 0 && totalseconds > -900) output = "Freiheit."
     if (dayOfWeek == 0 || dayOfWeek == 6) output = "Du bist frei."
     if (dayOfWeek == 5 && besttime != "9.05") output = "Du bist frei."
     document.getElementById("countdown_numbers").innerHTML = output;
