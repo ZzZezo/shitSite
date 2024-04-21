@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Emoji to Image Converter</title>
+  <link rel="icon" href="assets/images/emoji_icon.png" type="image/x-icon">
   <style>
     /* Font */
     @font-face {
@@ -105,7 +106,6 @@
     <input type="text" id="emojiInput" placeholder="Enter emoji here">
     <input type="submit" value="Convert">
   </div>
-
   <div id="emojiContainer"></div>
   <script>
     // Function to convert emoji string to image
@@ -135,10 +135,11 @@
         emojiToImage(input);
       }
       else {
+        //throw error (scrajj emote when wrong input (or emoji not in DB))
         var imgElement = document.createElement('img');
         imgElement.src = "assets/images/scrajjtest.webp";
 
-        document.getElementById('emojiContainer').replaceChildren(); //comment this out if u wanna add them all up next to eachother
+        document.getElementById('emojiContainer').replaceChildren();
         document.getElementById('emojiContainer').appendChild(imgElement);
       }
     });
