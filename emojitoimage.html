@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Emoji to Image Converter</title>
   <link rel="icon" href="assets/images/emoji_icon.png" type="image/x-icon">
+  <script src="emojimap.js"></script>
   <style>
     /* Font */
     @font-face {
@@ -97,6 +98,67 @@
       color: #808080;
       cursor: not-allowed;
     }
+
+    /* Windows 95 Checkbox Style */
+    .win95-checkbox {
+      display: inline-block;
+      position: relative;
+      padding-left: 25px;
+      margin-right: 15px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Hide the default checkbox */
+    .win95-checkbox input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Style the checkmark */
+    .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 15px;
+      width: 15px;
+      background-color: #c3c3c3;
+      border: 1px solid #808080;
+    }
+
+    /* On mouse-over, add a background color */
+    .win95-checkbox:hover input~.checkmark {
+      background-color: #999999;
+    }
+
+    /* When the checkbox is checked, add a background color */
+    .win95-checkbox input:checked~.checkmark {
+      background-color: #0078d7;
+    }
+
+    /* Create the checkmark/indicator (hidden when not checked) */
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    /* Show the checkmark when checked */
+    .win95-checkbox input:checked~.checkmark:after {
+      display: block;
+    }
+
+    /* Style the checkmark/indicator */
+    .win95-checkbox .checkmark:after {
+      left: 4px;
+      top: 1px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
   </style>
 </head>
 
@@ -107,7 +169,20 @@
     <input type="submit" value="Convert">
   </div>
   <div id="emojiContainer"></div>
+  <br>
+  <label class="win95-checkbox">
+    <input type="checkbox" id="win95-checkbox">
+    <span class="checkmark"></span>
+    Enable AI (incredibly experimental. in fact, u've never seen anything less experimental)
+  </label>
+
   <script>
+    let aiActivated = false;
+
+    function updateTestBoolean() {
+      aiActivated = document.getElementById('win95-checkbox').checked;
+    }
+
     // Function to convert emoji string to image
     function emojiToImage(emoji) {
       // Split the emoji string into individual characters
@@ -140,13 +215,19 @@
       }
       else {
         //throw error (scrajj emote when wrong input (or emoji not in DB))
-        var imgElement = document.createElement('img');
-        imgElement.src = "assets/images/scrajjtest.webp";
+        if (aiActivated) {
+          emojiToImage(convert(input));
+        }
+        else {
+          var imgElement = document.createElement('img');
+          imgElement.src = "assets/images/scrajjtest.webp";
 
-        document.getElementById('emojiContainer').replaceChildren();
-        document.getElementById('emojiContainer').appendChild(imgElement);
+          document.getElementById('emojiContainer').replaceChildren();
+          document.getElementById('emojiContainer').appendChild(imgElement);
+        }
       }
     });
+    document.getElementById('win95-checkbox').addEventListener('change', updateTestBoolean);
   </script>
 
 
