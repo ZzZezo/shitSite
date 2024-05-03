@@ -110,16 +110,20 @@
   <script>
     // Function to convert emoji string to image
     function emojiToImage(emoji) {
-    var codePoint = emoji.codePointAt(0).toString(16);
-    // Check if emoji requires a variation selector
-    var variationSelector = emoji.length > 1 && emoji.charCodeAt(1) === 0xFE0F ? '-fe0f' : '';
-    var emojiImageUrl = 'https://emoji.aranja.com/static/emoji-data/img-apple-160/' + codePoint + variationSelector + '.png';
-    var imgElement = document.createElement('img');
-    imgElement.src = emojiImageUrl;
+      // Split the emoji string into individual characters
+      var emojiArray = Array.from(emoji);
+      // Convert each character to its code point and concatenate them
+      var codePoints = emojiArray.map(char => char.codePointAt(0).toString(16)).join('-');
+      // Check if emoji requires a variation selector
+      var variationSelector = emojiArray.length === 4 ? '-fe0f' : '';
+      var emojiImageUrl = 'https://emoji.aranja.com/static/emoji-data/img-apple-160/' + codePoints + variationSelector + '.png';
+      var imgElement = document.createElement('img');
+      imgElement.src = emojiImageUrl;
 
-    document.getElementById('emojiContainer').replaceChildren(); //comment this out if u wanna add them all up next to eachother
-    document.getElementById('emojiContainer').appendChild(imgElement);
-}
+      document.getElementById('emojiContainer').replaceChildren(); //comment this out if u wanna add them all up next to eachother
+      document.getElementById('emojiContainer').appendChild(imgElement);
+    }
+
 
 
     function isEmoji(str) {

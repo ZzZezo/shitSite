@@ -315,9 +315,10 @@ function CreateMultipleEntities() {
 }
 
 function emojiToImage(emoji) {
-    var codePoint = emoji.codePointAt(0).toString(16);
-    var variationSelector = emoji.length > 1 && emoji.charCodeAt(1) === 0xFE0F ? '-fe0f' : '';
-    var emojiImageUrl = 'https://emoji.aranja.com/static/emoji-data/img-apple-160/' + codePoint + variationSelector + '.png';
+    var emojiArray = Array.from(emoji)
+    var codePoints = emojiArray.map(char => char.codePointAt(0).toString(16)).join('-');
+    var variationSelector = emojiArray.length === 4 ? '-fe0f' : '';
+    var emojiImageUrl = 'https://emoji.aranja.com/static/emoji-data/img-apple-160/' + codePoints + variationSelector + '.png';
     return emojiImageUrl;
 }
 
