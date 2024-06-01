@@ -1,6 +1,6 @@
 
 // Function to create and display the popup
-function createPopup(titleText, mainText, options, buttonText) {
+function createPopup(titleText, mainText, options, buttonText,functionsToRun) {
     // Create the popup container
     const popup = document.createElement('div');
     popup.className = 'popup';
@@ -52,21 +52,11 @@ function createPopup(titleText, mainText, options, buttonText) {
         let buttonTxt = buttonText[i];
         if(buttonTxt!=null)buttonTxt = addNewLinesEverynChars(buttonTxt,10);
         newButton.innerText = buttonTxt;
+
+        newButton.onclick = functionsToRun[i];
+
         buttonContainer.appendChild(newButton);
     }
-
-    // //old button logic (hardcoded)
-    //     const button1 = document.createElement('button');
-    //     button1.className = 'popup-button';
-    //     button1.innerText = button1Text;
-
-    //     const button2 = document.createElement('button');
-    //     button2.className = 'popup-button';
-    //     button2.innerText = button2Text;
-
-    //     // Append buttons to the button container
-    //     buttonContainer.appendChild(button1);
-    //     buttonContainer.appendChild(button2);
 
     //append buttonContainer
     popup.appendChild(buttonContainer);

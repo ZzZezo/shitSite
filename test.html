@@ -16,8 +16,17 @@
 
 </body>
 <script>
+  function opt1(){
+      console.log("Option 1 chosen");
+  }
+
+  function opt2(){
+      console.log("Option 2 chosen")
+  }
+
   // Call the function to create the popup
-  createPopup("Title", "Text", 2, ["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA","bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","c","d"]);
+  createPopup("Title", "Text", 2, ["Cancel","OK"],[opt1,opt2]);
+
 
 </script>
 
