@@ -327,7 +327,7 @@ function saveCanvas(nr) {
   let key = nr;
   localStorage.setItem(key, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + imageName + "/z/z/z/author/z/z/z/" + author);
 
-  alert("Saved your art at ID: " + nr + "\n\nYour Art may still be lost after refreshing the page.\nMake sure to save it otherwise if important.");
+  alert("Saved your art at ID " + nr + "!");
 }
 
 
