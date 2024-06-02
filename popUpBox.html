@@ -27,12 +27,25 @@
       console.log("Option 2 chosen")
   }
 
+  function opt3(argument){
+    console.log("Option 3 chosen")
+    console.log(argument)
+  }
+
   
   createPopup("Title", "Text", 2, ["Option 1","Option 2"],[opt1,opt2]);  // Call the function to create the popup
   //createPopup(TheTextInBlueBar,TheTextInBox,HowManyButtons,TheTextOnTheButtons,TheFunctionsWhenButtonsPressed)
 
 
+  //to pass a function with arguments you have to use this syntax: (can be used without args too, but costs readability and simplicity yk)
+  createPopup("Title", "Text", 1, ["Pass Variable"],[function(){return opt3("Example String");}]);
 
+
+  //if you wanna test those functions you have to comment on out, or it will always only display the second popup
+  //(you can only ever have one popup at a time)
+  //(if you create multiple without closing them you will just duplicate the last one created over and over again)
+  //this is because im incredibly bad at coding (but also a bit cuz im legit so fucking tired rn)
+  
 
 //below here has nothing to do with popup anymore i just think it looks better idk man
 </script>

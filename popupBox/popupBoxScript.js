@@ -50,7 +50,7 @@ function createPopup(titleText, mainText, options, buttonText,functionsToRun) {
         const newButton = document.createElement('button');
         newButton.className = 'popup-button';
         let buttonTxt = buttonText[i];
-        if(buttonTxt!=null)buttonTxt = addNewLinesEverynChars(buttonTxt,10);
+        if(buttonTxt!=null)buttonTxt = addNewLinesEverynChars(buttonTxt,15);
         newButton.innerText = buttonTxt;
 
         newButton.onclick = functionsToRun[i];
@@ -83,7 +83,7 @@ function addNewLinesEverynChars(str,n) {
     let result = '';
     let i = 0;
 
-    //loop through string and add a newline every n characters (n is hardcoded in the forloop and i think should be set at 10)
+    //loop through string and add a newline every n characters (n is hardcoded in the forloop and i think should be set at 15 imo)
     while (i < str.length) {
         if (i + n < str.length) {
             result += str.slice(i, i + n) + '\n';
