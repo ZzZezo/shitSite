@@ -4,15 +4,6 @@
   src: url('../assets/font/ms-sans-serif.woff') format('woff');
   }
 
-  body,
-  html {
-    height: 99%;
-
-    font-family: "Old Sans Serif";
-    background-color:teal;
-    cursor: url('../assets/images/old_pointer.png'), auto;
-  }
-
   .popup {
   background-color: #c0c0c0;
   border: 2px solid #000000;

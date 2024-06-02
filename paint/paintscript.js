@@ -302,7 +302,7 @@ function canvassaveinputupdated() {
 
 function saveCanvas(nr) {
   if (!Number.isInteger(nr)) {
-    alert("Bitte gib eine richtige ID ein.");
+    createPopup("Error", "Bitte gib eine richtige ID ein.", 1, ["OK"], [closePopup]);
     return;
   }
   var imageName = prompt("Wie möchtest du das Bild nennen?");
@@ -327,13 +327,13 @@ function saveCanvas(nr) {
   let key = nr;
   localStorage.setItem(key, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + imageName + "/z/z/z/author/z/z/z/" + author);
 
-  alert("Saved your art at ID " + nr + "!");
+  createPopup("Gespeichert!", "Dein Kunstwerk wurde gespeichert. (ID: " + nr + ")", 1, ["OK"], [closePopup]);
 }
 
 
 function loadCanvas(nr) { //load a saved canvas
   if (!Number.isInteger(nr)) {
-    alert("Bitte gib eine richtige ID ein.");
+    createPopup("Error", "Bitte gib eine richtige ID ein.", 1, ["OK"], [closePopup]);
     return;
   }
 
@@ -351,7 +351,7 @@ function loadCanvas(nr) { //load a saved canvas
 
 function editItem(nr) {
   if (!Number.isInteger(nr)) {
-    alert("Bitte gib eine richtige ID ein.");
+    createPopup("Error", "Bitte gib eine richtige ID ein.", 1, ["OK"], [closePopup]);
     return;
   }
 
@@ -364,14 +364,14 @@ function editItem(nr) {
 
 function deleteItem(nr) {
   if (!Number.isInteger(nr)) {
-    alert("Bitte gib eine richtige ID ein.");
+    createPopup("Error", "Bitte gib eine richtige ID ein.", 1, ["OK"], [closePopup]);
     return;
   }
 
-  if (!confirm("Bist du sicher, dass du Bild " + nr + " löschen möchtest? \nDies kann nicht rückgängig gemacht werden.")) {
-    return;
-  }
+  createPopup("Kunstwerk Löschen", "Bild " + nr + " vernichten? \nDies ist permanent..", 2, ["Abbrechen", "Ja"], [closePopup, function () { return confirmDeleteItem(nr); }]);
+}
 
+function confirmDeleteItem(nr) {
   //copy local storage to Arrays
   savedCanvases = [];
   savedNames = [];
@@ -404,12 +404,13 @@ function deleteItem(nr) {
 
   // localStorage.clear();
   updateArtlist();
+  closePopup();
 }
 
 
 function exportImage() {
   navigator.clipboard.writeText(canvas.toDataURL());
-  alert("Der Code wurde in die Zwischenablage kopiert.")
+  createPopup("Exportieren erfolgreich", "Der Code wurde in deine Zwischenablage kopiert.", 1, ["OK"], [closePopup]);
 }
 
 function importImage() {

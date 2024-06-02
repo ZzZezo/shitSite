@@ -72,7 +72,7 @@ function createPopup(titleText, mainText, options, buttonText,functionsToRun) {
 function closePopup() {
     const popup = document.getElementById('popup');
     if (popup) {
-        popup.style.display = 'none';
+        popup.remove(); // Remove the popup element from the DOM
     }
 }
 
