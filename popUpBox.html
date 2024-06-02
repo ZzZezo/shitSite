@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" href="https://icons.veryicon.com/png/o/business/vscode-program-item-icon/vscode.png" type="image/x-icon">
+
+  <!-- the two lines below here have to be added to the mainscript, cuz it implements the libray. -->
+  <link rel="stylesheet" href="popupBox/popupBoxStyle.css">
+  <script src="popupBox/popupBoxScript.js"></script>
+  <!-- the two lines above here have to be added to the mainscript, cuz it implements the libray. -->
+  <title>Devs Playground (PopUpBox)</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  //the functions the buttons should run have to be implemented in the main script and not in the "library script"
+  function opt1(){ //example for option 1
+      console.log("Option 1 chosen");
+  }
+
+  function opt2(){ //example for option 2
+      console.log("Option 2 chosen")
+  }
+
+  
+  createPopup("Title", "Text", 2, ["Option 1","Option 2"],[opt1,opt2]);  // Call the function to create the popup
+  //createPopup(TheTextInBlueBar,TheTextInBox,HowManyButtons,TheTextOnTheButtons,TheFunctionsWhenButtonsPressed)
+
+
+
+
+//below here has nothing to do with popup anymore i just think it looks better idk man
+</script>
+<style>
+  body,
+  html {
+    height: 99%;
+
+    font-family: "Old Sans Serif";
+    background-color:teal;
+    cursor: url('../assets/images/old_pointer.png'), auto;
+  }
+</style>
+</html>

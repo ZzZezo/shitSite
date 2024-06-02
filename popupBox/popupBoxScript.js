@@ -1,5 +1,5 @@
+//library script (better not change stuff here cuz its global for entire project and u have no idea what any of this means💀☠️)
 
-// Function to create and display the popup
 function createPopup(titleText, mainText, options, buttonText,functionsToRun) {
     // Create the popup container
     const popup = document.createElement('div');
@@ -7,39 +7,39 @@ function createPopup(titleText, mainText, options, buttonText,functionsToRun) {
     popup.style.display = 'none'; // Initially hidden
     popup.id = 'popup';
 
-    // Create the title bar
+    //title bar
     const titleBar = document.createElement('div');
     titleBar.className = 'popup-title-bar';
 
-    // Create the title
+    //title text
     const title = document.createElement('div');
     title.className = 'popup-title';
     title.innerText = titleText;
 
-    // Create the close button
+    //close button (always runs close function (can be updated in future, shouldnt even be hard))
     const closeButton = document.createElement('button');
     closeButton.className = 'popup-close';
     closeButton.innerText = 'X';
     closeButton.onclick = closePopup;
 
-    // Append title and close button to the title bar
+    //append to titlebar
     titleBar.appendChild(title);
     titleBar.appendChild(closeButton);
 
-    // Create the text
+    //main text
     const text = document.createElement('div');
     text.className = 'popup-text';
     text.innerText = mainText;
 
-    // Append all elements to the popup
+    //append to container
     popup.appendChild(titleBar);
     popup.appendChild(text);
 
-    // Create the button container
+    //buttons
     let buttonContainer = document.createElement('div');
     buttonContainer.className = 'button-container';
 
-    // Create the buttons
+    //for loop for each button (nah no shit, not like u could just read that)
     for (let i = 0; i < options; i++) {
         if(i%2==0 && i!=0){
             popup.appendChild(buttonContainer);
@@ -61,18 +61,18 @@ function createPopup(titleText, mainText, options, buttonText,functionsToRun) {
     //append buttonContainer
     popup.appendChild(buttonContainer);
 
-    // Append the popup to the body
+    //append entire popup to document
     document.body.appendChild(popup);
 
-    // Display the popup
+    //show popup
     popup.style.display = 'block';
 }
 
-// Function to close the popup
+//close popup (currently always runs when pressed close button but will (maybe) be updated (probably not lol))
 function closePopup() {
     const popup = document.getElementById('popup');
     if (popup) {
-        popup.remove(); // Remove the popup element from the DOM
+        popup.remove();
     }
 }
 
@@ -83,7 +83,7 @@ function addNewLinesEverynChars(str,n) {
     let result = '';
     let i = 0;
 
-    // Loop through the string and add a newline every 15 characters
+    //loop through string and add a newline every n characters (n is hardcoded in the forloop and i think should be set at 10)
     while (i < str.length) {
         if (i + n < str.length) {
             result += str.slice(i, i + n) + '\n';
