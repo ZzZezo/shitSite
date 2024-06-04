@@ -429,12 +429,16 @@ function exportImage() {
 
 function importImage() {
   var loader = canvas.getContext("2d");
-  var dataURL = prompt("Füge hier den Code ein:");
-  var img = new Image;
-  img.src = dataURL;
-  img.onload = function () {
-    loader.drawImage(img, 0, 0);
-  };
+  createPrompt("Importieren","Füge hier den Code ein:",function(answer){
+    //the user input will be saved in the variable "answer"
+    
+    var dataURL = answer;
+    var img = new Image;
+    img.src = dataURL;
+    img.onload = function () {
+      loader.drawImage(img, 0, 0);
+    };
+  });
 }
 
 function updateArtlist() {
