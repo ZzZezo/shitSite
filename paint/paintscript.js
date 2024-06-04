@@ -25,6 +25,7 @@ slideR.value = Math.floor(Math.random() * 256);
 slideG.value = Math.floor(Math.random() * 256);
 slideB.value = Math.floor(Math.random() * 256);
 var brush_color = 'rgb(' + slideR.value + ',' + slideG.value + ',' + slideB.value + ')';
+update_color(brush_color);
 
 colorBox.style.fill = brush_color;
 var penLastX, penLastY;
