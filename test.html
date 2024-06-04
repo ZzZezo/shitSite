@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="icon" href="https://icons.veryicon.com/png/o/business/vscode-program-item-icon/vscode.png" type="image/x-icon">
+  <link rel="icon" href="https://icons.veryicon.com/png/o/business/vscode-program-item-icon/vscode.png"
+    type="image/x-icon">
 
   <link rel="stylesheet" href="popupBox/popupBoxStyle.css">
   <script src="popupBox/popupBoxScript.js"></script>
@@ -13,10 +14,55 @@
 </head>
 
 <body>
-
+<!-- include this before the closing body tag -->
+<article class="prompt">
+  <form class="prompt__form">
+    <p class="prompt__text"><p>
+    <input type="text" class="prompt__input" />
+    <input type="submit" class="prompt__submit" value="submit" />
+  </form>  
+</article>
 </body>
 <script>
-  alert("idk bro hier passiert sonst nix kannst wieder gehn")
+  /* show Prompt plugin */
+  var showPrompt = (function () {
+
+    var promptEl = document.querySelector('.prompt'),
+      _cb = null;
+
+    var prompt = {
+      el: promptEl,
+      form: promptEl.querySelector('.prompt__form'),
+      text: promptEl.querySelector('.prompt__text'),
+      input: promptEl.querySelector('.prompt__input'),
+      submit: promptEl.querySelector('.prompt__submit')
+    }
+
+    prompt.form.addEventListener('submit', hide, false);
+
+    function show(text, cb) {
+      prompt.el.classList.add('prompt--show');
+      prompt.text.innerHTML = text;
+      _cb = cb;
+    }
+
+    function hide(e) {
+      e.preventDefault();
+      prompt.el.classList.remove('prompt--show');
+      _cb.call(prompt, prompt.input.value);
+    }
+
+
+    return show;
+
+  })();
+
+  // show the prompt
+  showPrompt('Enter Your Text Here', function (answer) {
+    console.log('prompt submitted', answer);
+  alert("hihihu");
+  showPrompt("lala");
+  });
 </script>
 <style>
   body,
@@ -24,8 +70,59 @@
     height: 99%;
 
     font-family: "Old Sans Serif";
-    background-color:teal;
-    cursor: url('../assets/images/old_pointer.png'), auto;
+    background-color: teal;
+    cursor: url('assets/images/old_pointer.png'), auto;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .prompt {
+    /* make the backgronud full screen */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(40, 40, 40, .37);
+
+    /* make it show on top of all other elements */
+    z-index: 999;
+
+    /* hide the prompt by default */
+    visibility: hidden;
+    opacity: 0;
+
+    transition: .6s opacity, .6s visibility;
+  }
+
+  .prompt__form {
+    /* center the prompt window */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    padding: 1em;
+
+    background: #e5e5e5;
+  }
+
+  .prompt--show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .prompt__input {
+    width: 80%;
+    float: left;
+  }
+
+  .prompt__submit {
+    width: 20%;
+    float: left;
   }
 </style>
+
 </html>

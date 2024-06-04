@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="https://icons.veryicon.com/png/o/business/vscode-program-item-icon/vscode.png"
+        type="image/x-icon">
+
+    <!-- the two lines below here have to be added to the mainscript, cuz it implements the libray. -->
+    <link rel="stylesheet" href="popupInput/popupInputStyle.css">
+    <script src="popupInput/popupInputScript.js"></script>
+    <!-- the two lines above here have to be added to the mainscript, cuz it implements the libray. -->
+    <title>Devs Playground (PopUpInput)</title>
+</head>
+<body>
+</body>
+
+<script>
+    //the function the submit-button should run has to be implemented in the main script and not in the "library script"
+    createPrompt("Title","Question?",function(answer){
+        //the user input will be saved in the variable "answer"
+        console.log("Answer: "+ answer);//this would print the users input
+    });
+
+
+
+//below here has nothing to do with popup anymore i just think it looks better idk man
+</script>
+<style>
+    body,
+    html {
+        height: 99%;
+
+        font-family: "Old Sans Serif";
+        background-color: teal;
+        cursor: url('assets/images/old_pointer.png'), auto;
+    }
+</style>
