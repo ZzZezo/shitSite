@@ -59,6 +59,7 @@ function createPrompt(titleText, mainText,answerFunction){
 
     //show popup
     popup.style.display = 'block';
+    Input.focus();
 }
 
 //close popup (currently always runs when pressed close button but will (maybe) be updated (probably not lol))
