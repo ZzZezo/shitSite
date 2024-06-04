@@ -175,7 +175,7 @@ label {
 }
 
 
-.popup {
+.COMPAREpopup {
   background-color: #c0c0c0;
   border: 2px solid #000000;
   width: 300px;
@@ -187,7 +187,7 @@ label {
   box-shadow: 5px 5px 5px #888888;
 }
 
-.popup-title-bar {
+.COMPAREpopup-title-bar {
   background-color: #000080;
   /* Windows 98 blue */
   color: #ffffff;
@@ -201,14 +201,14 @@ label {
   /* Center vertically */
 }
 
-.popup-title {
+.COMPAREpopup-title {
   margin: 0;
   margin-left: 2px;
   font-size: 14px;
   font-weight: bold;
 }
 
-.popup-close {
+.COMPAREpopup-close {
   padding: 5px 10px;
   background-color: #c0c0c0;
   border: 1px outset #e0dbdb;
@@ -219,15 +219,15 @@ label {
   cursor: pointer;
 }
 
-.popup-close:hover {
+.COMPAREpopup-close:hover {
   background-color: #d3d3d3;
 }
 
-.popup-close:active {
+.COMPAREpopup-close:active {
   border-style: inset;
 }
 
-.popup-text {
+.COMPAREpopup-text {
   margin-top: 10px;
   margin-bottom: 20px;
 }
@@ -237,7 +237,7 @@ label {
   justify-content: center;
 }
 
-.popup-button {
+.COMPAREpopup-button {
   background-color: #c0c0c0;
   border: 2px outset #808080;
   color: #000;
@@ -249,10 +249,10 @@ label {
   margin-right: 15px;
 }
 
-.popup-button:hover {
+.COMPAREpopup-button:hover {
   background-color: #d3d3d3;
 }
 
-.popup-button:active {
+.COMPAREpopup-button:active {
   border-style: inset;
 }

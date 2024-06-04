@@ -319,29 +319,36 @@ function saveCanvas(nr) {
     createPopup("Error", "Bitte gib eine richtige ID ein.", 1, ["OK"], [closePopup]);
     return;
   }
-  var imageName = prompt("Wie möchtest du das Bild nennen?");
-  var author = prompt("Und wer bist du?");
 
-  savedCanvases[nr] = canvas.toDataURL();
-  console.log(savedCanvases[nr]);
+  var imageName, author;
+  createPrompt("Speichern", "Wie möchtest du das Bild nennen?", function (answer) {
+    imageName = answer;
+    createPrompt("Speichern", "Und wer bist du?", function (answer) {
+      author = answer;
 
-  //showing on list
-  var boldNr = document.createElement("span");
-  boldNr.style.fontWeight = "bold";
-  boldNr.appendChild(document.createTextNode(nr));
+      savedCanvases[nr] = canvas.toDataURL();
+      console.log(savedCanvases[nr]);
 
-  var textNode = document.createTextNode(": " + imageName + ", " + author);
-  var lineBreak = document.createElement("br");
+      //showing on list
+      var boldNr = document.createElement("span");
+      boldNr.style.fontWeight = "bold";
+      boldNr.appendChild(document.createTextNode(nr));
 
-  document.getElementById("Artlist").appendChild(boldNr);
-  document.getElementById("Artlist").appendChild(textNode);
-  document.getElementById("Artlist").appendChild(lineBreak);
+      var textNode = document.createTextNode(": " + imageName + ", " + author);
+      var lineBreak = document.createElement("br");
 
-  //saving to local storage
-  let key = nr;
-  localStorage.setItem(key, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + imageName + "/z/z/z/author/z/z/z/" + author);
+      document.getElementById("Artlist").appendChild(boldNr);
+      document.getElementById("Artlist").appendChild(textNode);
+      document.getElementById("Artlist").appendChild(lineBreak);
 
-  createPopup("Gespeichert!", "Dein Kunstwerk wurde gespeichert. (ID: " + nr + ")", 1, ["OK"], [closePopup]);
+      //saving to local storage
+      let key = nr;
+      localStorage.setItem(key, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + imageName + "/z/z/z/author/z/z/z/" + author);
+
+      createPopup("Gespeichert!", "Dein Kunstwerk wurde gespeichert. (ID: " + nr + ")", 1, ["OK"], [closePopup]);
+
+    })
+  });
 }
 
 
@@ -369,11 +376,16 @@ function editItem(nr) {
     return;
   }
 
-  var newimageName = prompt("Wie möchtest du das Bild WIRKLICH nennen?");
-  var newauthor = prompt("Und wer bist WIRKLICH du?");
+  var newimageName, newauthor;
+  createPrompt("Bearbeiten", "Wie möchtest du das Bild WIRKLICH nennen?", function (answer) {
+    newimageName = answer;
+    createPrompt("Bearbeiten", "Und wer bist du WIRKLICH?", function (answer) {
+      newauthor = answer;
 
-  localStorage.setItem(nr, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + newimageName + "/z/z/z/author/z/z/z/" + newauthor);
-  updateArtlist();
+      localStorage.setItem(nr, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + newimageName + "/z/z/z/author/z/z/z/" + newauthor);
+      updateArtlist();
+    });
+  });
 }
 
 function deleteItem(nr) {
@@ -429,9 +441,9 @@ function exportImage() {
 
 function importImage() {
   var loader = canvas.getContext("2d");
-  createPrompt("Importieren","Füge hier den Code ein:",function(answer){
+  createPrompt("Importieren", "Füge hier den Code ein:", function (answer) {
     //the user input will be saved in the variable "answer"
-    
+
     var dataURL = answer;
     var img = new Image;
     img.src = dataURL;

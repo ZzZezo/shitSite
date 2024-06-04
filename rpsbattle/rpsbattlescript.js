@@ -8,6 +8,8 @@ let elapsedTime = 0;
 let EntitiesTakingPart = []
 let AllEntitiesExisting = [] //all entities created by player + default ones (contains entity templates)
 
+let newElementName, newElementImg;
+
 //modifyable for dev:
 const puffer = 5; // how far away from edge the object will bounce
 // const collisionMode = "Deletion" //"Deletion" or "Replacement" (uncomment the one you want)
@@ -437,7 +439,7 @@ document.getElementById("startbutton").addEventListener("click", function () {
     entitySpeed = document.getElementById("EntitySpeedInput").value;
     document.getElementById("EntitySpeedInput").disabled = true;
 
-
+    // plusButton = document.getElementById
     // console.log(entitySpeed);
 
     //blend in objects
@@ -463,79 +465,91 @@ document.getElementById("startbutton").addEventListener("click", function () {
     stopwatchInterval = setInterval(updateStopwatch, 1000);
 });
 
-document.getElementById("PLUS_icon_elementbox").addEventListener("click", async function () {
+document.getElementById("PLUS_icon_elementbox").addEventListener("click", function () {
     if (!paused) return;
     if (inpopup) return;
 
-    document.getElementById("startbutton").disabled = true;
-    document.getElementById("EntityNumberInput").disabled = true;
-    document.getElementById("EntitySizeInput").disabled = true;
-    document.getElementById("EntitySpeedInput").disabled = true;
-    inpopup = true;
 
-    let newElementName = prompt("Wie möchtest du das neue Element nennen?");
-    if (!newElementName) return; // Handle cancellation
+    createPrompt("Schere, Stein, Papier", "Wie möchtest du das neue Element nennen?", function (answer) {
+        newElementName = answer;
+        if (!newElementName) return; // Handle cancellation
+        // closePopup();
+        createPrompt("Schere, Stein, Papier", "Welchen Emoji möchtest du nutzen?", async function (answer) {
+            newElementImg = emojiToImage(answer);
+            if (!newElementImg) return; // Handle cancellation
 
-    let newElementImg = emojiToImage(prompt("Welchen Emoji möchtest du nutzen?"));
-    if (!newElementImg) return; // Handle cancellation
+            // closePopup();
 
-    let newElementDangerous = [];
-    let newElementVictims = [];
 
-    // Define a recursive function to process each element
-    async function processElement(index) {
-        if (index >= AllEntitiesExisting.length) {
-            // Base case: all elements processed, add the new entity and exit
-            AllEntitiesExisting.push(new EntityTemplate(newElementName, newElementImg, newElementDangerous, newElementVictims));
+            document.getElementById("startbutton").disabled = true;
+            document.getElementById("EntityNumberInput").disabled = true;
+            document.getElementById("EntitySizeInput").disabled = true;
+            document.getElementById("EntitySpeedInput").disabled = true;
+            inpopup = true;
 
-            document.getElementById("startbutton").disabled = false;
-            document.getElementById("EntityNumberInput").disabled = false;
-            document.getElementById("EntitySizeInput").disabled = false;
-            document.getElementById("EntitySpeedInput").disabled = false;
-            inpopup = false;
+            let newElementDangerous = [];
+            let newElementVictims = [];
 
-            return;
-        }
+            // Define a recursive function to process each element
+            async function processElement(index) {
+                if (index >= AllEntitiesExisting.length) {
 
-        let element = AllEntitiesExisting[index];
-        let popup = document.getElementById("popup");
-        popup.style.display = "block";
+                    // Base case: all elements processed, add the new entity and exit
+                    AllEntitiesExisting.push(new EntityTemplate(newElementName, newElementImg, newElementDangerous, newElementVictims));
 
-        popup.children[2].children[0].innerText = newElementName;
-        popup.children[2].children[0].onclick = function () {
-            if (element.name != "Herz") newElementVictims.push(element.name);
-            document.getElementById("RPSBcontainer").style.display = "flex";
-            popup.style.display = "none";
-            // After handling current element, process the next one recursively
-            processElement(index + 1);
-        }
-        popup.children[2].children[1].innerText = element.name;
-        popup.children[2].children[1].onclick = function () {
-            if (element.name != "Herz") newElementDangerous.push(element.name);
-            document.getElementById("RPSBcontainer").style.display = "flex";
-            popup.style.display = "none";
-            // After handling current element, process the next one recursively
-            processElement(index + 1);
-        }
+                    document.getElementById("startbutton").disabled = false;
+                    document.getElementById("EntityNumberInput").disabled = false;
+                    document.getElementById("EntitySizeInput").disabled = false;
+                    document.getElementById("EntitySpeedInput").disabled = false;
+                    inpopup = false;
 
-        popup.children[0].children[1].onclick = function () {
-            document.getElementById("RPSBcontainer").style.display = "flex";
-            popup.style.display = "none";
-            // After handling current element, process the next one recursively
-            processElement(index + 1);
-        }
+                    return;
+                }
 
-        // Wait for user input before processing the next element
-        await new Promise(resolve => {
-            // This promise resolves when the user clicks a button in the popup
-            // It ensures the loop waits for user input before continuing
+                let element = AllEntitiesExisting[index];
+                let COMPAREpopup = document.getElementById("COMPAREpopup");
+                COMPAREpopup.style.display = "block";
+
+                COMPAREpopup.children[2].children[0].innerText = newElementName;
+                COMPAREpopup.children[2].children[0].onclick = function () {
+                    if (element.name != "Herz") newElementVictims.push(element.name);
+                    document.getElementById("RPSBcontainer").style.display = "flex";
+                    COMPAREpopup.style.display = "none";
+                    // After handling current element, process the next one recursively
+                    processElement(index + 1);
+                }
+                COMPAREpopup.children[2].children[1].innerText = element.name;
+                COMPAREpopup.children[2].children[1].onclick = function () {
+                    if (element.name != "Herz") newElementDangerous.push(element.name);
+                    document.getElementById("RPSBcontainer").style.display = "flex";
+                    COMPAREpopup.style.display = "none";
+                    // After handling current element, process the next one recursively
+                    processElement(index + 1);
+                }
+
+                COMPAREpopup.children[0].children[1].onclick = function () {
+                    document.getElementById("RPSBcontainer").style.display = "flex";
+                    COMPAREpopup.style.display = "none";
+                    // After handling current element, process the next one recursively
+                    processElement(index + 1);
+                }
+
+                // Wait for user input before processing the next element
+                await new Promise(resolve => {
+                    // This promise resolves when the user clicks a button in the COMPAREpopup
+                    // It ensures the loop waits for user input before continuing
+                });
+            }
+
+            // Start processing from the first element (index 0)
+            await processElement(0);
         });
-    }
-
-    // Start processing from the first element (index 0)
-    await processElement(0);
+    });
 });
 
+async function compare() {
+
+}
 
 
 //code to run itself yykyk (not a function etc)
