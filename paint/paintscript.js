@@ -117,6 +117,18 @@ function update_color(color) {
 }
 
 function toolSizeChanged(value) {
+  value = parseInt(value, 10);
+
+  if (isNaN(value)) {
+    value = 0;
+    return;
+  }
+
+  //limitations
+  if (value < 0) {
+    value = 0;
+  }
+
   brush_size = value;
   toolsizeinput.value = value;
 }
@@ -456,11 +468,10 @@ function updateArtlist() {
 document.addEventListener('wheel', function (event) {
   var scroll_mult = 2; //declares by how many units the size is changed
   if (event.deltaY < 0) {
-    toolSizeChanged(brush_size-scroll_mult);
+    toolSizeChanged(brush_size - scroll_mult);
   } else {
-    toolSizeChanged(brush_size+scroll_mult);
+    toolSizeChanged(brush_size + scroll_mult);
   }
-  console.log(brush_size);
 });
 
 
