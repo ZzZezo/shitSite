@@ -450,6 +450,18 @@ function updateArtlist() {
   }
 }
 
+
+
+document.addEventListener('wheel', function (event) {
+  if (event.deltaY < 0) {
+    brush_size--;
+  } else {
+    brush_size++;
+  }
+  console.log(brush_size);
+});
+
+
 window.onload = function () {
   const context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height);
