@@ -87,14 +87,13 @@
     <button class="toolbutton" onclick="undoCanvas();">Undo</button>
     <button class="toolbutton"
         onclick="{const context = canvas.getContext('2d');context.fillStyle='white';context.fillRect(0,0,canvas.width, canvas.height);saveCanvasUndo()}">Reset</button>
-    <br><br><br><br>
     <button class="toolbutton" onclick="saveCanvas(savedCanvases.length)">Save</button>
+    <br><br><br>
     <button class="toolbutton" onclick="loadCanvas(idToLoad);">Load</button>
     <button class="toolbutton" onclick="editItem(idToLoad);">Edit</button>
     <button class="toolbutton" onclick="deleteItem(idToLoad);">Delete</button>
     <br>
-    <input id="canvassaveinput" class="tool_input" value="" onkeyup='canvassaveinputupdated()'>
-    <br>
+    ID: <input id="canvassaveinput" class="tool_input" value="" onkeyup='canvassaveinputupdated()'>
     <br>
     <label id="artlistheadline">List of all Images:</label>
     <div class="listOfArt" id="Artlist">

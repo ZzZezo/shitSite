@@ -88,6 +88,11 @@ canvas {
   cursor: url('../assets/images/old_pointer.png'), auto;
 }
 
+#canvassaveinput{
+  width:100px;
+  margin-bottom: 20px;
+}
+
 .slider:hover {
   opacity: 1;
 }
