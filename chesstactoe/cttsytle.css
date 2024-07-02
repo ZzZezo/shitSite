@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Old Sans Serif';
-    src: url('assets/font/ms-sans-serif.woff') format('woff');
+    src: url('../assets/font/ms-sans-serif.woff') format('woff');
 }
 
 body,
@@ -24,6 +24,8 @@ html {
 
 td {
     border: none;
+    font-size: 0px;
+    text-align: center;
     width: 70px;
     height: 70px;
 }
@@ -45,3 +47,12 @@ td {
     border-collapse: collapse;
     float: right;
 }
+
+img {
+    display: none;
+}
+
+
+img[src] {
+   display: inline-block;
+ }
