@@ -57,13 +57,15 @@ function drawTextures(board){
             const cellText = cell.textContent.trim();
             const img = document.createElement("img");
 
-            if(cellText == "bishop") img.src = "assets/images/ctt/bishop.png";
-            if(cellText == "king") img.src = "assets/images/ctt/king.png";
-            if(cellText == "knight") img.src = "assets/images/ctt/knight.png";
-            if(cellText == "pawn") img.src = "assets/images/ctt/pawn.png";
-            if(cellText == "queen") img.src = "assets/images/ctt/queen.png";
-            if(cellText == "rook") img.src = "assets/images/ctt/rook.png";
+            if(cellText.includes("bishop")) img.src = "assets/images/ctt/bishop.png";
+            if(cellText.includes("king")) img.src = "assets/images/ctt/king.png";
+            if(cellText.includes("knight")) img.src = "assets/images/ctt/knight.png";
+            if(cellText.includes("pawn")) img.src = "assets/images/ctt/pawn.png";
+            if(cellText.includes("queen")) img.src = "assets/images/ctt/queen.png";
+            if(cellText.includes("rook")) img.src = "assets/images/ctt/rook.png";
             
+            if(cellText.includes("_B")) img.style.filter = "brightness(0.2)"; //i have to find a better way to distinguish the colors later
+
             img.style.width = "60px";
             img.style.height = img.style.width;
 
@@ -77,7 +79,7 @@ function drawTextures(board){
 //code that actually runs
 createBoard(3);
 createLibrary(8,"white",["rook","knight","bishop","bishop","knight","rook","pawn","pawn"]);
-createLibrary(8,"black",["rook","knight","bishop","bishop","knight","rook","pawn","pawn"]);
+createLibrary(8,"black",["rook_B","knight_B","bishop_B","bishop_B","knight_B","rook_B","pawn_B","pawn_B"]);
 
 drawTextures("mainboard");
 drawTextures("whiteLibrary");
