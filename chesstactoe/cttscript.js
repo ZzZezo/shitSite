@@ -185,9 +185,30 @@ function clickedOnBoard(cell, row, col) {
         return;
     }
 
-    //player clicked on field with piece
     let team = "white";
     if (content.includes("_B")) team = "black";
+
+    if (team != SelectedPieceTeam && SelectedPieceTeam != "") {
+        //player clicked on field with piece that has DIFFERENT color (takes)
+        if (pieceSelected) {
+            cell.innerHTML = SelectedPieceType;
+            if (SelectedPieceTeam == "black") cell.innerHTML += "_B";
+            pieceOriginCell.innerHTML = "";
+        }
+
+        document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
+        pieceSelected = false;
+        SelectedPieceTeam = "";
+        SelectedPieceType = "";
+        pieceOriginCell = null;
+
+        drawTextures("mainboard");
+        drawTextures("whiteLibrary");
+        drawTextures("blackLibrary");
+        return;
+    }
+
+    //player clicked on field with piece that has same color or has no piece selcted (choses that piece)
     SelectedPieceTeam = team;
 
     const figureType = content.replace("_B", "");
@@ -214,8 +235,8 @@ function clickedOnBoard(cell, row, col) {
 
 //code that actually runs
 createBoard(3);
-createLibrary(8, "white", ["rook", "knight", "bishop", "bishop", "", "", "pawn", "pawn"]);
-createLibrary(8, "black", ["rook_B", "knight_B", "", "bishop_B", "knight_B", "rook_B", "pawn_B", "pawn_B"]);
+createLibrary(8, "white", ["rook", "rook", "knight", "knight", "bishop", "bishop", "pawn", "pawn"]);
+createLibrary(8, "black", ["rook_B", "rook_B", "knight_B", "knight_B", "bishop_B", "bishop_B", "pawn_B", "pawn_B"]);
 
 drawTextures("mainboard");
 drawTextures("whiteLibrary");
