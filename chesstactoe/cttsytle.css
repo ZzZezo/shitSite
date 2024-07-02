@@ -3,6 +3,10 @@
     src: url('../assets/font/ms-sans-serif.woff') format('woff');
 }
 
+.custom-cursor {
+    filter: brightness(70%);
+}
+
 body,
 html {
     height: 99%;
