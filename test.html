@@ -4,125 +4,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="icon" href="https://icons.veryicon.com/png/o/business/vscode-program-item-icon/vscode.png"
-    type="image/x-icon">
-
-  <link rel="stylesheet" href="popupBox/popupBoxStyle.css">
-  <script src="popupBox/popupBoxScript.js"></script>
   <title>Devs Playground</title>
+  <style>
+    body,
+    html {
+      height: 99%;
+
+      font-family: "Old Sans Serif";
+      background-color: #008080;
+      cursor: url('../assets/images/old_pointer.png'), auto;
+    }
+
+    table {
+      margin: auto;
+      border-collapse: collapse;
+      width: 320px;
+      /* Adjust the size as needed */
+      height: 320px;
+      /* Adjust the size as needed */
+    }
+
+    td {
+      width: 40px;
+      height: 40px;
+    }
+
+    .white {
+      background-color: #f3d3a7;
+    }
+
+    .black {
+      background-color: #995d35;
+    }
+  </style>
 </head>
 
 <body>
-<!-- include this before the closing body tag -->
-<article class="prompt">
-  <form class="prompt__form">
-    <p class="prompt__text"><p>
-    <input type="text" class="prompt__input" />
-    <input type="submit" class="prompt__submit" value="submit" />
-  </form>  
-</article>
+  <table>
+    <tbody>
+      <!-- Loop to create 8 rows -->
+      <!-- Row 1 -->
+      <tr>
+        <td class="white"></td>
+        <td class="black"></td>
+        <td class="white"></td>
+      </tr>
+      <!-- Row 2 -->
+      <tr>
+        <td class="black"></td>
+        <td class="white"></td>
+        <td class="black"></td>
+      </tr>
+      <!-- Row 3 -->
+      <tr>
+        <td class="white"></td>
+        <td class="black"></td>
+        <td class="white"></td>
+      </tr>
+    </tbody>
+  </table>
 </body>
-<script>
-  /* show Prompt plugin */
-  var showPrompt = (function () {
-
-    var promptEl = document.querySelector('.prompt'),
-      _cb = null;
-
-    var prompt = {
-      el: promptEl,
-      form: promptEl.querySelector('.prompt__form'),
-      text: promptEl.querySelector('.prompt__text'),
-      input: promptEl.querySelector('.prompt__input'),
-      submit: promptEl.querySelector('.prompt__submit')
-    }
-
-    prompt.form.addEventListener('submit', hide, false);
-
-    function show(text, cb) {
-      prompt.el.classList.add('prompt--show');
-      prompt.text.innerHTML = text;
-      _cb = cb;
-    }
-
-    function hide(e) {
-      e.preventDefault();
-      prompt.el.classList.remove('prompt--show');
-      _cb.call(prompt, prompt.input.value);
-    }
-
-
-    return show;
-
-  })();
-
-  // show the prompt
-  showPrompt('Enter Your Text Here', function (answer) {
-    console.log('prompt submitted', answer);
-  alert("hihihu");
-  showPrompt("lala");
-  });
-</script>
-<style>
-  body,
-  html {
-    height: 99%;
-
-    font-family: "Old Sans Serif";
-    background-color: teal;
-    cursor: url('assets/images/old_pointer.png'), auto;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  .prompt {
-    /* make the backgronud full screen */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(40, 40, 40, .37);
-
-    /* make it show on top of all other elements */
-    z-index: 999;
-
-    /* hide the prompt by default */
-    visibility: hidden;
-    opacity: 0;
-
-    transition: .6s opacity, .6s visibility;
-  }
-
-  .prompt__form {
-    /* center the prompt window */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    padding: 1em;
-
-    background: #e5e5e5;
-  }
-
-  .prompt--show {
-    visibility: visible;
-    opacity: 1;
-  }
-
-  .prompt__input {
-    width: 80%;
-    float: left;
-  }
-
-  .prompt__submit {
-    width: 20%;
-    float: left;
-  }
-</style>
 
 </html>

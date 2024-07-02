@@ -1,0 +1,32 @@
+@font-face {
+    font-family: 'Old Sans Serif';
+    src: url('assets/font/ms-sans-serif.woff') format('woff');
+}
+
+body,
+html {
+    height: 99%;
+
+    font-family: "Old Sans Serif";
+    background-color: #008080;
+    cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+table {
+    margin: auto;
+    border-collapse: collapse;
+}
+
+td {
+    border: none;
+    width: 75px;
+    height: 75px;
+}
+
+.white {
+    background-color: #f3d3a7;
+}
+
+.black {
+    background-color: #995d35;
+}
