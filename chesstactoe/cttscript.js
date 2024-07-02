@@ -88,6 +88,11 @@ function drawTextures(board) {
             img.style.width = piecesize;
             img.style.height = img.style.width;
 
+            try {
+                pieceOriginCell.querySelector('img').style.width = "30px";
+                pieceOriginCell.querySelector('img').style.height = "30px";
+            } catch (error) { }
+
             cell.appendChild(img);
         })
     })
@@ -178,6 +183,7 @@ function clickedOnBoard(cell, row, col) {
         pieceSelected = false;
         SelectedPieceTeam = "";
         SelectedPieceType = "";
+        pieceOriginCell = null;
 
         drawTextures("mainboard");
         drawTextures("whiteLibrary");
