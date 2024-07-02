@@ -1,3 +1,10 @@
+const piecesize = "60px";
+
+let pieceSelected = false; //tracks if user has selected a piece rn
+let pieceOriginCell; //tracks where the currently selcted piece was
+let SelectedPieceTeam; //tracks the team of currently selected piece
+let SelectedPieceType; //tracks the type of currently selected piece
+
 function createBoard(size) {
     const mainBoard = document.getElementById("mainboard");
 
@@ -14,7 +21,7 @@ function createBoard(size) {
                 td.className = 'black';
             }
 
-            td.onclick = function () { console.log(getContent(td)) };
+            td.onclick = function () { clickedOnBoard(this, row, col) };
 
             tr.appendChild(td);
         }
@@ -59,6 +66,13 @@ function drawTextures(board) {
     rows.forEach(row => {
         const cells = row.querySelectorAll("td");
         cells.forEach(cell => {
+            //remove any old images, so it doesnt stack
+            try {
+                let oldImage = cell.querySelector('img')
+                oldImage.remove();
+            } catch (error) { }
+
+
             const cellText = cell.textContent.trim();
             const img = document.createElement("img");
 
@@ -71,7 +85,7 @@ function drawTextures(board) {
 
             if (cellText.includes("_B")) img.style.filter = "brightness(0.2)"; //i have to find a better way to distinguish the colors later
 
-            img.style.width = "60px";
+            img.style.width = piecesize;
             img.style.height = img.style.width;
 
             cell.appendChild(img);
@@ -83,8 +97,8 @@ function getContent(cell) {
     return cell.textContent.trim();
 }
 
-function getPath(figureType,team) {
-    if(team=="white"){
+function getPath(figureType, team) {
+    if (team == "white") {
         if (figureType.includes("bishop")) return "assets/images/ctt/bishop.png";
         if (figureType.includes("king")) return "assets/images/ctt/king.png";
         if (figureType.includes("knight")) return "assets/images/ctt/knight.png";
@@ -92,7 +106,7 @@ function getPath(figureType,team) {
         if (figureType.includes("queen")) return "assets/images/ctt/queen.png";
         if (figureType.includes("rook")) return "assets/images/ctt/rook.png";
     }
-    else{
+    else {
         if (figureType.includes("bishop")) return "assets/images/ctt/bishop_B.png";
         if (figureType.includes("king")) return "assets/images/ctt/king_B.png";
         if (figureType.includes("knight")) return "assets/images/ctt/knight_B.png";
@@ -103,23 +117,80 @@ function getPath(figureType,team) {
 }
 
 function clickedOnLibrary(cell, row, col) {
+    //resetting old selection
+    try {
+        pieceOriginCell.querySelector('img').style.width = piecesize;
+        pieceOriginCell.querySelector('img').style.height = piecesize;
+    } catch (error) { }
+
+
     const content = cell.textContent.trim();
-    if (content == ""){
+    if (content == "") {
         //player clicked on empty field
         document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
-        return; 
+        pieceSelected = false;
+        SelectedPieceTeam = "";
+        SelectedPieceType = "";
+        return;
     }
+
+    //player clicked on field with piece
 
     let team = "white";
     if (content.includes("_B")) team = "black";
+    SelectedPieceTeam = team;
 
     const figureType = content.replace("_B", "");
+    SelectedPieceType = figureType;
 
-
+    //cursor
     var elementToChange = document.getElementsByTagName("body")[0];
-    elementToChange.style.cursor = "url('"+getPath(figureType,team)+"') 32 32, not-allowed";
+    elementToChange.style.cursor = "url('" + getPath(figureType, team) + "') 32 32, not-allowed";
+
+    var imgElement = cell.querySelector('img');
+    imgElement.style.width = "30px";
+    imgElement.style.height = imgElement.style.width;
     console.log(team + " " + figureType)
+
+
+    //updating global variables
+    pieceSelected = true;
+    pieceOriginCell = cell;
 }
+
+function clickedOnBoard(cell, row, col) {
+    const content = cell.textContent.trim();
+    if (content == "") {
+        //player clicked on empty field
+        if (pieceSelected) {
+            cell.innerHTML = SelectedPieceType;
+            if (SelectedPieceTeam == "black") cell.innerHTML += "_B";
+        }
+
+        //resetting old selection
+        try {
+            pieceOriginCell.querySelector('img').style.width = piecesize;
+            pieceOriginCell.querySelector('img').style.height = piecesize;
+        } catch (error) { }
+
+
+        document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
+        pieceSelected = false;
+        SelectedPieceTeam = "";
+        SelectedPieceType = "";
+
+        drawTextures("mainboard");
+        drawTextures("whiteLibrary");
+        drawTextures("blackLibrary");
+        return;
+    }
+    drawTextures("mainboard");
+    drawTextures("whiteLibrary");
+    drawTextures("blackLibrary");
+}
+
+
+
 
 
 //code that actually runs
