@@ -181,6 +181,13 @@
 
     function updateTestBoolean() {
       aiActivated = document.getElementById('win95-checkbox').checked;
+
+      if(aiActivated){
+        document.getElementById("emojiInput").placeholder = "Enter anything here";
+      }
+      else{
+        document.getElementById("emojiInput").placeholder = "Enter emoji here";
+      }
     }
 
     // Function to convert emoji string to image
