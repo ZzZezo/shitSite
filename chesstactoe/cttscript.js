@@ -88,11 +88,6 @@ function drawTextures(board) {
             img.style.width = piecesize;
             img.style.height = img.style.width;
 
-            try {
-                pieceOriginCell.querySelector('img').style.width = "30px";
-                pieceOriginCell.querySelector('img').style.height = "30px";
-            } catch (error) { }
-
             cell.appendChild(img);
         })
     })
@@ -140,7 +135,6 @@ function clickedOnLibrary(cell, row, col) {
     }
 
     //player clicked on field with piece
-
     let team = "white";
     if (content.includes("_B")) team = "black";
     SelectedPieceTeam = team;
@@ -164,20 +158,20 @@ function clickedOnLibrary(cell, row, col) {
 }
 
 function clickedOnBoard(cell, row, col) {
+    //resetting old selection
+    try {
+        pieceOriginCell.querySelector('img').style.width = piecesize;
+        pieceOriginCell.querySelector('img').style.height = piecesize;
+    } catch (error) { }
+
     const content = cell.textContent.trim();
     if (content == "") {
         //player clicked on empty field
         if (pieceSelected) {
             cell.innerHTML = SelectedPieceType;
             if (SelectedPieceTeam == "black") cell.innerHTML += "_B";
+            pieceOriginCell.innerHTML = "";
         }
-
-        //resetting old selection
-        try {
-            pieceOriginCell.querySelector('img').style.width = piecesize;
-            pieceOriginCell.querySelector('img').style.height = piecesize;
-        } catch (error) { }
-
 
         document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
         pieceSelected = false;
@@ -190,9 +184,28 @@ function clickedOnBoard(cell, row, col) {
         drawTextures("blackLibrary");
         return;
     }
-    drawTextures("mainboard");
-    drawTextures("whiteLibrary");
-    drawTextures("blackLibrary");
+
+    //player clicked on field with piece
+    let team = "white";
+    if (content.includes("_B")) team = "black";
+    SelectedPieceTeam = team;
+
+    const figureType = content.replace("_B", "");
+    SelectedPieceType = figureType;
+
+    //cursor
+    var elementToChange = document.getElementsByTagName("body")[0];
+    elementToChange.style.cursor = "url('" + getPath(figureType, team) + "') 32 32, not-allowed";
+
+    var imgElement = cell.querySelector('img');
+    imgElement.style.width = "30px";
+    imgElement.style.height = imgElement.style.width;
+    console.log(team + " " + figureType)
+
+
+    //updating global variables
+    pieceSelected = true;
+    pieceOriginCell = cell;
 }
 
 
