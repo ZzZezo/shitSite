@@ -2,6 +2,8 @@ let piecesize = 60;
 
 let BoardSize;
 
+let currentTeam = "white";
+
 let pieceSelected = false; //tracks if user has selected a piece rn
 let pieceOriginCell; //tracks where the currently selcted piece was
 let SelectedPieceTeam; //tracks the team of currently selected piece
@@ -176,12 +178,22 @@ function clickedOnLibrary(cell, row, col) {
     }
 
     //player clicked on field with piece
-    makeAllEmptyCellsAvailable();
-
+    
     let team = "white";
     if (content.includes("_B")) team = "black";
-    SelectedPieceTeam = team;
+    if(currentTeam!=team){
+        //wrong player
+        resetBorders();
 
+        document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
+        pieceSelected = false;
+        SelectedPieceTeam = "";
+        SelectedPieceType = "";
+        return;
+    }
+    SelectedPieceTeam = team;
+    makeAllEmptyCellsAvailable();
+    
     const figureType = content.replace("_B", "");
     SelectedPieceType = figureType;
 
@@ -225,9 +237,11 @@ function clickedOnBoard(cell, row, col) {
     if (content == "") {
         //player clicked on empty field
         if (pieceSelected) {
+            //player clicked on empty field with something selected (moves there)
             cell.innerHTML = SelectedPieceType;
             if (SelectedPieceTeam == "black") cell.innerHTML += "_B";
             pieceOriginCell.innerHTML = "";
+            nextTurn();
         }
 
         resetBorders();
@@ -247,12 +261,24 @@ function clickedOnBoard(cell, row, col) {
     let team = "white";
     if (content.includes("_B")) team = "black";
 
+    if(!pieceSelected&&currentTeam!=team){
+        //wrong player
+        resetBorders();
+
+        document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
+        pieceSelected = false;
+        SelectedPieceTeam = "";
+        SelectedPieceType = "";
+        return;
+    }
+
     if (team != SelectedPieceTeam && SelectedPieceTeam != "") {
         //player clicked on field with piece that has DIFFERENT color (takes)
         if (pieceSelected) {
             cell.innerHTML = SelectedPieceType;
             if (SelectedPieceTeam == "black") cell.innerHTML += "_B";
             pieceOriginCell.innerHTML = "";
+            nextTurn();
         }
 
         resetBorders();
@@ -427,6 +453,11 @@ function calculateMoves(figureType, currentRow, currentCol) {
             }
         }
     }
+}
+
+function nextTurn(){
+    if(currentTeam=="white")currentTeam ="black";
+    else currentTeam = "white";
 }
 
 
