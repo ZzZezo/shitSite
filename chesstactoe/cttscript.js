@@ -465,8 +465,8 @@ function calculateMoves(figureType, currentRow, currentCol) {
 }
 
 function nextTurn() {
-    checkForDraws();
     checkForVictories();
+    checkForDraws();
 
     if (currentTeam == "white") currentTeam = "black";
     else if (currentTeam == "black") currentTeam = "white";
@@ -483,6 +483,14 @@ function checkForDraws() {
     }
     else if (currentTeam == "white" && blackPiecesLeft == 1 && getContentByPos(1, 1).includes("knight") && BoardSize <= 3) {
         createPopup("ChessTacToe", "It's a Draw!\nBlack can't move", 1, ["OK"], [closePopup]);
+        currentTeam = "ITS OVER!"
+    }
+    else if (currentTeam == "white" && blackPiecesLeft == 0) {
+        createPopup("ChessTacToe", "It's a Draw!\nBlack can't move", 1, ["OK"], [closePopup]);
+        currentTeam = "ITS OVER!"
+    }
+    else if (currentTeam == "black" && whitePiecesLeft == 0) {
+        createPopup("ChessTacToe", "It's a Draw!\nWhite can't move", 1, ["OK"], [closePopup]);
         currentTeam = "ITS OVER!"
     }
     // console.log("weiß: " +whitePiecesLeft);
