@@ -426,8 +426,10 @@ function calculateMoves(figureType, currentRow, currentCol) {
 
 //code that actually runs
 createBoard(3);
-createLibrary(8, "white", ["rook", "rook", "knight", "knight", "bishop", "bishop", "pawn", "pawn"]);
-createLibrary(8, "black", ["rook_B", "rook_B", "knight_B", "knight_B", "bishop_B", "bishop_B", "pawn_B", "pawn_B"]);
+if(window.screen.height <= 560) rowamnt = 4;
+else rowamnt = 8;
+createLibrary(rowamnt, "white", ["rook", "rook", "knight", "knight", "bishop", "bishop", "pawn", "pawn"]);
+createLibrary(rowamnt, "black", ["rook_B", "rook_B", "knight_B", "knight_B", "bishop_B", "bishop_B", "pawn_B", "pawn_B"]);
 
 drawTextures("mainboard");
 drawTextures("whiteLibrary");
