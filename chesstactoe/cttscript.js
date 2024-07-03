@@ -1,4 +1,5 @@
-const piecesize = "60px";
+let piecesize = 60;
+
 let BoardSize;
 
 let pieceSelected = false; //tracks if user has selected a piece rn
@@ -25,6 +26,11 @@ function createBoard(size) {
             }
 
             td.onclick = function () { clickedOnBoard(this, row, col) };
+
+            if(window.screen.width <= 560){
+                td.style.width = window.screen.width/8;
+                td.style.height = window.screen.height;
+            };
 
             tr.appendChild(td);
         }
@@ -91,7 +97,7 @@ function drawTextures(board) {
 
             if (cellText.includes("_B")) img.style.filter = "brightness(0.2)"; //i have to find a better way to distinguish the colors later
 
-            img.style.width = piecesize;
+            img.style.width = piecesize+"px";
             img.style.height = img.style.width;
 
             cell.appendChild(img);
@@ -150,8 +156,8 @@ function getPath(figureType, team) {
 function clickedOnLibrary(cell, row, col) {
     //resetting old selection
     try {
-        pieceOriginCell.querySelector('img').style.width = piecesize;
-        pieceOriginCell.querySelector('img').style.height = piecesize;
+        pieceOriginCell.querySelector('img').style.width = piecesize+"px";
+        pieceOriginCell.querySelector('img').style.height = piecesize+"px";
     } catch (error) { }
 
 
@@ -182,7 +188,7 @@ function clickedOnLibrary(cell, row, col) {
     elementToChange.style.cursor = "url('" + getPath(figureType, team) + "') 32 32, not-allowed";
 
     var imgElement = cell.querySelector('img');
-    imgElement.style.width = "30px";
+    imgElement.style.width = piecesize/2+"px";
     imgElement.style.height = imgElement.style.width;
     console.log(team + " " + figureType)
 
@@ -194,8 +200,8 @@ function clickedOnLibrary(cell, row, col) {
 function clickedOnBoard(cell, row, col) {
     //resetting old selection
     try {
-        pieceOriginCell.querySelector('img').style.width = piecesize;
-        pieceOriginCell.querySelector('img').style.height = piecesize;
+        pieceOriginCell.querySelector('img').style.width = piecesize+"px";
+        pieceOriginCell.querySelector('img').style.height = piecesize+"px";
     } catch (error) { }
 
     if (pieceSelected && !cell.availableForSelection) { //clicked on unavailable cell
@@ -272,7 +278,7 @@ function clickedOnBoard(cell, row, col) {
     elementToChange.style.cursor = "url('" + getPath(figureType, team) + "') 32 32, not-allowed";
 
     var imgElement = cell.querySelector('img');
-    imgElement.style.width = "30px";
+    imgElement.style.width = piecesize/2+"px";
     imgElement.style.height = imgElement.style.width;
     console.log(team + " " + figureType)
 
