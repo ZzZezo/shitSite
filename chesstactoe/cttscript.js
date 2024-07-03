@@ -28,7 +28,7 @@ function createBoard(size) {
             td.onclick = function () { clickedOnBoard(this, row, col) };
 
             if(window.screen.width <= 560){
-                td.style.width = window.screen.width/8;
+                td.style.width = window.screen.width/8+"px";
                 td.style.height = window.screen.height;
             };
 
