@@ -30,6 +30,8 @@ function createBoard(size) {
             if(window.screen.width <= 560){
                 td.style.width = window.screen.width/6+"px";
                 td.style.height = td.style.width;
+                piecesize = Math.floor((window.screen.width / 6) - 10) + "px";
+
             };
 
             tr.appendChild(td);
