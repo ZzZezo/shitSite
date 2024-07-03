@@ -4,6 +4,9 @@ let BoardSize;
 
 let currentTeam = "white";
 
+let whitePiecesLeft;
+let blackPiecesLeft;
+
 let pieceSelected = false; //tracks if user has selected a piece rn
 let pieceOriginCell; //tracks where the currently selcted piece was
 let SelectedPieceTeam; //tracks the team of currently selected piece
@@ -29,8 +32,8 @@ function createBoard(size) {
 
             td.onclick = function () { clickedOnBoard(this, row, col) };
 
-            if(window.screen.width <= 560){
-                td.style.width = window.screen.width/6+"px";
+            if (window.screen.width <= 560) {
+                td.style.width = window.screen.width / 6 + "px";
                 td.style.height = td.style.width;
                 piecesize = Math.floor((window.screen.width / 6) - 10) + "px";
 
@@ -47,7 +50,10 @@ function createLibrary(size, color, figures) { //was cooked, look what i got mea
     const libraryBoard = document.getElementById(color + "Library");
     let slot = 0;
 
-    if(window.screen.height <= 560) columamnt = 2;
+    whitePiecesLeft = figures.length;
+    blackPiecesLeft = figures.length;
+
+    if (window.screen.height <= 560) columamnt = 2;
     else columamnt = 1;
 
     for (let row = 0; row < size; row++) {
@@ -101,7 +107,7 @@ function drawTextures(board) {
 
             if (cellText.includes("_B")) img.style.filter = "brightness(0.2)"; //i have to find a better way to distinguish the colors later
 
-            img.style.width = piecesize+"px";
+            img.style.width = piecesize + "px";
             img.style.height = img.style.width;
 
             cell.appendChild(img);
@@ -124,13 +130,13 @@ function getContentByPos(row, col) {
     }
 }
 
-function getTeamByPos(row,col){
+function getTeamByPos(row, col) {
     try {
         const mainBoard = document.getElementById("mainboard");
         var cell = mainBoard.rows[row].cells[col];
         let content = cell.textContent.trim();
-        if(content.includes("_B")) return "black";
-        else if(content != "")return "white";
+        if (content.includes("_B")) return "black";
+        else if (content != "") return "white";
         else return "";
     }
     catch (error) {
@@ -160,8 +166,8 @@ function getPath(figureType, team) {
 function clickedOnLibrary(cell, row, col) {
     //resetting old selection
     try {
-        pieceOriginCell.querySelector('img').style.width = piecesize+"px";
-        pieceOriginCell.querySelector('img').style.height = piecesize+"px";
+        pieceOriginCell.querySelector('img').style.width = piecesize + "px";
+        pieceOriginCell.querySelector('img').style.height = piecesize + "px";
     } catch (error) { }
 
 
@@ -178,10 +184,10 @@ function clickedOnLibrary(cell, row, col) {
     }
 
     //player clicked on field with piece
-    
+
     let team = "white";
     if (content.includes("_B")) team = "black";
-    if(currentTeam!=team){
+    if (currentTeam != team) {
         //wrong player
         resetBorders();
 
@@ -193,7 +199,7 @@ function clickedOnLibrary(cell, row, col) {
     }
     SelectedPieceTeam = team;
     makeAllEmptyCellsAvailable();
-    
+
     const figureType = content.replace("_B", "");
     SelectedPieceType = figureType;
 
@@ -202,7 +208,7 @@ function clickedOnLibrary(cell, row, col) {
     elementToChange.style.cursor = "url('" + getPath(figureType, team) + "') 32 32, not-allowed";
 
     var imgElement = cell.querySelector('img');
-    imgElement.style.width = piecesize/2+"px";
+    imgElement.style.width = piecesize / 2 + "px";
     imgElement.style.height = imgElement.style.width;
     console.log(team + " " + figureType)
 
@@ -214,8 +220,8 @@ function clickedOnLibrary(cell, row, col) {
 function clickedOnBoard(cell, row, col) {
     //resetting old selection
     try {
-        pieceOriginCell.querySelector('img').style.width = piecesize+"px";
-        pieceOriginCell.querySelector('img').style.height = piecesize+"px";
+        pieceOriginCell.querySelector('img').style.width = piecesize + "px";
+        pieceOriginCell.querySelector('img').style.height = piecesize + "px";
     } catch (error) { }
 
     if (pieceSelected && !cell.availableForSelection) { //clicked on unavailable cell
@@ -261,7 +267,7 @@ function clickedOnBoard(cell, row, col) {
     let team = "white";
     if (content.includes("_B")) team = "black";
 
-    if(!pieceSelected&&currentTeam!=team){
+    if (!pieceSelected && currentTeam != team) {
         //wrong player
         resetBorders();
 
@@ -275,6 +281,9 @@ function clickedOnBoard(cell, row, col) {
     if (team != SelectedPieceTeam && SelectedPieceTeam != "") {
         //player clicked on field with piece that has DIFFERENT color (takes)
         if (pieceSelected) {
+            if (currentTeam == "white") blackPiecesLeft -= 1;
+            else if (currentTeam == "black") whitePiecesLeft -= 1;
+
             cell.innerHTML = SelectedPieceType;
             if (SelectedPieceTeam == "black") cell.innerHTML += "_B";
             pieceOriginCell.innerHTML = "";
@@ -306,7 +315,7 @@ function clickedOnBoard(cell, row, col) {
     elementToChange.style.cursor = "url('" + getPath(figureType, team) + "') 32 32, not-allowed";
 
     var imgElement = cell.querySelector('img');
-    imgElement.style.width = piecesize/2+"px";
+    imgElement.style.width = piecesize / 2 + "px";
     imgElement.style.height = imgElement.style.width;
     console.log(team + " " + figureType)
 
@@ -364,7 +373,7 @@ function makeAvailable(row, col) {
 }
 
 function makeAttackable(row, col) {
-    if(SelectedPieceTeam==getTeamByPos(row,col))return;
+    if (SelectedPieceTeam == getTeamByPos(row, col)) return;
 
     const mainBoard = document.getElementById("mainboard");
     try {
@@ -395,7 +404,7 @@ function testThisMove(row, col) {
         makeAvailable(row, col);
         return true;
     } else {
-        if(SelectedPieceType!="pawn")makeAttackable(row, col);
+        if (SelectedPieceType != "pawn") makeAttackable(row, col);
         return false;
     }
 }
@@ -442,7 +451,7 @@ function calculateMoves(figureType, currentRow, currentCol) {
                 }
             }
         }
-        
+
     } else {
         //rooks + bishops (infinite movement)
         for (let [rowIncrement, colIncrement] of moves) {
@@ -455,17 +464,96 @@ function calculateMoves(figureType, currentRow, currentCol) {
     }
 }
 
-function nextTurn(){
-    if(currentTeam=="white")currentTeam ="black";
-    else currentTeam = "white";
+function nextTurn() {
+    checkForDraws();
+    checkForVictories();
+
+    if (currentTeam == "white") currentTeam = "black";
+    else if (currentTeam == "black") currentTeam = "white";
 }
 
+function checkForDraws() {
+    if (whitePiecesLeft < BoardSize && blackPiecesLeft < BoardSize) {
+        createPopup("ChessTacToe", "It's a Draw!\n Unssufficient Material", 1, ["OK"], [closePopup]);
+        currentTeam = "ITS OVER!"
+    }
+    else if (currentTeam == "black" && whitePiecesLeft == 1 && getContentByPos(1, 1).includes("knight") && BoardSize <= 3) {
+        createPopup("ChessTacToe", "It's a Draw!\n White can't move", 1, ["OK"], [closePopup]);
+        currentTeam = "ITS OVER!"
+    }
+    else if (currentTeam == "white" && blackPiecesLeft == 1 && getContentByPos(1, 1).includes("knight") && BoardSize <= 3) {
+        createPopup("ChessTacToe", "It's a Draw!\nBlack can't move", 1, ["OK"], [closePopup]);
+        currentTeam = "ITS OVER!"
+    }
+    // console.log("weiß: " +whitePiecesLeft);
+    // console.log("schwarz: " +blackPiecesLeft);
+}
 
+function checkForVictories() {
+    for (let i = 0; i < BoardSize; i++) {
+        if(checkRow(i) || checkColumn(i)){
+            let winner = currentTeam;
+            createPopup("ChessTacToe", "Congratulations!\n"+winner.charAt(0).toUpperCase() + winner.slice(1)+" won!", 1, ["OK"], [closePopup]);
+            currentTeam = "ITS OVER!"
+            return;
+        }
+    }
+    if(checkDiagonal1() || checkDiagonal2()){
+        let winner = currentTeam;
+        createPopup("ChessTacToe", "Congratulations!\n"+winner.charAt(0).toUpperCase() + winner.slice(1)+" won!", 1, ["OK"], [closePopup]);
+        currentTeam = "ITS OVER!"
+        return;
+    }
+}
+
+function checkRow(row) {
+    let testTeam = getTeamByPos(row,0);
+    if(testTeam=="")return false;
+    let allSameTeam = true;
+    for (let i = 0; i < BoardSize; i++) {
+        if(getTeamByPos(row,i)!=testTeam)allSameTeam=false;
+    }
+    if(allSameTeam)console.log("row "+row+" won.");
+    return allSameTeam;
+}
+
+function checkColumn(col) {
+    let testTeam = getTeamByPos(0,col);
+    if(testTeam=="")return false;
+    let allSameTeam = true;
+    for (let i = 0; i < BoardSize; i++) {
+        if(getTeamByPos(i,col)!=testTeam)allSameTeam=false;
+    }
+    if(allSameTeam)console.log("col "+col+" won.");
+    return allSameTeam;
+}
+
+function checkDiagonal1(){
+    let testTeam = getTeamByPos(0,0);
+    if(testTeam=="")return false;
+    let allSameTeam = true;
+    for (let i = 0; i < BoardSize; i++) {
+        if(getTeamByPos(i,i)!=testTeam)allSameTeam=false;
+    }
+    if(allSameTeam)console.log("diag 1 won.");
+    return allSameTeam;
+}
+
+function checkDiagonal2(){
+    let testTeam = getTeamByPos(0,BoardSize-1);
+    if(testTeam=="")return false;
+    let allSameTeam = true;
+    for (let i = 0; i < BoardSize; i++) {
+        if(getTeamByPos(i, BoardSize-1-i)!=testTeam)allSameTeam = false;
+    }
+    if(allSameTeam)console.log("diag 2 won.");
+    return allSameTeam;
+}
 
 
 //code that actually runs
 createBoard(3);
-if(window.screen.height <= 560) rowamnt = 4;
+if (window.screen.height <= 560) rowamnt = 4;
 else rowamnt = 8;
 createLibrary(rowamnt, "white", ["rook", "rook", "knight", "knight", "bishop", "bishop", "pawn", "pawn"]);
 createLibrary(rowamnt, "black", ["rook_B", "rook_B", "knight_B", "knight_B", "bishop_B", "bishop_B", "pawn_B", "pawn_B"]);
