@@ -422,7 +422,7 @@ function calculateMoves(figureType, currentRow, currentCol) {
 
 
 //code that actually runs
-createBoard(8);
+createBoard(3);
 createLibrary(8, "white", ["rook", "rook", "knight", "knight", "bishop", "bishop", "pawn", "pawn"]);
 createLibrary(8, "black", ["rook_B", "rook_B", "knight_B", "knight_B", "bishop_B", "bishop_B", "pawn_B", "pawn_B"]);
 
