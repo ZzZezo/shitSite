@@ -28,6 +28,7 @@ html {
 
 td {
     border: none;
+    border-color: #008080;
     font-size: 0px;
     text-align: center;
     width: 70px;

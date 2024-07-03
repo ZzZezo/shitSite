@@ -1,4 +1,5 @@
 const piecesize = "60px";
+let BoardSize;
 
 let pieceSelected = false; //tracks if user has selected a piece rn
 let pieceOriginCell; //tracks where the currently selcted piece was
@@ -6,6 +7,7 @@ let SelectedPieceTeam; //tracks the team of currently selected piece
 let SelectedPieceType; //tracks the type of currently selected piece
 
 function createBoard(size) {
+    BoardSize = size;
     const mainBoard = document.getElementById("mainboard");
 
     for (let row = 0; row < size; row++) {
@@ -13,6 +15,7 @@ function createBoard(size) {
 
         for (let col = 0; col < size; col++) {
             const td = document.createElement('td');
+            td.availableForSelection = false;
 
             //check color
             if ((row + col) % 2 === 0) {
@@ -97,6 +100,31 @@ function getContent(cell) {
     return cell.textContent.trim();
 }
 
+function getContentByPos(row, col) {
+    try {
+        const mainBoard = document.getElementById("mainboard");
+        var cell = mainBoard.rows[row].cells[col];
+        return cell.textContent.trim();
+    }
+    catch (error) {
+        return "";
+    }
+}
+
+function getTeamByPos(row,col){
+    try {
+        const mainBoard = document.getElementById("mainboard");
+        var cell = mainBoard.rows[row].cells[col];
+        let content = cell.textContent.trim();
+        if(content.includes("_B")) return "black";
+        else if(content != "")return "white";
+        else return "";
+    }
+    catch (error) {
+        return "";
+    }
+}
+
 function getPath(figureType, team) {
     if (team == "white") {
         if (figureType.includes("bishop")) return "assets/images/ctt/bishop.png";
@@ -127,6 +155,8 @@ function clickedOnLibrary(cell, row, col) {
     const content = cell.textContent.trim();
     if (content == "") {
         //player clicked on empty field
+        resetBorders();
+
         document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
         pieceSelected = false;
         SelectedPieceTeam = "";
@@ -135,6 +165,8 @@ function clickedOnLibrary(cell, row, col) {
     }
 
     //player clicked on field with piece
+    makeAllEmptyCellsAvailable();
+
     let team = "white";
     if (content.includes("_B")) team = "black";
     SelectedPieceTeam = team;
@@ -151,7 +183,6 @@ function clickedOnLibrary(cell, row, col) {
     imgElement.style.height = imgElement.style.width;
     console.log(team + " " + figureType)
 
-
     //updating global variables
     pieceSelected = true;
     pieceOriginCell = cell;
@@ -164,6 +195,21 @@ function clickedOnBoard(cell, row, col) {
         pieceOriginCell.querySelector('img').style.height = piecesize;
     } catch (error) { }
 
+    if (pieceSelected && !cell.availableForSelection) { //clicked on unavailable cell
+        resetBorders();
+
+        document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
+        pieceSelected = false;
+        SelectedPieceTeam = "";
+        SelectedPieceType = "";
+        pieceOriginCell = null;
+
+        drawTextures("mainboard");
+        drawTextures("whiteLibrary");
+        drawTextures("blackLibrary");
+        return;
+    }
+
     const content = cell.textContent.trim();
     if (content == "") {
         //player clicked on empty field
@@ -172,6 +218,8 @@ function clickedOnBoard(cell, row, col) {
             if (SelectedPieceTeam == "black") cell.innerHTML += "_B";
             pieceOriginCell.innerHTML = "";
         }
+
+        resetBorders();
 
         document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
         pieceSelected = false;
@@ -195,6 +243,8 @@ function clickedOnBoard(cell, row, col) {
             if (SelectedPieceTeam == "black") cell.innerHTML += "_B";
             pieceOriginCell.innerHTML = "";
         }
+
+        resetBorders();
 
         document.getElementsByTagName("body")[0].style.cursor = "url('assets/images/old_pointer.png'), auto";
         pieceSelected = false;
@@ -223,18 +273,156 @@ function clickedOnBoard(cell, row, col) {
     imgElement.style.height = imgElement.style.width;
     console.log(team + " " + figureType)
 
+    resetBorders();
+    calculateMoves(figureType, row, col);
 
     //updating global variables
     pieceSelected = true;
     pieceOriginCell = cell;
 }
 
+function resetBorders() {
+    const mainBoard = document.getElementById("mainboard");
+    const rows = mainBoard.querySelectorAll("tr");
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        cells.forEach(cell => {
+            cell.style.border = "none";
+            cell.availableForSelection = false;
+        })
+    })
+}
+
+function makeAllEmptyCellsAvailable() {
+    const mainBoard = document.getElementById("mainboard");
+    const rows = mainBoard.querySelectorAll("tr");
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        cells.forEach(cell => {
+            if (getContent(cell) == "") {
+                cell.style.border = "4px dashed #00E0E0";
+                cell.availableForSelection = true;
+            }
+        })
+    })
+}
+
+function makeAvailable(row, col) {
+    const mainBoard = document.getElementById("mainboard");
+    try {
+        if (row <= mainBoard.rows.length && col <= mainBoard.rows[row].cells.length && row >= 0 && col >= 0) {
+            // console.log("Next up: " + row + ", " + col);
+            var cell = mainBoard.rows[row].cells[col];
+            cell.style.border = "4px dashed #00E0E0"
+            cell.availableForSelection = true;
+        }
+        else {
+            //if cell doesnt exist
+            // console.log("Game tried to call cell that isnt available")
+        }
+    }
+    catch (error) {
+        // console.log("Game tried to call cell " + row + ", " + col + " but crashed")
+    }
+}
+
+function makeAttackable(row, col) {
+    if(SelectedPieceTeam==getTeamByPos(row,col))return;
+
+    const mainBoard = document.getElementById("mainboard");
+    try {
+        if (row <= mainBoard.rows.length && col <= mainBoard.rows[row].cells.length && row >= 0 && col >= 0) {
+            // console.log("Next up: " + row + ", " + col);
+            var cell = mainBoard.rows[row].cells[col];
+            cell.style.border = "4px dashed #FF8080"
+            cell.availableForSelection = true;
+        }
+        else {
+            //if cell doesnt exist
+            // console.log("Game tried to call cell that isnt available")
+        }
+    }
+    catch (error) {
+        // console.log("Game tried to call cell " + row + ", " + col + " but crashed")
+    }
+}
+
+function isWithinBounds(row, col) {
+    return row >= 0 && row < BoardSize && col >= 0 && col < BoardSize;
+}
+
+function testThisMove(row, col) {
+    if (!isWithinBounds(row, col)) return false;
+
+    if (getContentByPos(row, col) == "") {
+        makeAvailable(row, col);
+        return true;
+    } else {
+        if(SelectedPieceType!="pawn")makeAttackable(row, col);
+        return false;
+    }
+}
+
+function calculateMoves(figureType, currentRow, currentCol) {
+    const directions = {
+        rook: [
+            [1, 0], [-1, 0], [0, 1], [0, -1]
+        ],
+        bishop: [
+            [1, 1], [1, -1], [-1, 1], [-1, -1]
+        ],
+        knight: [
+            [2, 1], [2, -1], [-2, 1], [-2, -1],
+            [1, 2], [1, -2], [-1, 2], [-1, -2]
+        ],
+        pawn: [
+            [1, 0], [-1, 0], [0, 1], [0, -1]
+        ],
+        pawnAttack: [
+            [1, 1], [1, -1], [-1, 1], [-1, -1]
+        ]
+    };
+
+    resetBorders();
+
+    const moves = directions[figureType];
+
+    if (figureType == "knight" || figureType == "pawn") {
+        //knight and pawn (cuz their movement isnt infinite)
+        for (let [rowIncrement, colIncrement] of moves) {
+            const newPosRow = currentRow + rowIncrement;
+            const newPosCol = currentCol + colIncrement;
+            testThisMove(newPosRow, newPosCol);
+        }
+
+        if (figureType == "pawn") {
+            // Additional logic for pawn attacks
+            for (let [rowIncrement, colIncrement] of directions.pawnAttack) {
+                const newPosRow = currentRow + rowIncrement;
+                const newPosCol = currentCol + colIncrement;
+                if (isWithinBounds(newPosRow, newPosCol) && getContentByPos(newPosRow, newPosCol) !== "") {
+                    makeAttackable(newPosRow, newPosCol);
+                }
+            }
+        }
+        
+    } else {
+        //rooks + bishops (infinite movement)
+        for (let [rowIncrement, colIncrement] of moves) {
+            for (let i = 1; i < BoardSize; i++) {
+                const newPosRow = currentRow + i * rowIncrement;
+                const newPosCol = currentCol + i * colIncrement;
+                if (!testThisMove(newPosRow, newPosCol)) break;
+            }
+        }
+    }
+}
 
 
 
 
 //code that actually runs
-createBoard(3);
+createBoard(8);
 createLibrary(8, "white", ["rook", "rook", "knight", "knight", "bishop", "bishop", "pawn", "pawn"]);
 createLibrary(8, "black", ["rook_B", "rook_B", "knight_B", "knight_B", "bishop_B", "bishop_B", "pawn_B", "pawn_B"]);
 
