@@ -37,10 +37,13 @@ function createLibrary(size, color, figures) { //was cooked, look what i got mea
     const libraryBoard = document.getElementById(color + "Library");
     let slot = 0;
 
+    if(window.screen.height <= 560) columamnt = 2;
+    else columamnt = 1;
+
     for (let row = 0; row < size; row++) {
         const tr = document.createElement('tr');
 
-        for (let col = 0; col < 1; col++) {
+        for (let col = 0; col < columamnt; col++) {
             const td = document.createElement('td');
 
             //check color
