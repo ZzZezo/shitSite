@@ -432,6 +432,15 @@ function chosenOption(option) {
 function updateDropdownOptions(){
     const dropdown = document.getElementById('dropdown');
     dropdown.innerHTML = "";
+
+    // Add a placeholder option
+    const placeholderOption = document.createElement('option');
+    placeholderOption.text = "Select Element"; // Placeholder text
+    placeholderOption.value = ""; // Empty value
+    placeholderOption.disabled = true; // Disable this option
+    placeholderOption.selected = true; // Make it selected by default
+    dropdown.appendChild(placeholderOption);
+
     let id = 0;
     AllEntitiesExisting.forEach(element => {
         ename = element.name;
@@ -460,6 +469,13 @@ function changeIndividualEmoji(){
         dropdown_chosenEntity.updateImgpath(emojiToImage(answer));
         document.getElementById("elementbox").children[dropdown_chosenID].children[0].src=emojiToImage(answer);
     });
+}
+
+function deleteIndividualElement(){
+    AllEntitiesExisting.splice(dropdown_chosenID, 1);
+    document.getElementById("elementbox").children[dropdown_chosenID].remove();
+    updateDropdownOptions();
+    document.getElementById("elementSettings").style.display = "none";
 }
 
 
