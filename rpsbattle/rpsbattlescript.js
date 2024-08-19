@@ -472,10 +472,15 @@ function changeIndividualEmoji(){
 }
 
 function deleteIndividualElement(){
+    createPopup("Element Löschen", "Bist du sicher, dass du "+dropdown_chosenEntity.name+" löschen willst?", 2, ["Ja, sicher","Nein, Abbrechen"],[deleteIndividualElementConfirm,closePopup]);  // Call the function to create the popup
+}
+
+function deleteIndividualElementConfirm(){
     AllEntitiesExisting.splice(dropdown_chosenID, 1);
     document.getElementById("elementbox").children[dropdown_chosenID].remove();
     updateDropdownOptions();
     document.getElementById("elementSettings").style.display = "none";
+    closePopup();
 }
 
 
