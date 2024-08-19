@@ -20,7 +20,7 @@
             <button class="startbutton" id="startbutton">START</button>
         </div>
         <div class="Menu">
-            <p class="MenuText">Schnick Schnack Schnuck (Beta)</p>
+            <p class="MenuHeading"><b>Schnick Schnack Schnuck (Beta)</b></p>
             <div id="stopwatch">00:00:00</div><br>
             <div id="entitycounterContainer">
 
@@ -40,16 +40,23 @@
                 max="30" value="10" />
             <br>
             <br>
-            <br>
             <label for="EntitySizeInput">Entity Size:</label>
             <input class="win98-number-input" type="number" id="EntitySizeInput" name="EntitySizeInput" min="5"
                 max="100" value="35" />
             <br>
             <br>
-            <br>
             <label for="EntitySpeedInput">Entity Speed:</label>
             <input class="win98-number-input" type="number" id="EntitySpeedInput" name="EntitySpeedInput" min="0.1"
                 max="10" value="1" />
+            <br>
+            <p class = "MenuText"><b>Individuelle Einstellungen:</b></p>
+            <select id="dropdown">
+                <!-- Elements will be dynamically generated here in js-->
+            </select>
+            <div id="elementSettings">
+                <button onclick="changeIndividualName()">Change Name</button>
+                <button onclick="changeIndividualEmoji()">Change Emoji</button>
+            </div>
 
         </div>
     </div>

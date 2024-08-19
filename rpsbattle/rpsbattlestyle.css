@@ -28,7 +28,7 @@ html {
 
 #elementbox {
   margin-left: 25px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   display: flex;
   flex-wrap: wrap;
   position: relative;
@@ -57,20 +57,28 @@ html {
   overflow: hidden;
 }
 
-.MenuText {
+.MenuHeading {
   margin-top: 10px;
   margin-left: 10px;
   font-size: 26px;
   /* Adjust font size as needed */
 }
 
-.MenuTextA {
-  font-size: 24px;
-  /* Adjust font size as needed */
-  color: #333;
-  /* Text color */
+.MenuText{
+  margin-left: 10px;
   font-weight: bold;
-  /* Bold font */
+}
+
+#dropdown{
+  margin-left: 25px;
+  width: 100px;
+}
+
+#elementSettings{
+  display:none;
+
+  margin-left: 25px;
+  margin-top: 5px;
 }
 
 .Entity {

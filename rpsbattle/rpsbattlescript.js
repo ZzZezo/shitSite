@@ -21,6 +21,8 @@ let numEntities = 15; // Number of entities
 let entitySize = 35;
 let entitySpeed = 1.5;
 
+let dropdown_chosenEntity = -1;
+let dropdown_chosenID = -1;
 
 class Entity {
     constructor(battlefield, puffer, entities, entityName = "No name", startX, startY, speed = 2, color, size = 35, imgpath, dangerousEntities, victimEntities) {
@@ -252,7 +254,7 @@ class EntityTemplate {
         var count = elementbox.getElementsByClassName("elementToggle").length;
         //append div to elementbox (before the last (the + ))
         elementbox.insertBefore(div, elementbox.children[count - 1]);
-
+        
         div.connectedEntity = this;
 
         div.addEventListener("click", function () {
@@ -277,6 +279,14 @@ class EntityTemplate {
 
     toggleStatus() {
         this.enabled = !this.enabled;
+    }
+
+    updateName(newName) {
+        this.name = newName;
+    }
+
+    updateImgpath(newImgpath) {
+        this.imgpath = newImgpath;
     }
 }
 
@@ -413,13 +423,44 @@ function startAnimationLoop() {
 function chosenOption(option) {
     alert(option);
 
-
-
     document.getElementById("RPSBcontainer").style.display = "none";
     popup = document.getElementById("popup");
     popup.style.display = "block";
 }
 
+//individual settings
+function updateDropdownOptions(){
+    const dropdown = document.getElementById('dropdown');
+    dropdown.innerHTML = "";
+    let id = 0;
+    AllEntitiesExisting.forEach(element => {
+        ename = element.name;
+        const option = document.createElement('option');
+        option.value = id;
+        option.text = ename;
+        dropdown.appendChild(option);
+        id++;
+    })
+}
+function dropdownSelected(selectedOption){
+    dropdown_chosenEntity = AllEntitiesExisting[selectedOption];
+    dropdown_chosenID = selectedOption;
+    document.getElementById("elementSettings").style.display = "block";
+}
+
+function changeIndividualName(){
+    createPrompt("Element Bearbeiten", "Wie lautet der neue Name?", function (answer) {
+        dropdown_chosenEntity.updateName(answer);
+        updateDropdownOptions();
+    });
+
+}
+function changeIndividualEmoji(){
+    createPrompt("Element Bearbeiten", "Was ist der neue Emoji?", function (answer) {
+        dropdown_chosenEntity.updateImgpath(emojiToImage(answer));
+        document.getElementById("elementbox").children[dropdown_chosenID].children[0].src=emojiToImage(answer);
+    });
+}
 
 
 //BUTTONS etc.
@@ -496,6 +537,7 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", functi
 
                     // Base case: all elements processed, add the new entity and exit
                     AllEntitiesExisting.push(new EntityTemplate(newElementName, newElementImg, newElementDangerous, newElementVictims));
+                    updateDropdownOptions();
 
                     document.getElementById("startbutton").disabled = false;
                     document.getElementById("EntityNumberInput").disabled = false;
@@ -551,6 +593,12 @@ async function compare() {
 
 }
 
+const dropdown = document.getElementById('dropdown');
+dropdown.addEventListener('change', function() {
+    const selectedOption = dropdown.options[dropdown.selectedIndex].value;
+    dropdownSelected(selectedOption);
+});
+
 
 //code to run itself yykyk (not a function etc)
 //DEFAULT ENTITIES
@@ -558,3 +606,4 @@ AllEntitiesExisting.push(new EntityTemplate("Schere", "assets/images/scissors.pn
 AllEntitiesExisting.push(new EntityTemplate("Stein", "assets/images/rock.png", ["Papier"], ["Schere"]));
 AllEntitiesExisting.push(new EntityTemplate("Papier", "assets/images/paper.png", ["Schere"], ["Stein"]));
 AllEntitiesExisting.push(new EntityTemplate("Herz", emojiToImage("♥️"), [], []));
+updateDropdownOptions();
