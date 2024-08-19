@@ -582,6 +582,8 @@ document.getElementById("PLUS_icon_elementbox").addEventListener("click", functi
                     // Base case: all elements processed, add the new entity and exit
                     AllEntitiesExisting.push(new EntityTemplate(newElementName, newElementImg, newElementDangerous, newElementVictims));
                     updateDropdownOptions();
+                    document.getElementById("elementSettings").style.display = "none";
+                    
 
                     document.getElementById("startbutton").disabled = false;
                     document.getElementById("EntityNumberInput").disabled = false;
