@@ -162,8 +162,14 @@ class Entity {
                     else if (otherEntity.name == "Herz") this.copyProperties(otherEntity);
                 }
                 else {
-                    if (this.dangerousEntities.includes(otherEntity.name)) this.copyProperties(otherEntity);
-                    else if (this.victimEntities.includes(otherEntity.name)) otherEntity.copyProperties(this);
+                    if (this.dangerousEntities.includes(otherEntity.name))
+                    { 
+                        this.copyProperties(otherEntity);
+                    }
+                    else if (this.victimEntities.includes(otherEntity.name)) 
+                    {
+                        otherEntity.copyProperties(this);
+                    }
                 }
 
                 // Swap velocities to simulate bouncing off each other
@@ -226,6 +232,8 @@ class Entity {
         this.element.querySelector('img').src = otherEntity.element.querySelector('img').src
         this.dangerousEntities = otherEntity.dangerousEntities;
         this.victimEntities = otherEntity.victimEntities;
+        this.element.style.width = otherEntity.element.style.width;
+        this.element.style.height = otherEntity.element.style.height;
     }
 
 }
@@ -237,6 +245,9 @@ class EntityTemplate {
         this.dangerousEntities = dangerousEntities;
         this.victimEntities = victimEntities;
         this.enabled = true;
+        this.numEntities = numEntities;
+        this.entitySize = entitySize;
+        this.entitySpeed = entitySpeed;
         this.createToggleBox();
     }
 
@@ -288,6 +299,18 @@ class EntityTemplate {
     updateImgpath(newImgpath) {
         this.imgpath = newImgpath;
     }
+
+    updateAmount(newAmount) {
+        this.numEntities = newAmount;
+    }
+
+    updateSpeed(newSpeed) {
+        this.entitySpeed = newSpeed;
+    }
+
+    updateSize(newSize) {
+        this.entitySize = newSize;
+    }
 }
 
 //deletes all entities
@@ -311,17 +334,9 @@ function countEntities(ename) {
 // Create multiple entities
 function CreateMultipleEntities() {
     entities = [];
-    for (let i = 0; i < numEntities; i++) {
-        const battlefieldRect = battlefield.getBoundingClientRect();
-        //schere, stein, papier:
-        // if(EntitiesTakingPart.includes("Schere"))entities.push(new Entity(battlefield, puffer, entities, entityName = "Schere", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'red', size = entitySize, imgpath = "assets/images/scissors.png",dangerousEntities=["Stein"],victimEntities=["Papier"]));
-        // if(EntitiesTakingPart.includes("Stein"))entities.push(new Entity(battlefield, puffer, entities, entityName = "Stein", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'gray', size = entitySize, imgpath = "assets/images/rock.png",dangerousEntities=["Papier"],victimEntities=["Schere"]));
-        // if(EntitiesTakingPart.includes("Papier"))entities.push(new Entity(battlefield, puffer, entities, entityName = "Papier", startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = "assets/images/paper.png",dangerousEntities=["Schere"],victimEntities=["Stein"]));
-    }
-    //pushCustomEntity("SCHIZO",emojiToImage(prompt("What Emoji do you wanna convert?")),[],["Schere","Stein","Papier"])
     AllEntitiesExisting.forEach(template => {
         if (template.enabled) {
-            pushCustomEntity(template.name, template.imgpath, template.dangerousEntities, template.victimEntities);
+            pushCustomEntity(template.name, template.imgpath, template.dangerousEntities, template.victimEntities,template.numEntities,template.entitySize,template.entitySpeed);
         }
     });
 }
@@ -334,7 +349,7 @@ function emojiToImage(emoji) {
     return emojiImageUrl;
 }
 
-function pushCustomEntity(name, image, dangerousEntities, victimEntities) {
+function pushCustomEntity(name, image, dangerousEntities, victimEntities, amnt, siz, spd) {
 
     entities.forEach(entity => {
         if (dangerousEntities.includes(entity.name)) {
@@ -347,9 +362,9 @@ function pushCustomEntity(name, image, dangerousEntities, victimEntities) {
         }
     });
 
-    for (let i = 0; i < numEntities; i++) {
+    for (let i = 0; i < amnt; i++) {
         const battlefieldRect = battlefield.getBoundingClientRect();
-        entities.push(new Entity(battlefield, puffer, entities, entityName = name, startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = entitySpeed, color = 'white', size = entitySize, imgpath = image, dangerousEntities = dangerousEntities, victimEntities = victimEntities));
+        entities.push(new Entity(battlefield, puffer, entities, entityName = name, startX = Math.random() * (battlefieldRect.width - 50), startY = Math.random() * (battlefieldRect.height - 50), speed = spd, color = 'white', size = siz, imgpath = image, dangerousEntities = dangerousEntities, victimEntities = victimEntities));
     }
 }
 
@@ -487,23 +502,31 @@ function deleteIndividualElementConfirm(){
 //BUTTONS etc.
 document.getElementById("startbutton").addEventListener("click", function () {
     //everthing start button shoudl do
-
     if (inpopup) return;
 
     document.getElementById("stopButton").style.display = "block";
 
     numEntities = document.getElementById("EntityNumberInput").value;
+    AllEntitiesExisting.forEach(ent => {
+        ent.numEntities = numEntities;
+    });
     document.getElementById("EntityNumberInput").disabled = true;
 
     entitySize = document.getElementById("EntitySizeInput").value;
+    AllEntitiesExisting.forEach(ent => {
+        ent.entitySize = entitySize;
+    });
     document.getElementById("EntitySizeInput").disabled = true;
 
     entitySpeed = document.getElementById("EntitySpeedInput").value;
+    AllEntitiesExisting.forEach(ent => {
+        ent.entitySpeed = entitySpeed;
+    });
     document.getElementById("EntitySpeedInput").disabled = true;
 
     // plusButton = document.getElementById
     // console.log(entitySpeed);
-
+    // AllEntitiesExisting[1].updateSize(60);
     //blend in objects
     startAnimationLoop();
     this.style.display = "none";
