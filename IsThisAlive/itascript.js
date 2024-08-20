@@ -125,7 +125,7 @@ function checkClickedPoint(event) {
 function dotsToTime(dots) {
     //every dot adds 1 second to the timer.
     //returns it in this format mm:ss
-    var seconds = dots / 2;
+    var seconds = dots;
     timeLeft = seconds;
     var minutes = Math.floor(seconds / 60);
     seconds = seconds % 60;
