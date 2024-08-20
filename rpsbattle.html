@@ -6,7 +6,7 @@
     <script src="popupInput/popupInputScript.js"></script>
     <link rel="stylesheet" href="popupBox/popupBoxStyle.css">
     <script src="popupBox/popupBoxScript.js"></script>
-    
+
     <link rel="stylesheet" href="rpsbattle/rpsbattlestyle.css">
 
     <meta charset="UTF-8">
@@ -39,26 +39,32 @@
 
             <label for="EntityNumberInput">Entities each:</label>
             <input class="win98-number-input" type="number" id="EntityNumberInput" name="EntityNumberInput" min="0"
-                max="30" value="10" />
+                max="30" value="10" onkeyup="adjustIndividualInputs('amt')">
             <br>
             <br>
             <label for="EntitySizeInput">Entity Size:</label>
             <input class="win98-number-input" type="number" id="EntitySizeInput" name="EntitySizeInput" min="5"
-                max="100" value="35" />
+                max="100" value="35" onkeyup="adjustIndividualInputs('siz')">
             <br>
             <br>
             <label for="EntitySpeedInput">Entity Speed:</label>
             <input class="win98-number-input" type="number" id="EntitySpeedInput" name="EntitySpeedInput" min="0.1"
-                max="10" value="1" />
+                max="10" value="1" onkeyup="adjustIndividualInputs('spd')">
             <br>
-            <p class = "MenuText"><b>Individuelle Einstellungen:</b></p>
+            <p class="MenuText"><b>Individuelle Einstellungen:</b></p>
             <select id="dropdown">
                 <!-- Elements will be dynamically generated here in js-->
             </select>
             <div id="elementSettings">
                 <button onclick="changeIndividualName()">Change Name</button>
                 <button onclick="changeIndividualEmoji()">Change Emoji</button>
-                <button onclick="deleteIndividualElement()">Delete</button>
+                <button onclick="deleteIndividualElement()">Delete</button><br>
+                Amount:
+                <input class="individualInput" type="number" id="IndividualEntityNumberInput" value="10" onkeyup="changeIndividualStats()"><br>
+                Size:
+                <input class="individualInput" type="number" id="IndividualEntitySizeInput" value = "35" onkeyup="changeIndividualStats()"><br>
+                Speed:
+                <input class="individualInput" type="number" id="IndividualSpeedInput" value="1" onkeyup="changeIndividualStats()">
             </div>
 
         </div>

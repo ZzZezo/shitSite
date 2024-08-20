@@ -19,7 +19,7 @@ const collisionMode = "Replacement" //"Deletion" or "Replacement" (uncomment the
 //yeah i know those have default values, but you could basically put whatever there (for most of them)
 let numEntities = 15; // Number of entities
 let entitySize = 35;
-let entitySpeed = 1.5;
+let entitySpeed = 1;
 
 let dropdown_chosenEntity = -1;
 let dropdown_chosenID = -1;
@@ -234,6 +234,8 @@ class Entity {
         this.victimEntities = otherEntity.victimEntities;
         this.element.style.width = otherEntity.element.style.width;
         this.element.style.height = otherEntity.element.style.height;
+        this.vx = otherEntity.vx;
+        this.vy = otherEntity.vy;
     }
 
 }
@@ -302,14 +304,32 @@ class EntityTemplate {
 
     updateAmount(newAmount) {
         this.numEntities = newAmount;
-    }
-
-    updateSpeed(newSpeed) {
-        this.entitySpeed = newSpeed;
+        this.debugStatUpdates();
     }
 
     updateSize(newSize) {
         this.entitySize = newSize;
+        this.debugStatUpdates();
+    }
+
+    updateSpeed(newSpeed) {
+        this.entitySpeed = newSpeed;
+        this.debugStatUpdates();
+    }
+
+    updateStats(newAmount, newSize, newSpeed) {
+        this.updateAmount(newAmount);
+        this.updateSize(newSize);
+        this.updateSpeed(newSpeed);
+        this.debugStatUpdates();
+    }
+
+    debugStatUpdates() {
+        console.log("Entity: " + this.name);
+        console.log("Amount: " + this.numEntities);
+        console.log("Size: " + this.entitySize);
+        console.log("Speed: " + this.entitySpeed);
+        console.log("\n\n");
     }
 }
 
@@ -469,6 +489,11 @@ function updateDropdownOptions(){
 function dropdownSelected(selectedOption){
     dropdown_chosenEntity = AllEntitiesExisting[selectedOption];
     dropdown_chosenID = selectedOption;
+    
+    document.getElementById("IndividualEntityNumberInput").value = dropdown_chosenEntity.numEntities;
+    document.getElementById("IndividualEntitySizeInput").value = dropdown_chosenEntity.entitySize;
+    document.getElementById("IndividualSpeedInput").value = dropdown_chosenEntity.entitySpeed;
+
     document.getElementById("elementSettings").style.display = "block";
 }
 
@@ -490,6 +515,25 @@ function deleteIndividualElement(){
     createPopup("Element Löschen", "Bist du sicher, dass du "+dropdown_chosenEntity.name+" löschen willst?", 2, ["Ja, sicher","Nein, Abbrechen"],[deleteIndividualElementConfirm,closePopup]);  // Call the function to create the popup
 }
 
+function changeIndividualStats(){ //when someone changes the stats of a individual element
+    indiAmount = document.getElementById("IndividualEntityNumberInput").value;
+    indiSize = document.getElementById("IndividualEntitySizeInput").value;
+    indiSpeed = document.getElementById("IndividualSpeedInput").value;
+    
+    dropdown_chosenEntity.updateStats(indiAmount, indiSize, indiSpeed);
+}
+
+function adjustIndividualInputs(stat2Upgrade){ //when someone changes main stats, hereby overwriting individual stats
+    AllEntitiesExisting.forEach(ent => {
+        if(stat2Upgrade == 'amt')ent.updateAmount(document.getElementById("EntityNumberInput").value);
+        if(stat2Upgrade == 'siz')ent.updateSize(document.getElementById("EntitySizeInput").value);
+        if(stat2Upgrade == 'spd')ent.updateSpeed(document.getElementById("EntitySpeedInput").value);
+    })
+
+    updateDropdownOptions();
+    document.getElementById("elementSettings").style.display = "none";
+}
+
 function deleteIndividualElementConfirm(){
     AllEntitiesExisting.splice(dropdown_chosenID, 1);
     document.getElementById("elementbox").children[dropdown_chosenID].remove();
@@ -505,23 +549,8 @@ document.getElementById("startbutton").addEventListener("click", function () {
     if (inpopup) return;
 
     document.getElementById("stopButton").style.display = "block";
-
-    numEntities = document.getElementById("EntityNumberInput").value;
-    AllEntitiesExisting.forEach(ent => {
-        ent.numEntities = numEntities;
-    });
     document.getElementById("EntityNumberInput").disabled = true;
-
-    entitySize = document.getElementById("EntitySizeInput").value;
-    AllEntitiesExisting.forEach(ent => {
-        ent.entitySize = entitySize;
-    });
     document.getElementById("EntitySizeInput").disabled = true;
-
-    entitySpeed = document.getElementById("EntitySpeedInput").value;
-    AllEntitiesExisting.forEach(ent => {
-        ent.entitySpeed = entitySpeed;
-    });
     document.getElementById("EntitySpeedInput").disabled = true;
 
     // plusButton = document.getElementById

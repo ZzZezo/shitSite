@@ -264,3 +264,21 @@ label {
 .COMPAREpopup-button:active {
   border-style: inset;
 }
+
+.individualInput{
+  border: 2px inset #808080;
+  font-family: "Old Sans Serif";
+  width: 40px;
+  margin-top: 2px;
+}
+
+.individualInput::-webkit-inner-spin-button,
+.individualInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.individualInput:focus {
+  outline: none;
+  border-color: #000;
+}
