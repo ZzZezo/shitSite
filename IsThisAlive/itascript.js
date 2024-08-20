@@ -17,6 +17,8 @@ let speed = 1.4;
 let totalRedDots = 0;
 let bluedotscollected = 0;
 
+let timeLeft;
+
 function getRandomColor() {
     const colors = ['red', 'blue'];
     return colors[Math.floor(Math.random() * colors.length)];
@@ -25,17 +27,25 @@ function getRandomColor() {
 function generatePoints(numPoints) {
     points = [];
     totalRedDots = 0; // Reset the counter every time points are generated
-    
+
     for (let i = 0; i < numPoints; i++) {
         const color = getRandomColor();
+        let emoji;
+
         if (color === 'red') {
             totalRedDots++; // Increment the counter if the point is red
+            const redEmojis = ['🐎', '🐔', '🌳', '🐅', '🐫', '🌹', '🌻', '🦁', '🐼', '🌿', '🌺', '🌴', '🦒', '🦋', '🐝', '🍃', '🐨', '🌱', '🌷', '🐠', '🌲', '🐍', '🦊', '🐑', '🌾', '🐧', '🦓', '🌸', '🌵', '🦠', '🦜', '🌼', '🍂', '🦨', '🌰', '🐻', '🦥', '🦦', '🐺', '🦈', '🌾', '🦜', '🌲', '🐝', '🌹', '🌼', '🐇', '🌼', '🦋', '🌻', '🍄', '🌵', '🌴', '🐢', '🌷', '🐓', '🦁', '🦌', '🌲', '🦦', '🍃', '🐦', '🦄', '🐸']; // Array of red emojis
+            emoji = redEmojis[Math.floor(Math.random() * redEmojis.length)];
+        } else {
+            const blueEmojis = ['🏠', '🦴', '🛹', '🛰️', '🧶', '🩴', '⚽', '🎮', '🚗', '📱', '🖥️', '🛳️', '📚', '🕰️', '🛋️', '🪑', '🛏️', '🔑', '🧳', '🔒', '🛠️', '🚪', '🪒', '💻', '🎲', '📷', '🧩', '🔋', '🗺️', '🎨', '🧼', '🧺', '🎸', '📦', '🎤', '🔦', '🪟', '🎰', '📻', '🛎️', '🏅', '🧢', '🕶️', '📏', '🧳', '📅', '🔧', '🧪', '💡', '🚪', '🖼️', '🗜️', '🧺', '🛠️', '🏢', '🎯', '🔬', '🧩', '📊', '💼', '🎁', '🔧', '📎', '🗄️', '🔌', '🔑', '🛍️', '🎉', '📅', '🛒', '🔒', '🛡️', '🎮', '🧵', '📏', '🧲', '💻', '🗃️', '🪑', '📏', '🔑', '🧭', '📓', '🧬']; // Array of blue emojis
+            emoji = blueEmojis[Math.floor(Math.random() * blueEmojis.length)];
         }
 
         points.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
+            x: Math.random() * (canvas.width-30)+15,
+            y: Math.random() * (canvas.height-30)+15,
             color: color,
+            emoji: emoji, // Store the selected emoji in the point object
             dx: (Math.random() - 0.5) * speed, // x direction + speed
             dy: (Math.random() - 0.5) * speed  // y direction + speed
         });
@@ -45,13 +55,12 @@ function generatePoints(numPoints) {
 function drawPoints() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
     points.forEach(point => {
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, 10, 0, 2 * Math.PI);
-        ctx.fillStyle = point.color;
-        ctx.fill();
-        ctx.closePath();
-    });
+        ctx.font = '24px Arial'; // Set font size and style
+        ctx.textAlign = 'center'; // Center the emoji on the point
+        ctx.textBaseline = 'middle'; // Center the emoji on the point
 
+        ctx.fillText(point.emoji, point.x, point.y); // Draw the emoji stored in the point object
+    });
 }
 
 function updatePoints() {
@@ -63,7 +72,7 @@ function updatePoints() {
         if (point.x <= 10 || point.x >= canvas.width - 10) {
             point.dx *= -1;
         }
-        if (point.y <= 10 || point.y >= canvas.height - 10) {
+        if (point.y <= 20 || point.y >= canvas.height - 10) {
             point.dy *= -1;
         }
     });
@@ -80,18 +89,17 @@ function checkClickedPoint(event) {
     const clickY = event.clientY;
 
     let clickedPoint = null;
-
-    let id = 0;
-    points.forEach(point => {
-        const distance = Math.sqrt(Math.pow(point.x - clickX, 2) + Math.pow(point.y - clickY, 2));
-        if (distance <= 10) {
+    for (let id = 0; id < points.length; id++) {
+        const distance = Math.sqrt(Math.pow(points[id].x - clickX, 2) + Math.pow(points[id].y - clickY, 2));
+        if (distance <= 20) {
             //runs if point clicked
-            clickedPoint = point;
+            clickedPoint = points[id];
             points[id].x = 100000000;
-            points.slice(id, 1);
+            points.splice(id, 1);
+            console.log("ein punkt clikt");
+            break;
         }
-        id++;
-    });
+    }
 
     if (clickedPoint) {
         if (clickedPoint.color == targetColor) {
@@ -100,7 +108,8 @@ function checkClickedPoint(event) {
             correctaudio.play();
             totalRedDots--;
             if (totalRedDots == 0) {
-                createPopup("Spiel Vorbei.", "Du hast alle roten Punkte gefunden.\nDabei hattest du nur " + bluedotscollected + " Fehler gemacht.", 1, ["OK!"],[closePopup]);
+                clearInterval(stopwatchInterval);
+                createPopup("Spiel Vorbei.", "Du hast alle Lebewesen gefunden.\nDabei hast du nur " + bluedotscollected + " Fehler gemacht.", 1, ["Nochmal!"], [location.reload.bind(location)]);
             }
 
         } else {
@@ -110,10 +119,40 @@ function checkClickedPoint(event) {
             bluedotscollected++;
         }
     }
+    console.log(totalRedDots);
+}
+
+function dotsToTime(dots) {
+    //every dot adds 1 second to the timer.
+    //returns it in this format mm:ss
+    var seconds = dots / 2;
+    timeLeft = seconds;
+    var minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+
+    return (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+}
+
+function updateStopwatch() {
+    if (timeLeft <= 0 && totalRedDots > 0) {
+        clearInterval(stopwatchInterval);
+        createPopup("Spiel Vorbei.", "Die Zeit ist abgelaufen.\nDir haben nur " + totalRedDots + " Lebewesen gefehlt!\nDabei hast du nur " + bluedotscollected + " Fehler gemacht.", 1, ["Nochmal!"], [location.reload.bind(location)]);
+        return;
+    }
+    timeLeft--;
+    const minutes = Math.floor((timeLeft % 3600) / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('stopwatch').innerText = formatTime(minutes) + ':' + formatTime(seconds);
+}
+
+function formatTime(time) {
+    return time < 10 ? '0' + time : time;
 }
 
 canvas.addEventListener('click', checkClickedPoint);
 
 generatePoints(amountOfPointsTotal);
+document.getElementById("stopwatch").innerHTML = dotsToTime(amountOfPointsTotal);
+stopwatchInterval = setInterval(updateStopwatch, 1000);
 drawPoints();
 animate();
