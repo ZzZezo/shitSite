@@ -52,11 +52,23 @@ class Entity {
 
         this.battlefield.appendChild(this.element);
 
-        // Initialize position and velocity
+        // Initialize position
         this.x = startX;
         this.y = startY;
-        this.vx = speed * Math.random() * 2.5 - 1;
-        this.vy = speed * Math.random() * 2.5 - 1;
+        	
+        //initialize velocity
+        //distribute the speed randomly between vx and vy
+        let ratio = Math.random();
+        this.vx = speed * ratio;
+        this.vy = speed * (1-ratio);
+
+        //give vx and vy 50/50 chance to move "backwards"
+        if (Math.random() > 0.5) {
+            this.vx = -this.vx;
+        }
+        if (Math.random() > 0.5) {
+            this.vy = -this.vy;
+        }
 
 
         //SET UP OF GAME MECHANIC!
@@ -75,6 +87,7 @@ class Entity {
     //Moving the Entity
     updatePosition() {
         this.x += this.vx;
+        // console.log("something moved to " + this.x);
         this.y += this.vy;
 
         // Get the dimensions of the battlefield
@@ -304,24 +317,24 @@ class EntityTemplate {
 
     updateAmount(newAmount) {
         this.numEntities = newAmount;
-        this.debugStatUpdates();
+        // this.debugStatUpdates();
     }
 
     updateSize(newSize) {
         this.entitySize = newSize;
-        this.debugStatUpdates();
+        // this.debugStatUpdates();
     }
 
     updateSpeed(newSpeed) {
         this.entitySpeed = newSpeed;
-        this.debugStatUpdates();
+        // this.debugStatUpdates();
     }
 
     updateStats(newAmount, newSize, newSpeed) {
         this.updateAmount(newAmount);
         this.updateSize(newSize);
         this.updateSpeed(newSpeed);
-        this.debugStatUpdates();
+        // this.debugStatUpdates();
     }
 
     debugStatUpdates() {
@@ -516,18 +529,20 @@ function deleteIndividualElement(){
 }
 
 function changeIndividualStats(){ //when someone changes the stats of a individual element
-    indiAmount = document.getElementById("IndividualEntityNumberInput").value;
-    indiSize = document.getElementById("IndividualEntitySizeInput").value;
-    indiSpeed = document.getElementById("IndividualSpeedInput").value;
+    indiAmount = Number(document.getElementById("IndividualEntityNumberInput").value);
+    indiSize = Number(document.getElementById("IndividualEntitySizeInput").value);
+    indiSpeed = Number(document.getElementById("IndividualSpeedInput").value);
     
     dropdown_chosenEntity.updateStats(indiAmount, indiSize, indiSpeed);
 }
 
 function adjustIndividualInputs(stat2Upgrade){ //when someone changes main stats, hereby overwriting individual stats
     AllEntitiesExisting.forEach(ent => {
-        if(stat2Upgrade == 'amt')ent.updateAmount(document.getElementById("EntityNumberInput").value);
-        if(stat2Upgrade == 'siz')ent.updateSize(document.getElementById("EntitySizeInput").value);
-        if(stat2Upgrade == 'spd')ent.updateSpeed(document.getElementById("EntitySpeedInput").value);
+        if(stat2Upgrade == 'amt')ent.updateAmount(Number(document.getElementById("EntityNumberInput").value));
+        if(stat2Upgrade == 'siz')ent.updateSize(Number(document.getElementById("EntitySizeInput").value));
+        if(stat2Upgrade == 'spd')ent.updateSpeed(Number(document.getElementById("EntitySpeedInput").value));
+
+        // console.log(ent.entitySpeed);
     })
 
     updateDropdownOptions();
