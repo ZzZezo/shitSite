@@ -4,7 +4,9 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const amountOfPointsTotal = 40;
+const amountOfPointsTotal = 10;
+const emojiSize = 96;
+const timeMultiplier = 1.5;
 
 let points = [];
 let targetColor = 'red'; // pretend red would be alive things ig
@@ -12,7 +14,7 @@ let targetColor = 'red'; // pretend red would be alive things ig
 var correctaudio = new Audio('IsThisAlive/correct.mp3');
 var incorrectaudio = new Audio('IsThisAlive/incorrect.mp3');
 
-let speed = 1.4;
+let speed = 5;
 
 let totalRedDots = 0;
 let bluedotscollected = 0;
@@ -42,8 +44,8 @@ function generatePoints(numPoints) {
         }
 
         points.push({
-            x: Math.random() * (canvas.width-30)+15,
-            y: Math.random() * (canvas.height-30)+15,
+            x: Math.random() * (canvas.width-emojiSize)+emojiSize/2,
+            y: Math.random() * (canvas.height-emojiSize)+emojiSize/2,
             color: color,
             emoji: emoji, // Store the selected emoji in the point object
             dx: (Math.random() - 0.5) * speed, // x direction + speed
@@ -55,7 +57,7 @@ function generatePoints(numPoints) {
 function drawPoints() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
     points.forEach(point => {
-        ctx.font = '24px Arial'; // Set font size and style
+        ctx.font = emojiSize+'px Arial'; // Set font size and style
         ctx.textAlign = 'center'; // Center the emoji on the point
         ctx.textBaseline = 'middle'; // Center the emoji on the point
 
@@ -69,10 +71,10 @@ function updatePoints() {
         point.y += point.dy;
 
         // Check for collisions with canvas edges and reverse direction if necessary
-        if (point.x <= 10 || point.x >= canvas.width - 10) {
+        if (point.x <= emojiSize/2 || point.x >= canvas.width - emojiSize/2) {
             point.dx *= -1;
         }
-        if (point.y <= 20 || point.y >= canvas.height - 10) {
+        if (point.y <= emojiSize/2 || point.y >= canvas.height - emojiSize/2) {
             point.dy *= -1;
         }
     });
@@ -91,7 +93,7 @@ function checkClickedPoint(event) {
     let clickedPoint = null;
     for (let id = 0; id < points.length; id++) {
         const distance = Math.sqrt(Math.pow(points[id].x - clickX, 2) + Math.pow(points[id].y - clickY, 2));
-        if (distance <= 20) {
+        if (distance <= emojiSize) {
             //runs if point clicked
             clickedPoint = points[id];
             points[id].x = 100000000;
@@ -125,7 +127,7 @@ function checkClickedPoint(event) {
 function dotsToTime(dots) {
     //every dot adds 1 second to the timer.
     //returns it in this format mm:ss
-    var seconds = dots;
+    var seconds = dots*timeMultiplier;
     timeLeft = seconds;
     var minutes = Math.floor(seconds / 60);
     seconds = seconds % 60;

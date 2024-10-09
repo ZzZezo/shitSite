@@ -254,15 +254,30 @@ class Entity {
 }
 
 class EntityTemplate {
-    constructor(name, image, dangerousEntities, victimEntities) {
-        this.name = name;
-        this.imgpath = image;
-        this.dangerousEntities = dangerousEntities;
-        this.victimEntities = victimEntities;
-        this.enabled = true;
-        this.numEntities = numEntities;
-        this.entitySize = entitySize;
-        this.entitySpeed = entitySpeed;
+    constructor(nameOrObj, image, dangerousEntities, victimEntities) {
+        if (typeof nameOrObj === 'object'){
+            // If the first argument is an object, we assume it's an object with properties
+            const obj = nameOrObj;
+            this.name = obj.name;
+            this.imgpath = obj.imgpath;
+            this.dangerousEntities = obj.dangerousEntities;
+            this.victimEntities = obj.victimEntities;
+            this.enabled = true;
+            this.numEntities = numEntities;
+            this.entitySize = entitySize;
+            this.entitySpeed = entitySpeed;
+        }
+        else{
+            // Otherwise, we assume individual arguments are provided
+            this.name = nameOrObj;
+            this.imgpath = image;
+            this.dangerousEntities = dangerousEntities;
+            this.victimEntities = victimEntities;
+            this.enabled = true;
+            this.numEntities = numEntities;
+            this.entitySize = entitySize;
+            this.entitySpeed = entitySpeed;
+        }
         this.createToggleBox();
     }
 
@@ -508,6 +523,8 @@ function dropdownSelected(selectedOption){
     document.getElementById("IndividualSpeedInput").value = dropdown_chosenEntity.entitySpeed;
 
     document.getElementById("elementSettings").style.display = "block";
+
+    console.log(jsonfyTemplate(dropdown_chosenEntity));
 }
 
 function changeIndividualName(){
@@ -557,6 +574,32 @@ function deleteIndividualElementConfirm(){
     closePopup();
 }
 
+
+function jsonfyTemplate(template){
+    return JSON.stringify(template);
+}
+
+function saveToStorage(){
+    localStorage.clear();
+
+    AllEntitiesExisting.forEach(template => {
+        console.log("Saving "+template.name);
+        localStorage.setItem(template.name, jsonfyTemplate(template));
+    });
+}
+
+function loadFromStorage(){
+    document.getElementById("elementbox").innerHTML="";
+    for(i=0;i<localStorage.length;i++){
+        let key = localStorage.key(i);
+        let value = localStorage.getItem(key);
+        let template = JSON.parse(value);
+        AllEntitiesExisting[i] = new EntityTemplate(template);
+        console.log("Loaded "+template.name);
+    }
+    updateDropdownOptions();
+    document.getElementById("elementSettings").style.display = "none";
+}
 
 //BUTTONS etc.
 document.getElementById("startbutton").addEventListener("click", function () {
