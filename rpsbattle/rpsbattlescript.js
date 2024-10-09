@@ -589,7 +589,11 @@ function saveToStorage(){
 }
 
 function loadFromStorage(){
-    document.getElementById("elementbox").innerHTML="";
+    let elementBox = document.getElementById("elementbox");
+    while (elementBox.children.length > 1) {
+        elementBox.removeChild(elementBox.firstChild);
+    }
+
     for(i=0;i<localStorage.length;i++){
         let key = localStorage.key(i);
         let value = localStorage.getItem(key);
