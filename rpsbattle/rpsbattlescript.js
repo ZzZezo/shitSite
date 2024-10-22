@@ -579,7 +579,7 @@ function jsonfyTemplate(template){
     return JSON.stringify(template);
 }
 
-function saveToStorage(){
+function saveToStorage(){ //saving and loading currently shuffles the order, which i dont fully understand why it does so
     localStorage.clear();
 
     AllEntitiesExisting.forEach(template => {
@@ -588,7 +588,7 @@ function saveToStorage(){
     });
 }
 
-function loadFromStorage(){
+function loadFromStorage(){ //saving and loading currently shuffles the order, which i dont fully understand why it does so
     let elementBox = document.getElementById("elementbox");
     while (elementBox.children.length > 1) {
         elementBox.removeChild(elementBox.firstChild);
