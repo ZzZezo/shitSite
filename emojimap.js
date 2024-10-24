@@ -19,6 +19,7 @@ function maxMatchingValue(obj, key) {
     }
 
     console.log("Most similar value: " + (Array.isArray(maxValue) ? maxValue[0] : maxValue));
+    console.log((Array.isArray(maxValue) ? maxValue[0] : maxValue));
     return((Array.isArray(maxValue) ? maxValue[0] : maxValue));
 }
 

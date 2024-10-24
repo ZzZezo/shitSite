@@ -223,7 +223,17 @@
       else {
         //throw error (scrajj emote when wrong input (or emoji not in DB))
         if (aiActivated) {
-          emojiToImage(convert(input));
+          try {
+            emojiToImage(convert(input));
+          }
+          catch{
+            var imgElement = document.createElement('img');
+            imgElement.src = "assets/images/scrajjtest.webp";
+
+            document.getElementById('emojiContainer').replaceChildren();
+            document.getElementById('emojiContainer').appendChild(imgElement);
+          }
+
         }
         else {
           var imgElement = document.createElement('img');
