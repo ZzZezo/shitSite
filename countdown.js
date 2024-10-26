@@ -10,9 +10,8 @@ endTime.setSeconds(0);
 
 
 function updateCountdown() {
-    var output = secondsLeft + " Sekunden";
+    var output = calculateTimeSeconds() + " Sekunden";
     document.getElementById("countdown_numbers").innerHTML = output;
-    secondsLeft--;
     
     if(secondsLeft<=-1){
         window.open("https://www.twitch.tv/stegi","_self")
@@ -21,6 +20,7 @@ function updateCountdown() {
 
 
 function calculateTimeSeconds(){
+    now = new Date();
     var timeDifference = endTime - now;
     var timeDifferenceInSeconds = Math.floor(timeDifference / 1000);
     return timeDifferenceInSeconds;
