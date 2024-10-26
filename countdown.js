@@ -10,7 +10,8 @@ endTime.setSeconds(0);
 
 
 function updateCountdown() {
-    var output = calculateTimeSeconds() + " Sekunden";
+    secondsLeft = calculateTimeSeconds();
+    var output = secondsLeft + " Sekunden";
     document.getElementById("countdown_numbers").innerHTML = output;
     
     if(secondsLeft<=-1){
