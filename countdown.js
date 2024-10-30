@@ -1,10 +1,10 @@
 var secondsLeft = 1337;
 var now = new Date();
 var endTime = new Date();
-endTime.setFullYear(2024);
-endTime.setMonth(9);
-endTime.setDate(26);
-endTime.setHours(12);
+endTime.setFullYear(now.getFullYear() + 1);
+endTime.setMonth(0);
+endTime.setDate(1);
+endTime.setHours(0);
 endTime.setMinutes(0);
 endTime.setSeconds(0);
 
@@ -15,7 +15,7 @@ function updateCountdown() {
     document.getElementById("countdown_numbers").innerHTML = output;
     
     if(secondsLeft<=-1){
-        window.open("https://www.twitch.tv/stegi","_self")
+        alert("Happy New Year lol");
     }
 }
 
