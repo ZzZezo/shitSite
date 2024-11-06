@@ -1,25 +1,28 @@
-let partClubs = [];
-let clubs = ["München","Dortmund","Leverkusen","Freiburg","Karlsruhe","Berlin","Wolfsburg"]
-let tmpPoints = [23,16,16,16,20,15,9]
-let tmpGoals = [25,2,5,2,10,1,-1]
-
 class Club{
-    constructor(name, points = 0, goals = 0){
+    constructor(name) {
         this.name = name;
-        this.points = points;
-        this.goals = goals;
+
+        this.leagueStats = {}
     }
 }
 
-function updateTable(){
-    partClubs.sort((a, b) => b.goals - a.goals);
-    partClubs.sort((a, b) => b.points - a.points);
-    partClubs.forEach(club => {
-        document.getElementById("testElement").innerHTML += partClubs.indexOf(club)+1 + ". " + club.name + "<br>";
-    });
+class League{
+    constructor(name, clubs=[]) {
+        this.name = name;
+        this.clubs = clubs;
+    }
 }
 
-clubs.forEach(club => {
-    partClubs.push(new Club(club,tmpPoints[clubs.indexOf(club)],tmpGoals[clubs.indexOf(club)]));
-});
-updateTable();
+class Match{
+    constructor(homeClub, awayClub, homeGoals, awayGoals, league){
+        this.homeClub = homeClub;
+        this.awayClub = awayClub;
+        this.homeGoals = homeGoals;
+        this.awayGoals = awayGoals;
+        this.league = league;
+    }
+}
+
+function calculateInput(league, team1, goals1, team2, goals2){
+    dLeagues
+}

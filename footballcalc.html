@@ -12,7 +12,24 @@
     <title>Football Calculator</title>
 </head>
 <body>
-    <p id="testElement">
+    <h1 id="title">Football Calculator</h1>
+
+    <div id="inputContainer">
+        <input type="text" id="inputL" placeholder="Bundesliga">
+        <br>
+        <input type="text" id="inputT1" placeholder="Team 1">
+        <input type="text" id="inputG1" placeholder="0">
+        <br>
+        <input type="text" id="inputT2" placeholder="Team 2">
+        <input type="text" id="inputG2" placeholder="0">
+        <br><br>
+        <button onclick="calculateInput(inputL.value, inputT1.value, inputG1.value, inputT2.value, inputG2.value)">Calculate</button>
+    </div>
+
+    <div id="leagueTableContainer">
+        <p id="leagueTable"></p>
+    </div>
 </body>
 <script src="footballcalc/script.js"></script>
+<script src="footballcalc/data.js"></script>
 </html>
