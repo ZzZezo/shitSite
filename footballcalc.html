@@ -14,17 +14,13 @@
 <body>
     <h1 id="title">Football Calculator</h1>
 
+    <select id="LeagueDropdown">
+        <!-- Elements will be dynamically generated here in js-->
+    </select>
     <div id="inputContainer">
-        <input type="text" id="inputL" placeholder="Bundesliga">
-        <br>
-        <input type="text" id="inputT1" placeholder="Team 1">
-        <input type="text" id="inputG1" placeholder="0">
-        <br>
-        <input type="text" id="inputT2" placeholder="Team 2">
-        <input type="text" id="inputG2" placeholder="0">
-        <br><br>
-        <button onclick="calculateInput(inputL.value, inputT1.value, inputG1.value, inputT2.value, inputG2.value)">Calculate</button>
-    </div>
+        <!-- Elements will be dynamically generated here in js-->
+    </div><br>
+    <button id="calcButton" onclick="calculateInput()" disabled>Calculate</button>
 
     <div id="leagueTableContainer">
         <p id="leagueTable"></p>
