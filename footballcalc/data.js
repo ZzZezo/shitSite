@@ -1,15 +1,72 @@
 dClubs = [
     new Club("Bayern"),
-    new Club("Dortmund"),
+    new Club("Leipzig"),
+    new Club("Frankfurt"),
     new Club("Leverkusen"),
-    new Club("Karlsruhe"),
+    new Club("Dortmund"),
+    new Club("Freiburg"),
+    new Club("Berlin"),
+    new Club("Stuttgart"),
+    new Club("Mönchengladbach"),
+    new Club("Bremen"),
+    new Club("Augsburg"),
+    new Club("Heidenheim"),
+    new Club("Mainz"),
+    new Club("Wolfsburg"),
+    new Club("St. Pauli"),
+    new Club("Hoffenheim"),
+    new Club("Kiel"),
+    new Club("Bochum"),
+    //above is Bundesliga (18 Teams, 0-17)
+    //below is LaLiga (20 Teams, 18-37)
     new Club("Barcelona"),
-    new Club("Real Madrid"),
-    new Club("Atletico Madrid"),
-    new Club("Sevilla")
+    new Club("R. Madrid"),
+    new Club("A. Madrid"),
+    new Club("Villareal"),
+    new Club("Osasuna"),
+    new Club("Atl. Bilbao"),
+    new Club("R. Betis"),
+    new Club("Mallorca"),
+    new Club("R. Vallecano"),
+    new Club("Celta"),
+    new Club("R. Sociedad"),
+    new Club("Girona"),
+    new Club("Sevilla"),
+    new Club("Alaves"),
+    new Club("Leganes"),
+    new Club("Getafe"),
+    new Club("Espanyol"),
+    new Club("Palmas"),
+    new Club("Valladolid"),
+    new Club("Valencia"),
+    //above is LaLiga (20 Teams, 18-37)
+    //below is Premier League (20 Teams, 38-57)
+    new Club("Liverpool"),
+    new Club("Manchester C."),
+    new Club("Nottingham"),
+    new Club("Chelsea"),
+    new Club("Arsenal"),
+    new Club("Aston V."),
+    new Club("Tottenham"),
+    new Club("Brighton"),
+    new Club("Fulham"),
+    new Club("Bournemouth"),
+    new Club("Newcastle"),
+    new Club("Brentford"),
+    new Club("Manchester U."),
+    new Club("West Hammers"),
+    new Club("Leicester"),
+    new Club("Everton"),
+    new Club("Southampton"),
+    new Club("Wolves"),
+    new Club("Ipswich"),
+    new Club("Crystal Menace")
+
 ]
 
 dLeagues=[
-    new League("Bundesliga", [dClubs[0],dClubs[1],dClubs[2],dClubs[3]]),
-    new League("La Liga", [dClubs[4],dClubs[5],dClubs[6],dClubs[7]])
+    //explanation here: https://i.imgur.com/Np8uMPQ.png (i have no idea what any of that means lmao)
+    new League("Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i])),
+    new League("La Liga", Array.from({ length: 20 }, (_, i) => dClubs[i + 18])),
+    new League("Premier League", Array.from({ length: 20 }, (_, i) => dClubs[i + 38]))
 ]
