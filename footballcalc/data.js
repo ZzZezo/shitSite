@@ -60,13 +60,49 @@ dClubs = [
     new Club("Southampton"),
     new Club("Wolves"),
     new Club("Ipswich"),
-    new Club("Crystal Menace")
+    new Club("Crystal Menace"),
+    //above is Premier League (20 Teams, 38-57)
+    //below is Serie A (20 Teams, 58-77)
+    new Club("Neapel"),
+    new Club("I. Mailand"),
+    new Club("A. Bergamo"),
+    new Club("Florenz"),
+    new Club("L. Rom"),
+    new Club("Juve"),
+    new Club("Milan"),
+    new Club("Udine"),
+    new Club("Bologna"),
+    new Club("Turin"),
+    new Club("Empoli"),
+    new Club("Roma"),
+    new Club("Verona"),
+    new Club("Como"),
+    new Club("Genua"),
+    new Club("Parma"),
+    new Club("Cagliari"),
+    new Club("Monza"),
+    new Club("Venedig"),
+    new Club("Lecce"),
+    //above is Serie A (20 Teams, 58-77)
+    //below is 1. HNL (10 Teams, 78-87)
+    new Club("H. Split"),
+    new Club("Rijeka"),
+    new Club("D. Zagreb"),
+    new Club("Osijek"),
+    new Club("Varazdin"),
+    new Club("Istrien"),
+    new Club("Sibenik"),
+    new Club("Gorica"),
+    new Club("Koprivinica"),
+    new Club("L. Zagreb")
 
 ]
 
 dLeagues=[
     //explanation here: https://i.imgur.com/Np8uMPQ.png (i have no idea what any of that means lmao)
-    new League("Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i])),
-    new League("La Liga", Array.from({ length: 20 }, (_, i) => dClubs[i + 18])),
-    new League("Premier League", Array.from({ length: 20 }, (_, i) => dClubs[i + 38]))
+    new League("Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i]),[],[],[17,18],[16],[1,2,3,4],[5],[6]),
+    new League("La Liga", Array.from({ length: 20 }, (_, i) => dClubs[i + 18]),[],[],[18,19,20],[],[1,2,3,4],[5],[6]),
+    new League("Premier League", Array.from({ length: 20 }, (_, i) => dClubs[i + 38]),[],[],[18,19,20],[],[1,2,3,4],[5]),
+    new League("Serie A", Array.from({ length: 20 }, (_, i) => dClubs[i + 58]),[],[],[18,19,20],[],[1,2,3,4],[5],[6]),
+    new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),[],[],[10],[],[1],[2],[3,4])
 ]

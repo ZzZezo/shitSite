@@ -8,3 +8,47 @@ body,html {
     font-family: 'Old Sans Serif';
     cursor: url('../assets/images/old_pointer.png'), auto;
 }
+
+/* Flexbox container */
+#GroupContainer {
+  display: flex;
+  gap:20px;
+}
+
+#LeagueTable {
+  width: auto;
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-family: "Tahoma", sans-serif;
+  font-size: 14px;
+  color: #000;
+  margin: 20px;
+}
+
+#LeagueTable th,
+#LeagueTable td {
+  padding: 6px 12px;
+  background-color: #C0C0C0;
+  color: #000;
+  border: 2px solid #808080;
+  /* Windows 98 3D effect */
+  border-top-color: #FFF;
+  border-left-color: #FFF;
+  border-right-color: #404040;
+  border-bottom-color: #404040;
+  text-align: left;
+}
+
+#LeagueTable th {
+  background-color: #B0B0B0;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 #FFF;
+}
+
+#LeagueTable tr:nth-child(even) td {
+  background-color: #D4D0C8;
+}
+
+#LeagueTable tr:hover td {
+  background-color: #B8B8B8;
+}

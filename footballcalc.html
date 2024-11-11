@@ -17,13 +17,16 @@
     <select id="LeagueDropdown">
         <!-- Elements will be dynamically generated here in js-->
     </select>
-    <div id="inputContainer">
-        <!-- Elements will be dynamically generated here in js-->
-    </div><br>
-    <button id="calcButton" onclick="calculateInput()" disabled>Calculate</button>
 
-    <div id="leagueTableContainer">
-        <p id="leagueTable"></p>
+    <!-- Flex container for side-by-side layout -->
+    <div id="GroupContainer">
+        <div id="inputContainer">
+            <!-- Elements will be dynamically generated here in js-->
+        </div>
+        
+        <table id="LeagueTable">
+            <!-- Elements will be dynamically generated here in js-->
+        </table>
     </div>
 </body>
 <script src="footballcalc/script.js"></script>
