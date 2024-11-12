@@ -7,6 +7,8 @@ let ELColor = "#EB8F5A";
 let CoLColor = "#5FC385";
 let championColor = "#FFD700";
 
+let crntweek = 0; //tracks what weej we are in (spieltag)
+
 class Club {
     constructor(name) {
         this.name = name;
@@ -71,11 +73,28 @@ class League {
     }
 
     generateMatchplan(){
-        let matchplan = [];
-        for (let i = 0; i < this.clubs.length; i++) {
-            for (let j = i+1; j < this.clubs.length; j++) {
-                matchplan.push([this.clubs[i], this.clubs[j]]);
+        const clubs = [...this.clubs];
+        const matchplan = [];
+        const totalRounds = clubs.length - 1;
+        const matchesPerRound = clubs.length / 2;
+
+        for (let round = 0; round < totalRounds; round++) {
+            const roundMatches = [];
+    
+            for (let match = 0; match < matchesPerRound; match++) {
+                const home = clubs[match];
+                const away = clubs[clubs.length - 1 - match];
+    
+                if (home !== null && away !== null) {
+                    roundMatches.push([home, away]);
+                }
             }
+    
+            // Rotate teams, keeping the first team fixed
+            clubs.splice(1, 0, clubs.pop());
+    
+            // Add the current round to the matchplan
+            matchplan.push(...roundMatches);
         }
         return matchplan;
     }
@@ -132,7 +151,6 @@ class Match {
     }
 }
 
-// Function to create and handle a match
 function calculateInput() {
     const leagueName = document.getElementById('LeagueDropdown').value;
     const league = dLeagues.find(leagueObj => leagueObj.name === leagueName);
@@ -213,6 +231,9 @@ function calculateInput() {
     console.table(sortedClubs);
     updateTabel(sortedClubs,league);
     league.updateStats(sortedClubs);
+
+    crntweek +=1;
+    showMatches(leagueName);
 }
 
 function showMatches(leagueName) {
@@ -223,22 +244,34 @@ function showMatches(leagueName) {
     }
 
     const clubs = league.clubs;
-    let remainingClubs = JSON.parse(JSON.stringify(clubs));
     
     const container = document.getElementById("inputContainer");
     container.innerHTML = "";	
+    
+    //-------------LEGACY MATCHMAKING--------------
+    // let remainingClubs = JSON.parse(JSON.stringify(clubs));
+    // while(remainingClubs.length>=2){
+    //     // Pick the first team randomly
+    //     const randomIndex1 = Math.floor(Math.random() * remainingClubs.length);
+    //     const t1 = remainingClubs[randomIndex1].name;
+    //     remainingClubs.splice(randomIndex1, 1); // Remove the first team from the array
 
-    //show matches until no clubs left ig?
-    while(remainingClubs.length>=2){
-        // Pick the first team randomly
-        const randomIndex1 = Math.floor(Math.random() * remainingClubs.length);
-        const t1 = remainingClubs[randomIndex1].name;
-        remainingClubs.splice(randomIndex1, 1); // Remove the first team from the array
+    //     // Pick the second team randomly from the remaining clubs
+    //     const randomIndex2 = Math.floor(Math.random() * remainingClubs.length);
+    //     const t2 = remainingClubs[randomIndex2].name;
+    //     remainingClubs.splice(randomIndex2, 1); // Remove the second team from the array
+//-------------LEGACY MATCHMAKING--------------
 
-        // Pick the second team randomly from the remaining clubs
-        const randomIndex2 = Math.floor(Math.random() * remainingClubs.length);
-        const t2 = remainingClubs[randomIndex2].name;
-        remainingClubs.splice(randomIndex2, 1); // Remove the second team from the array
+
+//-------------NEW MATCHMAKING--------------
+    let matchesAmntMatchday = league.clubs.length / 2;
+    let remainingMatches = matchesAmntMatchday;
+    while(remainingMatches > 0){
+        t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][0].name;
+        t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][1].name;
+        remainingMatches--;
+//-------------NEW MATCHMAKING--------------
+
 
         //show in html
         const inputT1 = document.createElement("input");
