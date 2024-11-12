@@ -94,8 +94,27 @@ dClubs = [
     new Club("Sibenik"),
     new Club("Gorica"),
     new Club("Koprivinica"),
-    new Club("L. Zagreb")
-
+    new Club("L. Zagreb"),
+    //above is 1. HNL (10 Teams, 78-87)
+    //below is 1. HNL (18 Teams, 88-105)
+    new Club("Düsseldorf"),
+    new Club("Karlsruhe"),
+    new Club("Hannover"),
+    new Club("Paderborn"),
+    new Club("Hamburg"),
+    new Club("Elversberg"),
+    new Club("Nürnberg"),
+    new Club("Köln"),
+    new Club("Magdeburg"),
+    new Club("Kaiserslautern"),
+    new Club("Hertha"),
+    new Club("Darmstadt"),
+    new Club("Fürth"),
+    new Club("Schalke"),
+    new Club("Braunschweig"),
+    new Club("Münster"),
+    new Club("Ulm"),
+    new Club("Regensburg")
 ]
 
 dLeagues=[
@@ -104,5 +123,6 @@ dLeagues=[
     new League("La Liga", Array.from({ length: 20 }, (_, i) => dClubs[i + 18]),[],[],[18,19,20],[],[1,2,3,4],[5],[6]),
     new League("Premier League", Array.from({ length: 20 }, (_, i) => dClubs[i + 38]),[],[],[18,19,20],[],[1,2,3,4],[5]),
     new League("Serie A", Array.from({ length: 20 }, (_, i) => dClubs[i + 58]),[],[],[18,19,20],[],[1,2,3,4],[5],[6]),
-    new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),[],[],[10],[],[1],[2],[3,4])
+    new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),[],[],[10],[],[1],[2],[3,4]),
+    new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),[1,2],[3],[17,18],[16],[],[],[])
 ]

@@ -7,7 +7,9 @@ let ELColor = "#EB8F5A";
 let CoLColor = "#5FC385";
 let championColor = "#FFD700";
 
-let crntweek = 0; //tracks what weej we are in (spieltag)
+let loadedLeagues; //initialized at bottom (later dynamically), stores the leagues the game will cycle through
+let activeLeague; //the league thats currently selected, used to dropdown.value
+let crntweek = 0; //tracks what week we are in (spieltag)
 
 class Club {
     constructor(name) {
@@ -24,19 +26,25 @@ class Club {
 }
 
 class League {
-    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],hasChampion=true) {
-        this.name = name;
+    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],hasChampion=true,rounds = 2) {
+        this.name = name; //whats it called (e.g.: "Premier League")
         this.clubs = clubs;
         this.sortedClubs = this.init_sortedClubs(clubs);
         this.matches = [];
+        //who gets relegated/promoted
         this.promotePositions = promotePositions;
         this.promotePlayoffs = promotePlayoffs;
         this.relegatePositions = relegatePositions;
         this.relegatePlayoffs = relegatePlayoffs;
+        //who qualifies for Champions-, Euro- and Conferenceleague
         this.CLPositions = CLPositions;
         this.ELPositions = ELPositions;
         this.CoLPositions = CoLPositions;
+        //kann man meister werden
         this.hasChampion = hasChampion;
+        //Hin und rückrunde?
+        this.rounds = rounds;
+        this.currentRound = 1;
 
         this.matchplan = this.generateMatchplan();
         console.log(this.matchplan);
@@ -73,15 +81,16 @@ class League {
     }
 
     generateMatchplan(){
-        const clubs = [...this.clubs];
+        let clubs = [...this.clubs]; //creates a copy of the clubs array
+        clubs = clubs.sort((a,b)=>0.5-Math.random());//shuffles the array, so the matchplan will be unique for everyone.
         const matchplan = [];
         const totalRounds = clubs.length - 1;
         const matchesPerRound = clubs.length / 2;
 
-        for (let round = 0; round < totalRounds; round++) {
+        for (let round = 0; round < totalRounds; round++) { //every round is one matchday
             const roundMatches = [];
     
-            for (let match = 0; match < matchesPerRound; match++) {
+            for (let match = 0; match < matchesPerRound; match++) { //runs through every match on each matchday
                 const home = clubs[match];
                 const away = clubs[clubs.length - 1 - match];
     
@@ -94,7 +103,7 @@ class League {
             clubs.splice(1, 0, clubs.pop());
     
             // Add the current round to the matchplan
-            matchplan.push(...roundMatches);
+            matchplan.push(...roundMatches); //pushes a copy of all matches of the matchday to the matchplan array, which contains every match of the season
         }
         return matchplan;
     }
@@ -151,9 +160,9 @@ class Match {
     }
 }
 
-function calculateInput() {
-    const leagueName = document.getElementById('LeagueDropdown').value;
-    const league = dLeagues.find(leagueObj => leagueObj.name === leagueName);
+function calculateInput() { //called when the calculate button is pressed, turns user input into actual matches
+    const leagueName = activeLeague.name;
+    const league = activeLeague;
     let todaysMatches = [];
     if (!league) {
         throw new Error(`League ${leagueName} not found.`);
@@ -162,7 +171,7 @@ function calculateInput() {
     const container = document.getElementById("inputContainer");
     for (let innerContainer of container.children) {
         if (innerContainer.tagName !== 'DIV') {
-            continue; // Skip non-DIV elements
+            continue; //skip Calc Button and other non-DIV elements
         }
         const homeClubName = innerContainer.children[1].value; //if you wonder why the number dont seem to match. its because of the <br> elements.
         const awayClubName = innerContainer.children[4].value; //if you wonder why the number dont seem to match. its because of the <br> elements.
@@ -188,7 +197,7 @@ function calculateInput() {
         }
 
         if(isNaN(homeGoals) || isNaN(awayGoals)){
-            throw new Error("Goals cannot be empty.");
+            throw new Error("Goals cannot be empty.");//also throws when goals entered ar not an int
         }
 
         // Proceed with creating and handling the match if both clubs are in the league
@@ -211,29 +220,43 @@ function calculateInput() {
         losses: club.leagueStats[leagueName][5]
     })).sort((a, b) => {
         if (b.points !== a.points) {
-            return b.points - a.points;
+            return b.points - a.points; //sort by points
         }
         if (b.goaldif !== a.goaldif) {
-            return b.goaldif - a.goaldif;
+            return b.goaldif - a.goaldif; //if points equal sort by goaldif
         }
         if (b.goals !== a.goals) {
-            return b.goals - a.goals;
+            return b.goals - a.goals; //if goaldif equal sort by goals shot
         }
         if (b.conceded !== a.conceded) {
-            return a.conceded - b.conceded;
+            return a.conceded - b.conceded; //if equal amount of goals sort by conceded goals
         }
         if (b.wins !== a.wins) {
-            return b.wins - a.wins;
+            return b.wins - a.wins; //if equal amnt of conceded goals sort by victories
         }
-        return a.losses - b.losses;
+        return a.losses - b.losses; //else sort by who lost the least games
     });
     
     console.table(sortedClubs);
     updateTabel(sortedClubs,league);
     league.updateStats(sortedClubs);
 
-    crntweek +=1;
-    showMatches(leagueName);
+    matchesCalculated(league);
+}
+
+function matchesCalculated(lastLeague) {
+    if(loadedLeagues.indexOf(lastLeague)==loadedLeagues.length-1){//if its the last loaded league go back to start
+        crntweek +=1;
+
+        activeLeague = loadedLeagues[0];
+        showMatches(loadedLeagues[0].name);
+        updateTabel(loadedLeagues[0].getSortedClubs(),loadedLeagues[0])
+    }
+    else{ //go to next league
+        activeLeague = loadedLeagues[loadedLeagues.indexOf(lastLeague)+1];
+        showMatches(loadedLeagues[loadedLeagues.indexOf(lastLeague)+1].name);
+        updateTabel(loadedLeagues[loadedLeagues.indexOf(lastLeague)+1].getSortedClubs(),loadedLeagues[loadedLeagues.indexOf(lastLeague)+1]);
+    }
 }
 
 function showMatches(leagueName) {
@@ -242,8 +265,6 @@ function showMatches(leagueName) {
     if (!league) {
         throw new Error(`League ${leagueName} not found.`);
     }
-
-    const clubs = league.clubs;
     
     const container = document.getElementById("inputContainer");
     container.innerHTML = "";	
@@ -267,8 +288,8 @@ function showMatches(leagueName) {
     let matchesAmntMatchday = league.clubs.length / 2;
     let remainingMatches = matchesAmntMatchday;
     while(remainingMatches > 0){
-        t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][0].name;
-        t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][1].name;
+        t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek%league.clubs.length-1*matchesAmntMatchday][0].name;
+        t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek%league.clubs.length-1*matchesAmntMatchday][1].name;
         remainingMatches--;
 //-------------NEW MATCHMAKING--------------
 
@@ -332,6 +353,8 @@ function updateDropdownOptions(){
 }
 
 function updateTabel(sortedClubs,league){
+    //I know whats coming now is ass as fuck but i did that at 4am or so pls-
+    //well do that better eventually. first things first.
     const tableBody = document.getElementById("LeagueTable");
     tableBody.innerHTML = "";
     const theadrow = document.createElement("tr");
@@ -427,12 +450,16 @@ function updateTabel(sortedClubs,league){
 
 const dropdown = document.getElementById('LeagueDropdown');
 dropdown.addEventListener('change', function() {
+    //calls when a league is selected out of the dropdown menu
     showMatches(dropdown.value);
     leagueName = dropdown.value;
     const league = dLeagues.find(leagueObj => leagueObj.name === leagueName);
+    activeLeague = league;
     updateTabel(league.getSortedClubs(),league);
+    dropdown.style.display = "none";
 });
 
 window.onload = function exampleFunction(){ 
     updateDropdownOptions();
+    loadedLeagues = [dLeagues[0],dLeagues[5],dLeagues[4]];
     }
