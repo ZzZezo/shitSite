@@ -183,10 +183,10 @@ function calculateInput() { //called when the calculate button is pressed, turns
         if (innerContainer.tagName !== 'DIV') {
             continue; //skip Calc Button and other non-DIV elements
         }
-        const homeClubName = innerContainer.children[1].value; //if you wonder why the number dont seem to match. its because of the <br> elements.
-        const awayClubName = innerContainer.children[4].value; //if you wonder why the number dont seem to match. its because of the <br> elements.
-        const homeGoals = parseInt(innerContainer.children[2].value); //if you wonder why the number dont seem to match. its because of the <br> elements.
-        const awayGoals = parseInt(innerContainer.children[5].value); //if you wonder why the number dont seem to match. its because of the <br> elements.
+        const homeClubName = innerContainer.children[0].value; //if you wonder why the number dont seem to match. its because of the <br> elements.
+        const awayClubName = innerContainer.children[3].value; //if you wonder why the number dont seem to match. its because of the <br> elements.
+        const homeGoals = parseInt(innerContainer.children[1].value); //if you wonder why the number dont seem to match. its because of the <br> elements.
+        const awayGoals = parseInt(innerContainer.children[4].value); //if you wonder why the number dont seem to match. its because of the <br> elements.
         
         const homeClub = dClubs.find(club => club.name === homeClubName);
         const awayClub = dClubs.find(club => club.name === awayClubName);
@@ -309,20 +309,24 @@ function showMatches(leagueName) {
             inputT1.type = "text";
             inputT1.value = t1;
             inputT1.disabled = true;
+            inputT1.classList.add("teamInput");
         const inputG1 = document.createElement("input");
             inputG1.type = "text";
             inputG1.placeholder = "0";
+            inputG1.classList.add("goalInput");
         const inputT2 = document.createElement("input");
             inputT2.type = "text";
             inputT2.value = t2;
             inputT2.disabled = true;
+            inputT2.classList.add("teamInput");
         const inputG2 = document.createElement("input");
             inputG2.type = "text";
             inputG2.placeholder = "0";
+            inputG2.classList.add("goalInput");
 
         let innerContainer = document.createElement("div");
         //add to container
-        innerContainer.appendChild(document.createElement("br"));
+        innerContainer.classList.add("inputContainer");
         innerContainer.appendChild(inputT1);
         innerContainer.appendChild(inputG1);
         innerContainer.appendChild(document.createElement("br"));
@@ -335,7 +339,7 @@ function showMatches(leagueName) {
     // add following button: <button id="calcButton" onclick="calculateInput()" disabled>Calculate</button>
     const calcButton = document.createElement("button");
     calcButton.id = "calcButton";
-    calcButton.innerText = "Calculate";
+    calcButton.innerText = "Continue";
     calcButton.onclick = calculateInput;
     calcButton.disabled = false;
     container.appendChild(calcButton);
@@ -456,6 +460,14 @@ function updateTabel(sortedClubs,league){
         });
         tableBody.appendChild(row);
     });
+}
+
+function saveToStorage(){
+    localStorage.clear();
+}
+
+function loadFromStorage(){
+
 }
 
 const dropdown = document.getElementById('LeagueDropdown');
