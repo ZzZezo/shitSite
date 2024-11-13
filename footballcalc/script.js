@@ -310,19 +310,21 @@ function showMatches(leagueName) {
             inputT1.value = t1;
             inputT1.disabled = true;
             inputT1.classList.add("teamInput");
-        const inputG1 = document.createElement("input");
+            const inputG1 = document.createElement("input");
             inputG1.type = "text";
             inputG1.placeholder = "0";
             inputG1.classList.add("goalInput");
-        const inputT2 = document.createElement("input");
+            inputG1.onkeyup = function() {switchToNextInput()};
+            const inputT2 = document.createElement("input");
             inputT2.type = "text";
             inputT2.value = t2;
             inputT2.disabled = true;
             inputT2.classList.add("teamInput");
-        const inputG2 = document.createElement("input");
+            const inputG2 = document.createElement("input");
             inputG2.type = "text";
             inputG2.placeholder = "0";
             inputG2.classList.add("goalInput");
+            inputG2.onkeyup = function() {switchToNextInput()};
 
         let innerContainer = document.createElement("div");
         //add to container
@@ -461,6 +463,24 @@ function updateTabel(sortedClubs,league){
         tableBody.appendChild(row);
     });
 }
+
+function switchToNextInput() {
+    //create array of all items from class "goalInput"
+    const goalInputs = document.querySelectorAll('.goalInput');
+    //get the index of the current input element
+    const currentIndex = Array.from(goalInputs).indexOf(document.activeElement);
+    //get the next input element
+    const nextInput = goalInputs[currentIndex + 1];
+    //if there is a next input element, focus on it
+    if (nextInput) {
+        nextInput.focus();
+    }
+    else {
+        //if there is no next input element, focus on the calcButton
+        document.getElementById("calcButton").focus();
+    }
+}
+
 
 function saveToStorage(){
     localStorage.clear();
