@@ -26,7 +26,7 @@ class Club {
 }
 
 class League {
-    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],hasChampion=true,rounds = 2) {
+    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],hasChampion=true,terms = 2) {
         this.name = name; //whats it called (e.g.: "Premier League")
         this.clubs = clubs;
         this.sortedClubs = this.init_sortedClubs(clubs);
@@ -43,7 +43,7 @@ class League {
         //kann man meister werden
         this.hasChampion = hasChampion;
         //Hin und rückrunde?
-        this.rounds = rounds;
+        this.terms = terms;
         this.currentRound = 1;
 
         this.matchplan = this.generateMatchplan();
@@ -83,7 +83,7 @@ class League {
     generateMatchplan(){
         let clubs = [...this.clubs]; //creates a copy of the clubs array
         clubs = clubs.sort((a,b)=>0.5-Math.random());//shuffles the array, so the matchplan will be unique for everyone.
-        const matchplan = [];
+        let matchplan = [];
         const totalRounds = clubs.length - 1;
         const matchesPerRound = clubs.length / 2;
 
@@ -103,8 +103,18 @@ class League {
             clubs.splice(1, 0, clubs.pop());
     
             // Add the current round to the matchplan
-            matchplan.push(...roundMatches); //pushes a copy of all matches of the matchday to the matchplan array, which contains every match of the season
+            matchplan.push(...roundMatches); //pushes the array CONTENT into the array not the array itself (like array.concat())
         }
+
+        //add second (and potentially 3rd,4th...) term with reversed home and away teams
+        let matchplanCopy = [...matchplan];//copy of original match plan to keep reference
+        for(let i = 1; i < this.terms; i++) {
+            let termMatches = (i % 2 === 0)
+                ? matchplanCopy  //for even terms use original order
+                : matchplanCopy.map(match => [...match].reverse()); //for odd terms, use reversed order
+            matchplan = [...matchplan, ...termMatches];//append term to matchplan
+        }
+
         return matchplan;
     }
 }
@@ -288,8 +298,8 @@ function showMatches(leagueName) {
     let matchesAmntMatchday = league.clubs.length / 2;
     let remainingMatches = matchesAmntMatchday;
     while(remainingMatches > 0){
-        t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek%league.clubs.length-1*matchesAmntMatchday][0].name;
-        t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek%league.clubs.length-1*matchesAmntMatchday][1].name;
+        t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][0].name;
+        t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][1].name;
         remainingMatches--;
 //-------------NEW MATCHMAKING--------------
 
@@ -462,4 +472,12 @@ dropdown.addEventListener('change', function() {
 window.onload = function exampleFunction(){ 
     updateDropdownOptions();
     loadedLeagues = [dLeagues[0],dLeagues[5],dLeagues[4]];
+
+    //below is just tmp, auto selects bundesliga for start
+    showMatches(dLeagues[0].name);
+    leagueName = dLeagues[0].name;
+    const league = dLeagues[0];
+    activeLeague = league;
+    updateTabel(league.getSortedClubs(),league);
+    dropdown.style.display = "none";
     }
