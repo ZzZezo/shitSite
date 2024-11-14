@@ -47,7 +47,6 @@ class League {
         this.currentRound = 1;
 
         this.matchplan = this.generateMatchplan();
-        console.log(this.matchplan);
         
         //init league stats for all clubs
         clubs.forEach(club => club.initializeLeagueStats(this.name));
@@ -267,6 +266,7 @@ function matchesCalculated(lastLeague) {
         showMatches(loadedLeagues[loadedLeagues.indexOf(lastLeague)+1].name);
         updateTabel(loadedLeagues[loadedLeagues.indexOf(lastLeague)+1].getSortedClubs(),loadedLeagues[loadedLeagues.indexOf(lastLeague)+1]);
     }
+    switchToNextInput(true);
 }
 
 function showMatches(leagueName) {
@@ -435,6 +435,7 @@ function updateTabel(sortedClubs,league){
         row.appendChild(drawsCell);
         row.appendChild(lossesCell);
         row.childNodes.forEach(element => {
+            element.onclick=function a(){alert(activeLeague.sortedClubs[position-1].name)};
             if(position==1 && league.hasChampion){
                 element.style.color=championColor;
             }
@@ -464,13 +465,15 @@ function updateTabel(sortedClubs,league){
     });
 }
 
-function switchToNextInput() {
+function switchToNextInput(first) {
+    if(event.key=='Enter'||event.key=="F5")return;
     //create array of all items from class "goalInput"
     const goalInputs = document.querySelectorAll('.goalInput');
     //get the index of the current input element
     const currentIndex = Array.from(goalInputs).indexOf(document.activeElement);
     //get the next input element
-    const nextInput = goalInputs[currentIndex + 1];
+    let nextInput = goalInputs[currentIndex + 1];
+    if(first) nextInput = goalInputs[0];
     //if there is a next input element, focus on it
     if (nextInput) {
         nextInput.focus();
@@ -507,9 +510,10 @@ window.onload = function exampleFunction(){
 
     //below is just tmp, auto selects bundesliga for start
     showMatches(dLeagues[0].name);
-    leagueName = dLeagues[0].name;
+    leagueName = dLeagues[0].name;  
     const league = dLeagues[0];
     activeLeague = league;
     updateTabel(league.getSortedClubs(),league);
     dropdown.style.display = "none";
+    switchToNextInput(true);
     }
