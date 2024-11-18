@@ -9,12 +9,16 @@ let championColor = "#FFD700";
 
 let loadedLeagues; //initialized at bottom (later dynamically), stores the leagues the game will cycle through
 let activeLeague; //the league thats currently selected, used to dropdown.value
+let finshedLeagues = [];
 let crntweek = 0; //tracks what week we are in (spieltag)
+
+let isSeasonOver = false;
 
 class Club {
     constructor(name) {
         this.name = name;
         this.leagueStats = {};  //on club creation, initialize the league stats
+        this.matches=[];
     }
 
     //init league stats on league creation
@@ -22,6 +26,10 @@ class Club {
         if (!this.leagueStats[leagueName]) {
             this.leagueStats[leagueName] = 0;  // Set initial points to 0 for the league
         }
+    }
+
+    addMatch(match) {
+        this.matches.push(match);
     }
 }
 
@@ -47,6 +55,8 @@ class League {
         this.currentRound = 1;
 
         this.matchplan = this.generateMatchplan();
+        this.matchdaysThisSeason = this.matchplan.length;
+        this.matchdaysPlayed = 0;
         
         //init league stats for all clubs
         clubs.forEach(club => club.initializeLeagueStats(this.name));
@@ -116,6 +126,30 @@ class League {
 
         return matchplan;
     }
+
+    replaceClub(oldClub,newClub){
+        let index = this.clubs.indexOf(oldClub);
+        this.clubs[index] = newClub;
+        newClub.initializeLeagueStats(this.name);
+        this.matchplan = this.generateMatchplan();//this line probably should be done somewhere else later
+        this.sortedClubs = this.init_sortedClubs(this.clubs);//so should this
+        console.log(this.name+": Replaced "+oldClub.name + " with "+newClub.name);
+    }
+
+    removeClub(club){
+        let index = this.clubs.indexOf(club);
+        this.clubs.splice(index,1);
+        this.matchplan = this.generateMatchplan();//this line probably should be done somewhere else later
+        this.sortedClubs = this.init_sortedClubs(this.clubs);//so should this
+        console.log(this.name+": Removed "+club.name);
+    }
+
+    addClub(club){
+        this.clubs.push(club);
+        this.matchplan = this.generateMatchplan();//this line probably should be done somewhere else later
+        this.sortedClubs = this.init_sortedClubs(this.clubs);//so should this
+        console.log(this.name+": Added "+club.name);
+    }
 }
 
 class Match {
@@ -124,6 +158,7 @@ class Match {
         this.awayClub = awayClub;
         this.homeGoals = homeGoals;
         this.awayGoals = awayGoals;
+        this.played = false;
         
         // Find and assign the league object from the predefined list
         this.league = dLeagues.find(leagueObj => leagueObj.name === leagueName);
@@ -131,6 +166,8 @@ class Match {
         // Add match to the league if found
         if (this.league) {
             this.league.addMatch(this);
+            this.homeClub.addMatch(this);
+            this.awayClub.addMatch(this);
         } else {
             throw new Error(`League ${leagueName} not found.`);
         }
@@ -166,6 +203,8 @@ class Match {
         this.homeClub.leagueStats[this.league.name][2] += this.awayGoals;
         this.awayClub.leagueStats[this.league.name][1] += this.awayGoals;
         this.awayClub.leagueStats[this.league.name][2] += this.homeGoals;
+
+        this.played = true;
     }
 }
 
@@ -253,20 +292,32 @@ function calculateInput() { //called when the calculate button is pressed, turns
     matchesCalculated(league);
 }
 
-function matchesCalculated(lastLeague) {
-    if(loadedLeagues.indexOf(lastLeague)==loadedLeagues.length-1){//if its the last loaded league go back to start
-        crntweek +=1;
-
-        activeLeague = loadedLeagues[0];
-        showMatches(loadedLeagues[0].name);
-        updateTabel(loadedLeagues[0].getSortedClubs(),loadedLeagues[0])
+function matchesCalculated(lastLeague,leagueDone=false) {
+    if (leagueDone) {
+        //remove from loaded leagues if done
+        finshedLeagues.push(lastLeague);
+        loadedLeagues.splice(loadedLeagues.indexOf(lastLeague), 1);
     }
-    else{ //go to next league
-        activeLeague = loadedLeagues[loadedLeagues.indexOf(lastLeague)+1];
-        showMatches(loadedLeagues[loadedLeagues.indexOf(lastLeague)+1].name);
-        updateTabel(loadedLeagues[loadedLeagues.indexOf(lastLeague)+1].getSortedClubs(),loadedLeagues[loadedLeagues.indexOf(lastLeague)+1]);
+    //check if all leagues are done
+    if (areAllLeaguesDone()) {
+        seasonOver();
+        return;
     }
-    switchToNextInput(true);
+    else{
+        if(loadedLeagues.indexOf(lastLeague)==loadedLeagues.length-1){//if its the last loaded league go back to start
+            crntweek +=1;
+    
+            activeLeague = loadedLeagues[0];
+            showMatches(activeLeague.name);
+            updateTabel(activeLeague.getSortedClubs(),activeLeague)
+        }
+        else{ //go to next league
+            activeLeague = loadedLeagues[loadedLeagues.indexOf(lastLeague)+1];
+            showMatches(activeLeague.name);
+            updateTabel(activeLeague.getSortedClubs(),activeLeague);
+        }
+        switchToNextInput(true);
+    }
 }
 
 function showMatches(leagueName) {
@@ -298,9 +349,18 @@ function showMatches(leagueName) {
     let matchesAmntMatchday = league.clubs.length / 2;
     let remainingMatches = matchesAmntMatchday;
     while(remainingMatches > 0){
-        t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][0].name;
-        t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][1].name;
-        remainingMatches--;
+        if(league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday]){
+            t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][0].name;
+            t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][1].name;
+            remainingMatches--;
+        }
+        else{
+            matchesCalculated(league,true);
+            remainingMatches = 0;
+            return;
+        }
+        
+        
 //-------------NEW MATCHMAKING--------------
 
 
@@ -337,6 +397,7 @@ function showMatches(leagueName) {
         //add inner container to container
         container.appendChild(innerContainer);
     }
+    league.matchdaysPlayed+=1;
     container.appendChild(document.createElement("br"));
     // add following button: <button id="calcButton" onclick="calculateInput()" disabled>Calculate</button>
     const calcButton = document.createElement("button");
@@ -366,6 +427,37 @@ function updateDropdownOptions(){
         option.text = leaguename;
         dropdown.appendChild(option);
     })
+}
+
+function updateDropdownOptionsByList(list){
+    const dropdown = document.getElementById('LeagueDropdown2');
+    dropdown.innerHTML = "";
+
+    // Add a placeholder option
+    const placeholderOption = document.createElement('option');
+    placeholderOption.text = "Select League"; // Placeholder text
+    placeholderOption.value = ""; // Empty value
+    placeholderOption.disabled = true; // Disable this option
+    placeholderOption.selected = true; // Make it selected by default
+    dropdown.appendChild(placeholderOption);
+
+    list.forEach(leagueObj => {
+        leaguename = leagueObj.name;
+        const option = document.createElement('option');
+        option.value = leaguename;
+        option.text = leaguename;
+        dropdown.appendChild(option);
+    })
+
+    dropdown.addEventListener('change', function() {
+        //calls when a league is selected out of the dropdown menu
+        leagueName = dropdown.value;
+        const league = dLeagues.find(leagueObj => leagueObj.name === leagueName);
+        activeLeague=league;
+        updateTabel(league.getSortedClubs(),league);
+    });
+    
+    dropdown.style.display = "block";
 }
 
 function updateTabel(sortedClubs,league){
@@ -480,10 +572,20 @@ function switchToNextInput(first) {
     }
     else {
         //if there is no next input element, focus on the calcButton
-        document.getElementById("calcButton").focus();
+        if(document.getElementById("calcButton"))document.getElementById("calcButton").focus();
     }
 }
 
+function areAllLeaguesDone() {
+    return loadedLeagues.every(
+        league => league.matchplan.every(match => match.played)
+    );
+}
+
+function seasonOver(){
+    alert("The Season is Over. Because I can't code you now gotta reset everything! WW");
+    updateDropdownOptionsByList(finshedLeagues);
+}
 
 function saveToStorage(){
     localStorage.clear();
@@ -506,7 +608,12 @@ dropdown.addEventListener('change', function() {
 
 window.onload = function exampleFunction(){ 
     updateDropdownOptions();
+
+    //below is tmp, auto loads Bundesliga, 2. Bundesliga and HNL
     loadedLeagues = [dLeagues[0],dLeagues[5],dLeagues[4]];
+    //below is very tmp. honestly its more testing that tmp. switches out karlsruhe with bochum lol
+    dLeagues[0].replaceClub(dClubs[17],dClubs[89]);
+    dLeagues[5].replaceClub(dClubs[89],dClubs[17]);
 
     //below is just tmp, auto selects bundesliga for start
     showMatches(dLeagues[0].name);

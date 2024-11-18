@@ -96,7 +96,7 @@ dClubs = [
     new Club("Koprivinica"),
     new Club("L. Zagreb"),
     //above is 1. HNL (10 Teams, 78-87)
-    //below is 1. HNL (18 Teams, 88-105)
+    //below is 2. Buli (18 Teams, 88-105)
     new Club("Düsseldorf"),
     new Club("Karlsruhe"),
     new Club("Hannover"),
@@ -114,7 +114,90 @@ dClubs = [
     new Club("Braunschweig"),
     new Club("Münster"),
     new Club("Ulm"),
-    new Club("Regensburg")
+    new Club("Regensburg"),
+    //above is 2. Buli (18 Teams, 88-105)
+    //below is Ligue 1 (18 Teams, 106-123)
+    new Club("Paris"),
+    new Club("Monaco"),
+    new Club("Marseille"),
+    new Club("Lille"),
+    new Club("Lyon"),
+    new Club("Nizza"),
+    new Club("Reims"),
+    new Club("Lens"),
+    new Club("Auxerre"),
+    new Club("Toulouse"),
+    new Club("Straßburg"),
+    new Club("Brest"),
+    new Club("Rennes"),
+    new Club("Nantes"),
+    new Club("Angers"),
+    new Club("Saint-Etienne"),
+    new Club("Le Haivre"),
+    new Club("Montpellier"),
+    //above is Ligue 1 (18 Teams, 106-123)
+    //below is 3. Bundesliga (20 Teams, 124-143)
+    new Club("Sandhausen"),
+    new Club("Bielefeld"),
+    new Club("Dresden"),
+    new Club("Saarbrücken"),
+    new Club("Cottbus"),
+    new Club("Aue"),
+    new Club("Wiesbaden"),
+    new Club("Ingolstadt"),
+    new Club("V. Köln"),
+    new Club("1860"),
+    new Club("Dortmund II"),
+    new Club("Aachen"),
+    new Club("Mannheim"),
+    new Club("Verl"),
+    new Club("Rostock"),
+    new Club("Essen"),
+    new Club("Stuttgart II"),
+    new Club("Hannover II"),
+    new Club("Unteraching"),
+    new Club("Osnabrück"),
+    //above is 3. Bundesliga (20 Teams, 124-143)
+    //below is Eredivisie (18 Teams, 144-161)
+    new Club("PSV"),
+    new Club("Utrecht"),
+    new Club("Ajax"),
+    new Club("Feyenoord"),
+    new Club("Twente"),
+    new Club("Alkmaar"),
+    new Club("Sittard"),
+    new Club("NEC"),
+    new Club("Willem II"),
+    new Club("Eagles"),
+    new Club("Breda"),
+    new Club("Heerenveen"),
+    new Club("Groningen"),
+    new Club("Zwolle"),
+    new Club("Heracles"),
+    new Club("Sparta"),
+    new Club("Akmere"),
+    new Club("Waalwijk"),
+    //above is Eredivisie (18 Teams, 144-161)
+    //below is Süper Lig(18 Teams, 162-179)
+    new Club("Galatasaray"),
+    new Club("Fenerbahce"),
+    new Club("Samsuns"),
+    new Club("Eyuupsultan"),
+    new Club("Besiktas"),
+    new Club("Göztepe"),
+    new Club("Sivas"),
+    new Club("Basaksehir"),
+    new Club("Kasimpasa"),
+    new Club("Konya"),
+    new Club("Antalya"),
+    new Club("Rize"),
+    new Club("Trabzon"),
+    new Club("Gazian"),
+    new Club("Kayseri"),
+    new Club("Bodrum"),
+    new Club("Alanya"),
+    new Club("Hatay")
+    //above is Süper Lig(18 Teams, 162-179)
 ]
 
 dLeagues=[
@@ -124,5 +207,9 @@ dLeagues=[
     new League("Premier League", Array.from({ length: 20 }, (_, i) => dClubs[i + 38]),[],[],[18,19,20],[],[1,2,3,4],[5]),
     new League("Serie A", Array.from({ length: 20 }, (_, i) => dClubs[i + 58]),[],[],[18,19,20],[],[1,2,3,4],[5],[6]),
     new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),[],[],[10],[],[1],[2],[3,4],true,4),
-    new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),[1,2],[3],[17,18],[16],[],[],[])
+    new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),[1,2],[3],[17,18],[16],[],[],[]),
+    new League("Ligue 1", Array.from({ length: 18 }, (_, i) => dClubs[i + 106]),[],[],[17,18],[16],[1,2,3],[4,5],[6]),
+    new League("3.Bundesliga", Array.from({ length: 20 }, (_, i) => dClubs[i + 124]),[1,2],[3],[17,18,19,20],[],[],[],[]),
+    new League("Eredivisie", Array.from({ length: 18 }, (_, i) => dClubs[i + 144]),[],[],[17,18],[16],[1,2],[3,4],[5,6,7,8]),
+    new League("Süper Lig", Array.from({ length: 18 }, (_, i) => dClubs[i + 162]),[],[],[16,17,18],[],[1,2],[3],[4])
 ]
