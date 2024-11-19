@@ -100,8 +100,15 @@ class League {
             const roundMatches = [];
     
             for (let match = 0; match < matchesPerRound; match++) { //runs through every match on each matchday
-                const home = clubs[match];
-                const away = clubs[clubs.length - 1 - match];
+                let home,away;
+                if(Math.random() < 0.5){
+                    home = clubs[match];
+                    away = clubs[clubs.length - 1 - match];
+                }
+                else{
+                    home = clubs[clubs.length - 1 - match];
+                    away = clubs[match];
+                }
     
                 if (home !== null && away !== null) {
                     roundMatches.push([home, away]);
@@ -527,7 +534,7 @@ function updateTabel(sortedClubs,league){
         row.appendChild(drawsCell);
         row.appendChild(lossesCell);
         row.childNodes.forEach(element => {
-            element.onclick=function a(){alert(activeLeague.sortedClubs[position-1].name)};
+            element.onclick=function a(){updateClubInfo(activeLeague.sortedClubs[position-1])};
             if(position==1 && league.hasChampion){
                 element.style.color=championColor;
             }
@@ -576,6 +583,73 @@ function switchToNextInput(first) {
     }
 }
 
+function resetClubInfo(){
+    document.getElementById("ClubInfoContainer").innerHTML = "";
+}
+
+function updateClubInfo(clubSorted){
+    club = activeLeague.clubs.find(club => club.name == clubSorted.name);
+
+    resetClubInfo();
+    infoContainer = document.getElementById("ClubInfoContainer");
+
+    const leaguesHeader = document.createElement("h6");
+    leaguesHeader.textContent = activeLeague.name;
+    infoContainer.appendChild(leaguesHeader);
+
+    const clubHeader = document.createElement("h1");
+    clubHeader.textContent = club.name;
+    infoContainer.appendChild(clubHeader);
+
+    // Create the match container
+    const matchContainer = document.createElement("div");
+    matchContainer.classList.add("matchContainer");
+
+    // Create the table
+    const matchTable = document.createElement("table");
+    matchTable.classList.add("matchHeader"); // Apply the CSS class for styling
+
+    // Add the header row to the table
+    const headerRow = document.createElement("tr");
+    ["Home Team", "Home Goals", "Away Goals", "Away Team"].forEach(header => {
+        const th = document.createElement("th");
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    matchTable.appendChild(headerRow);
+
+    // Populate the table with match data
+    club.matches.forEach(match => {
+        const matchRow = document.createElement("tr");
+        const homeCell = document.createElement("td");
+        homeCell.textContent = match.homeClub.name;
+
+        const homeGoalsCell = document.createElement("td");
+        homeGoalsCell.textContent = match.homeGoals;
+
+        const awayGoalsCell = document.createElement("td");
+        awayGoalsCell.textContent = match.awayGoals;
+
+        const awayCell = document.createElement("td");
+        awayCell.textContent = match.awayClub.name;
+
+        matchRow.appendChild(homeCell);
+        matchRow.appendChild(homeGoalsCell);
+        matchRow.appendChild(awayGoalsCell);
+        matchRow.appendChild(awayCell);
+
+        matchTable.appendChild(matchRow);
+    });
+
+    // Append the table to the match container
+    matchContainer.appendChild(matchTable);
+
+    // Append the match container to the info container
+    infoContainer.appendChild(matchContainer);
+
+}
+
+
 function areAllLeaguesDone() {
     return loadedLeagues.every(
         league => league.matchplan.every(match => match.played)
@@ -610,15 +684,15 @@ window.onload = function exampleFunction(){
     updateDropdownOptions();
 
     //below is tmp, auto loads Bundesliga, 2. Bundesliga and HNL
-    loadedLeagues = [dLeagues[0],dLeagues[5],dLeagues[4]];
+    loadedLeagues = [dLeagues[4]];
     //below is very tmp. honestly its more testing that tmp. switches out karlsruhe with bochum lol
     dLeagues[0].replaceClub(dClubs[17],dClubs[89]);
     dLeagues[5].replaceClub(dClubs[89],dClubs[17]);
 
     //below is just tmp, auto selects bundesliga for start
-    showMatches(dLeagues[0].name);
-    leagueName = dLeagues[0].name;  
-    const league = dLeagues[0];
+    showMatches(dLeagues[4].name);
+    leagueName = dLeagues[4].name;  
+    const league = dLeagues[4];
     activeLeague = league;
     updateTabel(league.getSortedClubs(),league);
     dropdown.style.display = "none";
