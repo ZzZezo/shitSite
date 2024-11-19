@@ -669,6 +669,25 @@ function loadFromStorage(){
 
 }
 
+function startGame(){
+    if(loadedLeagues.length<1)return;
+    document.getElementById('checkboxContainer').style.display = "none";
+    updateDropdownOptions();
+
+    //below is very tmp. honestly its more testing that tmp. switches out karlsruhe with bochum lol
+    dLeagues[0].replaceClub(dClubs[17],dClubs[89]);
+    dLeagues[5].replaceClub(dClubs[89],dClubs[17]);
+
+    //below is just tmp, auto selects bundesliga for start
+    showMatches(loadedLeagues[0].name);
+    leagueName = loadedLeagues[0].name;  
+    const league = loadedLeagues[0];
+    activeLeague = league;
+    updateTabel(league.getSortedClubs(),league);
+    dropdown.style.display = "none";
+    switchToNextInput(true);
+}
+
 const dropdown = document.getElementById('LeagueDropdown');
 dropdown.addEventListener('change', function() {
     //calls when a league is selected out of the dropdown menu
@@ -681,20 +700,34 @@ dropdown.addEventListener('change', function() {
 });
 
 window.onload = function exampleFunction(){ 
-    updateDropdownOptions();
+    loadedLeagues = [];
+    //add a checkbox for each league, so the user can choose which leagues to play in, and which leagues to keep track of
+    const checkboxContainer = document.getElementById('checkboxContainer');
+    for (let i = 0; i < dLeagues.length; i++) {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = 'checkbox' + i;
+        checkbox.name = 'checkbox';
+        checkbox.value = dLeagues[i].name;
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                loadedLeagues.push(dLeagues[i]);
+            } else {
+                loadedLeagues = loadedLeagues.filter(league => league.name !== dLeagues[i].name);
+            }
+        });
+        const label = document.createElement('label');
+        label.htmlFor = 'checkbox' + i;
+        label.textContent = dLeagues[i].name;
+        checkboxContainer.appendChild(checkbox);
+        checkboxContainer.appendChild(label);
+        checkboxContainer.appendChild(document.createElement('br'));
 
-    //below is tmp, auto loads Bundesliga, 2. Bundesliga and HNL
-    loadedLeagues = [dLeagues[4]];
-    //below is very tmp. honestly its more testing that tmp. switches out karlsruhe with bochum lol
-    dLeagues[0].replaceClub(dClubs[17],dClubs[89]);
-    dLeagues[5].replaceClub(dClubs[89],dClubs[17]);
-
-    //below is just tmp, auto selects bundesliga for start
-    showMatches(dLeagues[4].name);
-    leagueName = dLeagues[4].name;  
-    const league = dLeagues[4];
-    activeLeague = league;
-    updateTabel(league.getSortedClubs(),league);
-    dropdown.style.display = "none";
-    switchToNextInput(true);
     }
+    //button to call startGame funciton
+    checkboxContainer.appendChild(document.createElement('br'));
+    const startButton = document.createElement('button');
+    startButton.textContent = 'Start Game';
+    startButton.addEventListener('click', startGame);
+    checkboxContainer.appendChild(startButton);
+}
