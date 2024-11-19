@@ -300,6 +300,7 @@ function calculateInput() { //called when the calculate button is pressed, turns
 }
 
 function matchesCalculated(lastLeague,leagueDone=false) {
+    resetClubInfo();
     if (leagueDone) {
         //remove from loaded leagues if done
         finshedLeagues.push(lastLeague);
