@@ -163,6 +163,7 @@ class Cup{
     constructor(name,clubs = [], HasThirdPlace = false){
         this.name = name;
         this.clubs = clubs;
+        if(!isPowerOfTwo(this.clubs.length) || this.clubs.length < 2) console.warn(`Cup ${this.name} has ${this.clubs.length} participants.`);
         this.remainingClubs = this.clubs;
         this.HasThirdPlace = HasThirdPlace;
         this.matches = [];
@@ -179,6 +180,7 @@ class Cup{
     }
 
     drawNewRound(){
+        this.matchplan = [];
         let clubsToDraw = [...this.remainingClubs]; //copy remaining clubs
         clubsToDraw = clubsToDraw.sort((a,b)=>0.5-Math.random());//randomize it
         if(isPowerOfTwo(clubsToDraw.length)){
@@ -703,6 +705,53 @@ function isPowerOfTwo(n) {
 function seasonOver(){
     alert("The Season is Over. Because I can't code you now gotta reset everything! WW");
     updateDropdownOptionsByList(finshedLeagues);
+}
+
+function switchToCup(cup){
+    document.getElementById("LeagueTable").style.display = "none";
+    showCupMatches(cup);
+}
+
+function showCupMatches(cup) {
+    inputContainer = document.getElementById("inputContainer");
+    inputContainer.innerHTML = "";
+    cup.matchplan.forEach(match => {
+        const home = match[0];
+        const away = match[1];
+
+        //show in html
+        const inputT1 = document.createElement("input");
+        inputT1.type = "text";
+        inputT1.value = home.name;
+        inputT1.disabled = true;
+        inputT1.classList.add("teamInput");
+        const inputG1 = document.createElement("input");
+        inputG1.type = "text";
+        inputG1.placeholder = "0";
+        inputG1.classList.add("goalInput");
+        inputG1.onkeyup = function() {switchToNextInput()};
+        const inputT2 = document.createElement("input");
+        inputT2.type = "text";
+        inputT2.value = away.name;
+        inputT2.disabled = true;
+        inputT2.classList.add("teamInput");
+        const inputG2 = document.createElement("input");
+        inputG2.type = "text";
+        inputG2.placeholder = "0";
+        inputG2.classList.add("goalInput");
+        inputG2.onkeyup = function() {switchToNextInput()};
+
+        let innerContainer = document.createElement("div");
+        //add to container
+        innerContainer.classList.add("inputContainer");
+        innerContainer.appendChild(inputT1);
+        innerContainer.appendChild(inputG1);
+        innerContainer.appendChild(document.createElement("br"));
+        innerContainer.appendChild(inputT2);
+        innerContainer.appendChild(inputG2);
+        //add inner container to container
+        inputContainer.appendChild(innerContainer);
+    })
 }
 
 function saveToStorage(){

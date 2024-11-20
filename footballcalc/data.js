@@ -215,5 +215,5 @@ dLeagues=[
 ]
 
 dTournaments=[
-    
+    new Cup("DFB Pokal", Array.from({ length: 16 }, (_, i) => dClubs[i]),false)
 ]
