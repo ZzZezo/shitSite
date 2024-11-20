@@ -213,3 +213,7 @@ dLeagues=[
     new League("Eredivisie", Array.from({ length: 18 }, (_, i) => dClubs[i + 144]),[],[],[17,18],[16],[1,2],[3,4],[5,6,7,8]),
     new League("Süper Lig", Array.from({ length: 18 }, (_, i) => dClubs[i + 162]),[],[],[16,17,18],[],[1,2],[3],[4])
 ]
+
+dTournaments=[
+    
+]

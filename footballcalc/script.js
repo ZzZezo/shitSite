@@ -159,6 +159,41 @@ class League {
     }
 }
 
+class Cup{
+    constructor(name,clubs = [], HasThirdPlace = false){
+        this.name = name;
+        this.clubs = clubs;
+        this.remainingClubs = this.clubs;
+        this.HasThirdPlace = HasThirdPlace;
+        this.matches = [];
+        this.totalRounds = this.calculateRounds();
+        this.matchplan = [];
+    }
+
+    calculateRounds(){
+        // Calculate the number of rounds based on the number of clubs
+        if(isPowerOfTwo(this.clubs.length) && this.clubs.length >= 2){
+            return logBase2(this.clubs.length);
+        }
+        else throw new Error(`Cup ${this.name} has an invalid number of participants. (${this.clubs.length})`);
+    }
+
+    drawNewRound(){
+        let clubsToDraw = [...this.remainingClubs]; //copy remaining clubs
+        clubsToDraw = clubsToDraw.sort((a,b)=>0.5-Math.random());//randomize it
+        if(isPowerOfTwo(clubsToDraw.length)){
+            let gamesThisRound = clubsToDraw.length/2;
+
+            for (let i = 0; i < gamesThisRound; i++) {
+                const homeClub = clubsToDraw.pop();
+                const awayClub = clubsToDraw.pop();
+                this.matchplan.push([homeClub,awayClub]);
+            }
+        }
+        else throw new Error(`Cup ${this.name} has an invalid number of remaining participants.`);
+    }
+}
+
 class Match {
     constructor(homeClub, awayClub, homeGoals, awayGoals, leagueName) {
         this.homeClub = homeClub;
@@ -657,6 +692,14 @@ function areAllLeaguesDone() {
     );
 }
 
+function logBase2(x){
+    return Math.log2(x);
+}
+
+function isPowerOfTwo(n) {
+    return n > 0 && (n & (n - 1)) === 0;
+}
+
 function seasonOver(){
     alert("The Season is Over. Because I can't code you now gotta reset everything! WW");
     updateDropdownOptionsByList(finshedLeagues);
@@ -731,4 +774,12 @@ window.onload = function exampleFunction(){
     startButton.textContent = 'Start Game';
     startButton.addEventListener('click', startGame);
     checkboxContainer.appendChild(startButton);
+
+
+    //Below is example for club (so i understand later how cup class is intended to work lmao)
+    // dLeagues[0].clubs.splice(11,2);
+    // const test = new Cup("TestCup",dLeagues[0].clubs);
+    // test.drawNewRound();
+    // console.log(test.matchplan);
 }
+
