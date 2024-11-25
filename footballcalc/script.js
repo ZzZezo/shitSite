@@ -195,7 +195,7 @@ class Cup{
         else throw new Error(`Cup ${this.name} has an invalid number of remaining participants.`);
     }
 
-    roundFinished(){
+    async roundFinished(){
         const teamInputs = document.querySelectorAll('.teamInput');
         const goalInputs = document.querySelectorAll('.goalInput');
 
@@ -231,9 +231,22 @@ class Cup{
                 //kick out home team
                 clubsToKickOut.push(homeClub);
             }
-            else if(homeGoals==awayGoals){
-                createPopup(this.name,"Who wins in Penalty Shootout?",2,[homeClub.name,awayClub.name],[function(){return kickClubFromCup(awayClub,tmpcup);},function(){return kickClubFromCup(homeClub,tmpcup);}]);
-                //doesnt work cuz the code doesnt wait for the users input. it just keeps going so yeah thats not good lol
+            else if (homeGoals === awayGoals) {
+                // Handle penalty shootout asynchronously
+                const winner = await new Promise((resolve) => {
+                    createPopup(
+                        this.name,
+                        "Who wins in Penalty Shootout?",
+                        2,
+                        [homeClub.name, awayClub.name],
+                        [
+                            () => resolve(homeClub),
+                            () => resolve(awayClub),
+                        ]
+                    );
+                });
+                clubsToKickOut.push(winner === homeClub ? awayClub : homeClub);
+                closePopup();
             }
         }
 
@@ -815,12 +828,6 @@ function showCupMatches(cup) {
     submitButton.innerText = "Next Round";
     submitButton.onclick = function(){cup.roundFinished()};
     inputContainer.appendChild(submitButton);
-}
-
-function kickClubFromCup(clubObj,cup){
-    console.log("Kicking "+clubObj.name+" from "+cup.name);
-    cup.remainingClubs = cup.remainingClubs.filter(club => club !== clubObj);
-    closePopup();
 }
 
 function saveToStorage(){
