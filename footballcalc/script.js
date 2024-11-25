@@ -194,6 +194,63 @@ class Cup{
         }
         else throw new Error(`Cup ${this.name} has an invalid number of remaining participants.`);
     }
+
+    roundFinished(){
+        const teamInputs = document.querySelectorAll('.teamInput');
+        const goalInputs = document.querySelectorAll('.goalInput');
+
+        let clubsToKickOut = [];
+
+        for (let i = 0; i < teamInputs.length; i += 2) {
+            const tmpcup = this;
+            //get club NAMES
+            const name_homeClub = teamInputs[i].value;
+            const name_awayClub = teamInputs[i + 1].value;
+            //get club obj from club names
+            const homeClub = this.clubs.find(club => club.name === name_homeClub);
+            const awayClub = this.clubs.find(club => club.name === name_awayClub);
+            //get goals
+            const homeGoals = parseInt(goalInputs[i].value);
+            const awayGoals = parseInt(goalInputs[i + 1].value);
+
+            if(homeClub===undefined || awayClub===undefined){
+                throw new Error(`One or both clubs (${name_homeClub}, ${name_awayClub}) not found in dClubs.`);
+            }
+            if(homeGoals<0 || awayGoals<0){
+                throw new Error("Goals cannot be negative.");
+            }
+    
+            if(isNaN(homeGoals) || isNaN(awayGoals)){
+                throw new Error("Goals cannot be empty.");//also throws when goals entered ar not an int
+            }
+            if(homeGoals>awayGoals){
+                //kick out away Team
+                clubsToKickOut.push(awayClub);
+            }
+            else if(homeGoals<awayGoals){
+                //kick out home team
+                clubsToKickOut.push(homeClub);
+            }
+            else if(homeGoals==awayGoals){
+                createPopup(this.name,"Who wins in Penalty Shootout?",2,[homeClub.name,awayClub.name],[function(){return kickClubFromCup(awayClub,tmpcup);},function(){return kickClubFromCup(homeClub,tmpcup);}]);
+                //doesnt work cuz the code doesnt wait for the users input. it just keeps going so yeah thats not good lol
+            }
+        }
+
+        clubsToKickOut.forEach(clubb => {
+            this.remainingClubs = this.remainingClubs.filter(club => club !== clubb);
+        });
+
+        if(isPowerOfTwo(this.remainingClubs.length) && this.remainingClubs.length>=2){
+            this.drawNewRound();
+            document.getElementById("LeagueTable").style.display = "none";
+            showCupMatches(this);
+        }
+        else if(this.remainingClubs.length=1){
+            //cup winner
+        }
+        else throw new Error("Cup has an invalid number of clubs left!");
+    }
 }
 
 class Match {
@@ -752,6 +809,18 @@ function showCupMatches(cup) {
         //add inner container to container
         inputContainer.appendChild(innerContainer);
     })
+
+    const submitButton = document.createElement("button");
+    submitButton.id = "submitButton";
+    submitButton.innerText = "Next Round";
+    submitButton.onclick = function(){cup.roundFinished()};
+    inputContainer.appendChild(submitButton);
+}
+
+function kickClubFromCup(clubObj,cup){
+    console.log("Kicking "+clubObj.name+" from "+cup.name);
+    cup.remainingClubs = cup.remainingClubs.filter(club => club !== clubObj);
+    closePopup();
 }
 
 function saveToStorage(){
