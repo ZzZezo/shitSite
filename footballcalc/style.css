@@ -13,6 +13,7 @@ body,html {
 #GroupContainer {
   display: flex;
   gap:20px;
+  align-items: flex-start; /* Items align to the top, no vertical stretching */
 }
 
 #LeagueTable {

@@ -10,9 +10,14 @@ let championColor = "#FFD700";
 let loadedLeagues; //initialized at bottom (later dynamically), stores the leagues the game will cycle through
 let activeLeague; //the league thats currently selected, used to dropdown.value
 let finshedLeagues = [];
-let crntweek = 0; //tracks what week we are in (spieltag)
+
+let seasonCalendar;
 
 let isSeasonOver = false;
+
+
+//debug variables
+let debug_fast_skip = false;
 
 class Club {
     constructor(name) {
@@ -53,9 +58,12 @@ class League {
         //Hin und rückrunde?
         this.terms = terms;
         this.currentRound = 1;
+        this.crntweek = 0; //tracks what week we are in (spieltag)
 
         this.matchplan = this.generateMatchplan();
-        this.matchdaysThisSeason = this.matchplan.length;
+        this.matchesThisSeason = this.matchplan.length;
+        this.matchdaysThisSeason = this.matchesThisSeason / (this.clubs.length / 2);
+        // console.log(this.name+": "+this.matchdaysThisSeason);
         this.matchdaysPlayed = 0;
         
         //init league stats for all clubs
@@ -322,6 +330,53 @@ class Match {
     }
 }
 
+class Calendar{
+    constructor(Leagues){
+        this.partakingLeagues = Leagues;
+        this.Calendar = this.initCalendar();
+        this.calendarIndex = 0;
+    }
+      
+      initCalendar() {
+        const leagues = this.partakingLeagues.map(league => ({
+          name: league.name,
+          matchdays: league.matchdaysThisSeason,
+        }));
+        const calendar = [];
+      
+        //find lowest number of matchdays
+        const minMatchdays = Math.min(...leagues.map(league => league.matchdays));
+        
+        //add the first "minMatchdays" of each league to the calendar BUT save a list of all matchdays that were not used
+        for (let i = 0; i < minMatchdays; i++) {
+          leagues.forEach(league => {
+            if (league.matchdays > 0) {
+              calendar.push(league);
+              league.matchdays--;
+            }
+          });
+        }
+        //add the remaining matchdays to the calendar at a random position
+        for (let i = 0; i < minMatchdays; i++) {
+          leagues.forEach(league => {
+            if (league.matchdays > 0) {
+              const randomIndex = Math.floor(Math.random() * calendar.length);
+              calendar.splice(randomIndex, 0, league);
+              league.matchdays--;
+            }
+          });
+        }
+
+        //update the calendar to only return league names not objects
+        for (let i = 0; i < calendar.length; i++) {
+          calendar[i] = calendar[i].name;
+        }
+        
+      
+        return calendar;
+      }
+}
+
 function calculateInput() { //called when the calculate button is pressed, turns user input into actual matches
     const leagueName = activeLeague.name;
     const league = activeLeague;
@@ -407,32 +462,25 @@ function calculateInput() { //called when the calculate button is pressed, turns
 }
 
 function matchesCalculated(lastLeague,leagueDone=false) {
+    seasonCalendar.calendarIndex+=1;
     resetClubInfo();
     if (leagueDone) {
         //remove from loaded leagues if done
         finshedLeagues.push(lastLeague);
-        loadedLeagues.splice(loadedLeagues.indexOf(lastLeague), 1);
     }
     //check if all leagues are done
-    if (areAllLeaguesDone()) {
+    if (seasonCalendar.calendarIndex >= seasonCalendar.Calendar.length) {
         seasonOver();
         return;
     }
-    else{
-        if(loadedLeagues.indexOf(lastLeague)==loadedLeagues.length-1){//if its the last loaded league go back to start
-            crntweek +=1;
-    
-            activeLeague = loadedLeagues[0];
-            showMatches(activeLeague.name);
-            updateTabel(activeLeague.getSortedClubs(),activeLeague)
-        }
-        else{ //go to next league
-            activeLeague = loadedLeagues[loadedLeagues.indexOf(lastLeague)+1];
-            showMatches(activeLeague.name);
-            updateTabel(activeLeague.getSortedClubs(),activeLeague);
-        }
-        switchToNextInput(true);
-    }
+    lastLeague.crntweek +=1;
+
+    activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
+    activeLeague = dLeagues.find(league => league.name === activeLeagueName);
+    showMatches(activeLeague.name);
+    updateTabel(activeLeague.getSortedClubs(),activeLeague)
+
+    switchToNextInput(false);
 }
 
 function showMatches(leagueName) {
@@ -464,9 +512,9 @@ function showMatches(leagueName) {
     let matchesAmntMatchday = league.clubs.length / 2;
     let remainingMatches = matchesAmntMatchday;
     while(remainingMatches > 0){
-        if(league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday]){
-            t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][0].name;
-            t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+crntweek*matchesAmntMatchday][1].name;
+        if(league.matchplan[(matchesAmntMatchday-remainingMatches)+league.crntweek*matchesAmntMatchday]){
+            t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+league.crntweek*matchesAmntMatchday][0].name;
+            t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+league.crntweek*matchesAmntMatchday][1].name;
             remainingMatches--;
         }
         else{
@@ -490,6 +538,7 @@ function showMatches(leagueName) {
             inputG1.placeholder = "0";
             inputG1.classList.add("goalInput");
             inputG1.onkeyup = function() {switchToNextInput()};
+            if(debug_fast_skip)inputG1.value = 0;
             const inputT2 = document.createElement("input");
             inputT2.type = "text";
             inputT2.value = t2;
@@ -500,6 +549,7 @@ function showMatches(leagueName) {
             inputG2.placeholder = "0";
             inputG2.classList.add("goalInput");
             inputG2.onkeyup = function() {switchToNextInput()};
+            if(debug_fast_skip)inputG2.value = 0;
 
         let innerContainer = document.createElement("div");
         //add to container
@@ -774,7 +824,7 @@ function isPowerOfTwo(n) {
 
 function seasonOver(){
     alert("The Season is Over. Because I can't code you now gotta reset everything! WW");
-    updateDropdownOptionsByList(finshedLeagues);
+    updateDropdownOptionsByList(loadedLeagues);
 }
 
 function switchToCup(cup){
@@ -843,16 +893,12 @@ function startGame(){
     document.getElementById('checkboxContainer').style.display = "none";
     updateDropdownOptions();
 
-    //below is very tmp. honestly its more testing that tmp. switches out karlsruhe with bochum lol
-    dLeagues[0].replaceClub(dClubs[17],dClubs[89]);
-    dLeagues[5].replaceClub(dClubs[89],dClubs[17]);
+    seasonCalendar = new Calendar(loadedLeagues);
 
-    //below is just tmp, auto selects bundesliga for start
-    showMatches(loadedLeagues[0].name);
-    leagueName = loadedLeagues[0].name;  
-    const league = loadedLeagues[0];
-    activeLeague = league;
-    updateTabel(league.getSortedClubs(),league);
+    activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
+    activeLeague = dLeagues.find(league => league.name === activeLeagueName);
+    showMatches(activeLeague.name);
+    updateTabel(activeLeague.getSortedClubs(),activeLeague)
     dropdown.style.display = "none";
     switchToNextInput(true);
 }
