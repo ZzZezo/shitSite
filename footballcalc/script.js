@@ -18,6 +18,7 @@ let isSeasonOver = false;
 
 //debug variables
 let debug_fast_skip = false;
+let debug_console_tables = false;
 
 class Club {
     constructor(name) {
@@ -173,10 +174,13 @@ class Cup{
         this.clubs = clubs;
         if(!isPowerOfTwo(this.clubs.length) || this.clubs.length < 2) console.warn(`Cup ${this.name} has ${this.clubs.length} participants.`);
         this.remainingClubs = this.clubs;
-        this.HasThirdPlace = HasThirdPlace;
+        this.HasThirdPlace = HasThirdPlace; //yep, this does absolutely nothing but nice to store it anyways :D
         this.matches = [];
         this.totalRounds = this.calculateRounds();
         this.matchplan = [];
+        this.crntweek = 0;
+
+        this.drawNewRound();
     }
 
     calculateRounds(){
@@ -264,11 +268,13 @@ class Cup{
 
         if(isPowerOfTwo(this.remainingClubs.length) && this.remainingClubs.length>=2){
             this.drawNewRound();
-            document.getElementById("LeagueTable").style.display = "none";
-            showCupMatches(this);
+            document.getElementById("LeagueTable").style.display = "block";
+            matchesCalculated(this,false);
         }
         else if(this.remainingClubs.length=1){
-            //cup winner
+            console.log(this.remainingClubs[0].name + " wins the cup!");
+            document.getElementById("LeagueTable").style.display = "block";
+            matchesCalculated(this,false);
         }
         else throw new Error("Cup has an invalid number of clubs left!");
     }
@@ -375,6 +381,20 @@ class Calendar{
       
         return calendar;
       }
+
+      getRemaining(){
+        return this.Calendar.length - this.calendarIndex;
+      }
+
+      spreadIntoCalendar(name,matchdays){
+        let gameInterval = Math.floor(this.getRemaining() / matchdays);
+
+        for (let i = 1; i<=matchdays;i++){
+            let index = this.calendarIndex + gameInterval * i;
+            this.Calendar.splice(index,0,name);
+            console.log(index);
+        }
+      }
 }
 
 function calculateInput() { //called when the calculate button is pressed, turns user input into actual matches
@@ -454,7 +474,7 @@ function calculateInput() { //called when the calculate button is pressed, turns
         return a.losses - b.losses; //else sort by who lost the least games
     });
     
-    console.table(sortedClubs);
+    if(debug_console_tables)console.table(sortedClubs);
     updateTabel(sortedClubs,league);
     league.updateStats(sortedClubs);
 
@@ -463,6 +483,7 @@ function calculateInput() { //called when the calculate button is pressed, turns
 
 function matchesCalculated(lastLeague,leagueDone=false) {
     seasonCalendar.calendarIndex+=1;
+    // console.log("Remaining:" + seasonCalendar.getRemaining());
     resetClubInfo();
     if (leagueDone) {
         //remove from loaded leagues if done
@@ -477,8 +498,19 @@ function matchesCalculated(lastLeague,leagueDone=false) {
 
     activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
     activeLeague = dLeagues.find(league => league.name === activeLeagueName);
-    showMatches(activeLeague.name);
-    updateTabel(activeLeague.getSortedClubs(),activeLeague)
+    if(!activeLeague){ //IF NOT A LEAGUE, LOOK FOR TORNAMENT INSTEAD
+        activeLeague = dTournaments.find(tournament => tournament.name === activeLeagueName);
+        if(!activeLeague){ //if also not a tournament lick my balls idk how that got into the calendar then...
+            throw new Error(`League/Cup ${activeLeagueName} not found.`);
+        }
+        //run this if it is a cup
+        switchToCup(activeLeague);
+    }
+    else{
+        //or run this if it is a league
+        showMatches(activeLeague.name);
+        updateTabel(activeLeague.getSortedClubs(),activeLeague)
+    }
 
     switchToNextInput(false);
 }
@@ -829,6 +861,7 @@ function seasonOver(){
 
 function switchToCup(cup){
     document.getElementById("LeagueTable").style.display = "none";
+    console.log("its time for "+cup.name);
     showCupMatches(cup);
 }
 
