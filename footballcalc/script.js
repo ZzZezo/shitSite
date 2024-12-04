@@ -8,6 +8,7 @@ let CoLColor = "#5FC385";
 let championColor = "#FFD700";
 
 let loadedLeagues; //initialized at bottom (later dynamically), stores the leagues the game will cycle through
+let loadedCups; //initialized at bottom (later dynamically), stores the leagues the game will cycle through
 let activeLeague; //the league thats currently selected, used to dropdown.value
 let finshedLeagues = [];
 
@@ -21,10 +22,11 @@ let debug_fast_skip = false;
 let debug_console_tables = false;
 
 class Club {
-    constructor(name) {
+    constructor(name,HardcodedRating) {
         this.name = name;
         this.leagueStats = {};  //on club creation, initialize the league stats
         this.matches=[];
+        this.hardcodedRating = HardcodedRating;
     }
 
     //init league stats on league creation
@@ -98,11 +100,10 @@ class League {
         return sortedClubs;
     }
 
-    generateMatchplan(){
+    generateMatchplan(totalRounds = this.clubs.length - 1){
         let clubs = [...this.clubs]; //creates a copy of the clubs array
         clubs = clubs.sort((a,b)=>0.5-Math.random());//shuffles the array, so the matchplan will be unique for everyone.
         let matchplan = [];
-        const totalRounds = clubs.length - 1;
         const matchesPerRound = clubs.length / 2;
 
         for (let round = 0; round < totalRounds; round++) { //every round is one matchday
@@ -928,6 +929,10 @@ function startGame(){
 
     seasonCalendar = new Calendar(loadedLeagues);
 
+    loadedCups.forEach(cup => {
+        seasonCalendar.spreadIntoCalendar(cup.name,cup.totalRounds);
+    });
+
     activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
     activeLeague = dLeagues.find(league => league.name === activeLeagueName);
     showMatches(activeLeague.name);
@@ -949,6 +954,7 @@ dropdown.addEventListener('change', function() {
 
 window.onload = function exampleFunction(){ 
     loadedLeagues = [];
+    loadedCups = [dTournaments[0]];//currently tmp later also dynamic like the leagues
     //add a checkbox for each league, so the user can choose which leagues to play in, and which leagues to keep track of
     const checkboxContainer = document.getElementById('checkboxContainer');
     for (let i = 0; i < dLeagues.length; i++) {
