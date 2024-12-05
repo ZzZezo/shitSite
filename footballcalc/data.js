@@ -5,7 +5,7 @@ dClubs = [
     new Club("Leverkusen", 870),
     new Club("Dortmund", 960),
     new Club("Freiburg", 740),
-    new Club("Berlin", 700),
+    new Club("Berlin", 770),
     new Club("Stuttgart", 640),
     new Club("Mönchengladbach", 720),
     new Club("Bremen", 670),
@@ -98,10 +98,10 @@ dClubs = [
     //above is 1. HNL (10 Teams, 78-87)
     //below is 2. Buli (18 Teams, 88-105)
     new Club("Düsseldorf", 400),
-    new Club("Karlsruhe", 440), //KSC FOR EVER <3
+    new Club("Karlsruhe", 420), //KSC FOR EVER <3
     new Club("Hannover", 320),
     new Club("Paderborn", 340),
-    new Club("Hamburg", 500),
+    new Club("Hamburg", 420),
     new Club("Elversberg", 160),
     new Club("Nürnberg", 380),
     new Club("Köln", 480),
@@ -110,7 +110,7 @@ dClubs = [
     new Club("Hertha", 460),
     new Club("Darmstadt", 440),
     new Club("Fürth", 300),
-    new Club("Schalke", 520),
+    new Club("Schalke", 380),
     new Club("Braunschweig", 240),
     new Club("Münster", 140),
     new Club("Ulm", 80),

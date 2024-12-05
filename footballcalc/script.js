@@ -167,6 +167,18 @@ class League {
         this.sortedClubs = this.init_sortedClubs(this.clubs);//so should this
         console.log(this.name+": Added "+club.name);
     }
+
+    fullSimulation(randomness){//the higher the randomness value the LESS random are the results
+        let simulatedList = [...this.clubs];//copys all clubs to the new list
+        let weightedList = simulatedList.map(club =>({ //creates new array with objects out of list
+           weightedClub: club, 
+           weight: Math.random() * Math.pow(club.hardcodedRating,randomness) //gives random value and scales with rating
+        }));
+        //sort based on generated & scaled weight
+        weightedList.sort((a,b)=> b.weight-a.weight);
+        simulatedList = [...weightedList];
+        return simulatedList;
+    }
 }
 
 class Cup{
