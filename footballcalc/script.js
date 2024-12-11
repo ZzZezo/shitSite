@@ -12,24 +12,24 @@ let loadedCups; //initialized at bottom (later dynamically), stores the leagues 
 let activeLeague; //the league thats currently selected, used to dropdown.value
 let finshedLeagues = [];
 
-let seasonCalendar;
+let seasonCalendar; //stores the one Object of the Calendar class
 
-let isSeasonOver = false;
+let isSeasonOver = false; //set to true when season is over, but maybe won't be needed ?
 
 
 //debug variables
-let debug_fast_skip = false;
-let debug_console_tables = false;
+let debug_fast_skip = false; //if true, fills out every game with 1-1
+let debug_console_tables = false; //if true, prints the tables to the console
 
-class Club {
+class Club { //all clubs
     constructor(name,HardcodedRating) {
         this.name = name;
-        this.leagueStats = {};  //on club creation, initialize the league stats
-        this.matches=[];
-        this.hardcodedRating = HardcodedRating;
+        this.leagueStats = {};  //a list of all leagues it takes part and the points it has in that league
+        this.matches=[]; //lists every match the club plays in (or should, i'm not sure if it also tracks cup games etc.)
+        this.hardcodedRating = HardcodedRating; //used for simulation
     }
 
-    //init league stats on league creation
+    //init league stats on league creation --> is called when a league is created, for any club in the league
     initializeLeagueStats(leagueName) {
         if (!this.leagueStats[leagueName]) {
             this.leagueStats[leagueName] = 0;  // Set initial points to 0 for the league
@@ -42,28 +42,30 @@ class Club {
 }
 
 class League {
-    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],hasChampion=true,terms = 2) {
+    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],association="FIFA",level=1,hasChampion=true,terms = 2) {
         this.name = name; //whats it called (e.g.: "Premier League")
         this.clubs = clubs;
-        this.sortedClubs = this.init_sortedClubs(clubs);
+        this.sortedClubs = this.init_sortedClubs(clubs); //all clubs of the league, but in order they are shown in tabel
         this.matches = [];
         //who gets relegated/promoted
         this.promotePositions = promotePositions;
         this.promotePlayoffs = promotePlayoffs;
         this.relegatePositions = relegatePositions;
         this.relegatePlayoffs = relegatePlayoffs;
+        //what association and what level the league is, used for promotion and relegation
+        this.association = association;
+        this.level = level;
         //who qualifies for Champions-, Euro- and Conferenceleague
         this.CLPositions = CLPositions;
         this.ELPositions = ELPositions;
         this.CoLPositions = CoLPositions;
         //kann man meister werden
         this.hasChampion = hasChampion;
-        //Hin und rückrunde?
+        //Hin und rückrunden
         this.terms = terms;
-        this.currentRound = 1;
         this.crntweek = 0; //tracks what week we are in (spieltag)
 
-        this.matchplan = this.generateMatchplan();
+        this.matchplan = this.generateMatchplan(); //array: [Spieltag][Spiel] --> e.g.: [7][2] = Spieltag 8, Spiel 3
         this.matchesThisSeason = this.matchplan.length;
         this.matchdaysThisSeason = this.matchesThisSeason / (this.clubs.length / 2);
         // console.log(this.name+": "+this.matchdaysThisSeason);

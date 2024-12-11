@@ -222,16 +222,16 @@ dClubs = [
 
 dLeagues=[
     //explanation here: https://i.imgur.com/Np8uMPQ.png (i have no idea what any of that means lmao)
-    new League("1.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i]),[],[],[17,18],[16],[1,2,3,4],[5],[6]),
-    new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),[1,2],[3],[17,18],[16],[],[],[]),
-    new League("3.Bundesliga", Array.from({ length: 20 }, (_, i) => dClubs[i + 124]),[1,2],[3],[17,18,19,20],[],[],[],[]),
-    new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),[],[],[10],[],[1],[2],[3,4],true,4),
-    new League("La Liga", Array.from({ length: 20 }, (_, i) => dClubs[i + 18]),[],[],[18,19,20],[],[1,2,3,4],[5],[6]),
-    new League("Premier League", Array.from({ length: 20 }, (_, i) => dClubs[i + 38]),[],[],[18,19,20],[],[1,2,3,4],[5]),
-    new League("Serie A", Array.from({ length: 20 }, (_, i) => dClubs[i + 58]),[],[],[18,19,20],[],[1,2,3,4],[5],[6]),
-    new League("Ligue 1", Array.from({ length: 18 }, (_, i) => dClubs[i + 106]),[],[],[17,18],[16],[1,2,3],[4,5],[6]),
-    new League("Eredivisie", Array.from({ length: 18 }, (_, i) => dClubs[i + 144]),[],[],[17,18],[16],[1,2],[3,4],[5,6,7,8]),
-    new League("Süper Lig", Array.from({ length: 18 }, (_, i) => dClubs[i + 162]),[],[],[16,17,18],[],[1,2],[3],[4])
+    new League("1.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i]),[],[],[17,18],[16],[1,2,3,4],[5],[6],"DFB",1),
+    new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),[1,2],[3],[17,18],[16],[],[],[],"DFB,2"),
+    new League("3.Bundesliga", Array.from({ length: 20 }, (_, i) => dClubs[i + 124]),[1,2],[3],[17,18,19,20],[],[],[],[],"DFB",3),
+    new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),[],[],[10],[],[1],[2],[3,4],"HNS",1,true,4),
+    new League("La Liga", Array.from({ length: 20 }, (_, i) => dClubs[i + 18]),[],[],[18,19,20],[],[1,2,3,4],[5],[6],"ESP",1),
+    new League("Premier League", Array.from({ length: 20 }, (_, i) => dClubs[i + 38]),[],[],[18,19,20],[],[1,2,3,4],[5],[],"ENG",1),
+    new League("Serie A", Array.from({ length: 20 }, (_, i) => dClubs[i + 58]),[],[],[18,19,20],[],[1,2,3,4],[5],[6],"ITA",1),
+    new League("Ligue 1", Array.from({ length: 18 }, (_, i) => dClubs[i + 106]),[],[],[17,18],[16],[1,2,3],[4,5],[6],"FRA",1),
+    new League("Eredivisie", Array.from({ length: 18 }, (_, i) => dClubs[i + 144]),[],[],[17,18],[16],[1,2],[3,4],[5,6,7,8],"NED",1),
+    new League("Süper Lig", Array.from({ length: 18 }, (_, i) => dClubs[i + 162]),[],[],[16,17,18],[],[1,2],[3],[4],"TUR",1)
 ]
 
 dTournaments=[

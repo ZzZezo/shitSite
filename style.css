@@ -177,3 +177,62 @@
     margin-left: 75px;
     margin-right: 75px;
 }
+
+#Taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px; /* Adjust height as needed */
+    background: linear-gradient(90deg, #c3c3c3, #e0e0e0); /* Classic gray gradient */
+    border-top: 2px solid #ffffff; /* Top bevel */
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #7a7a7a; /* Bottom and side bevels */
+    border-bottom: 2px solid #7a7a7a;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 5px;
+    box-sizing: border-box;
+  }
+
+  #StartButton {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    /* width: 50px; Adjusted width for icon and text */
+    padding-right: 3px;
+    height: 30px; /* Same as taskbar height minus padding */
+    background: linear-gradient(90deg, #e0e0e0, #c3c3c3);
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #7a7a7a;
+    border-bottom: 2px solid #7a7a7a;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    padding-left: 5px; /* Space around content */
+  }
+
+  #StartButton img {
+    width: 20px; /* Icon size */
+    height: 20px;
+  }
+
+  #StartButton:hover {
+    background-color: #d3d3d3;
+  }
+  
+  #TaskArea {
+    flex-grow: 1;
+    background: #d0d0d0;
+    border: 1px solid #7a7a7a;
+    border-left: none;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
