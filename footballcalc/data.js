@@ -138,15 +138,15 @@ dClubs = [
     //above is Ligue 1 (18 Teams, 106-123)
     //below is 3. Bundesliga (20 Teams, 124-143)
     new Club("Sandhausen", 320),
-    new Club("Bielefeld", 480),
-    new Club("Dresden", 500),
+    new Club("Bielefeld", 380),
+    new Club("Dresden", 400),
     new Club("Saarbrücken", 390),
     new Club("Cottbus", 360),
     new Club("Aue", 340),
-    new Club("Wiesbaden", 420),
-    new Club("Ingolstadt", 400),
-    new Club("V. Köln", 410),
-    new Club("1860", 470),
+    new Club("Wiesbaden", 320),
+    new Club("Ingolstadt", 300),
+    new Club("V. Köln", 310),
+    new Club("1860", 370),
     new Club("Dortmund II", 200),
     new Club("Aachen", 380),
     new Club("Mannheim", 430),
@@ -156,7 +156,7 @@ dClubs = [
     new Club("Stuttgart II", 210),
     new Club("Hannover II", 190),
     new Club("Unteraching", 250),
-    new Club("Osnabrück", 460),
+    new Club("Osnabrück", 360),
     //above is 3. Bundesliga (20 Teams, 124-143)
     //below is Eredivisie (18 Teams, 144-161)
     new Club("PSV", 880),
@@ -198,7 +198,7 @@ dClubs = [
     new Club("Alanya", 200),
     new Club("Hatay", 160),
     //above is Süper Lig(18 Teams, 162-179)
-    //below are some lower clubs from Germany (for DFB Pokal)
+    //below are some lower clubs from Germany (for DFB Pokal+ 3. division relegation) (18 Teams, 180-197)
     new Club("Offenbach", 100),
     new Club("Villingen Schwenningen", 50),
     new Club("Duigsburg", 140),
@@ -210,14 +210,14 @@ dClubs = [
     new Club("Meppen", 30),
     new Club("Lübeck", 30),
     new Club("Schweinfurt", 10),
-    new Club("Bayreuth", 5),
-    new Club("Aschaffenburg", 2),
+    new Club("Bayreuth", 10),
+    new Club("Aschaffenburg", 10),
     new Club("Würzburg", 20),
     new Club("Trier", 10),
-    new Club("Gießen", 5),
-    new Club("Heidelberg", 5),
-    new Club("Offenburg", 1)
-    //above are some lower clubs from Germany (for DFB Pokal)
+    new Club("Gießen", 10),
+    new Club("Heidelberg", 10),
+    new Club("Offenburg", 10)
+    //above are some lower clubs from Germany (for DFB Pokal+ 3. division relegation) (18 Teams, 180-197)
 ]
 
 dLeagues=[
@@ -225,6 +225,7 @@ dLeagues=[
     new League("1.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i]),[],[],[17,18],[16],[1,2,3,4],[5],[6],"DFB",1),
     new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),[1,2],[3],[17,18],[16],[],[],[],"DFB",2),
     new League("3.Bundesliga", Array.from({ length: 20 }, (_, i) => dClubs[i + 124]),[1,2],[3],[17,18,19,20],[],[],[],[],"DFB",3),
+    new League("Regionalligen", Array.from({ length: 18 }, (_, i) => dClubs[i + 180]),[1,2,3,4],[],[17,18],[],[],[],[],"DFB",4,true,2,false), //unplayable
     new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),[],[],[10],[],[1],[2],[3,4],"HNS",1,true,4),
     new League("La Liga", Array.from({ length: 20 }, (_, i) => dClubs[i + 18]),[],[],[18,19,20],[],[1,2,3,4],[5],[6],"ESP",1),
     new League("Premier League", Array.from({ length: 20 }, (_, i) => dClubs[i + 38]),[],[],[18,19,20],[],[1,2,3,4],[5],[],"ENG",1),

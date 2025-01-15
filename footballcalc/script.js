@@ -44,7 +44,7 @@ class Club { //all clubs
 }
 
 class League {
-    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],association="FIFA",level=1,hasChampion=true,terms = 2) {
+    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],association="FIFA",level=1,hasChampion=true,terms = 2,playable = true) {
         this.name = name; //whats it called (e.g.: "Premier League")
         this.clubs = clubs;
         this.sortedClubs = this.init_sortedClubs(clubs); //all clubs of the league, but in order they are shown in tabel
@@ -73,6 +73,9 @@ class League {
         // console.log(this.name+": "+this.matchdaysThisSeason);
         this.matchdaysPlayed = 0;
         
+        //if the league can be played (or only simulated, used for lower divisions, so all playbable leagues can relegate clubs)
+        this.playable = playable;
+
         //init league stats for all clubs
         clubs.forEach(club => club.initializeLeagueStats(this.name));
     }
@@ -451,21 +454,21 @@ class SeasonManager {
                 const clubsToRelegate = this.getClubsToRelegate(currentLeague);
                 const clubsToPromote = this.getClubsToPromote(currentLeague);
 
-                // Handle relegation
-                if (clubsToRelegate.length > 0 && lowerLeague) {
-                    console.log(currentLeague.name + " Relegation:")
-                    clubsToRelegate.forEach(club => {
-                        currentLeague.removeClub(club);
-                        lowerLeague.addClub(club);
-                    });
-                }
-
                 // Handle promotion
                 if (clubsToPromote.length > 0 && higherLeague) {
-                    console.log(currentLeague.name + " Promotion:")
+                    console.log("%c"+currentLeague.name + " Promotion:","color:cornflowerblue")
                     clubsToPromote.forEach(club => {
                         currentLeague.removeClub(club);
                         higherLeague.addClub(club);
+                    });
+                }
+
+                // Handle relegation
+                if (clubsToRelegate.length > 0 && lowerLeague) {
+                    console.log("%c"+currentLeague.name + " Relegation:","color:cornflowerblue")
+                    clubsToRelegate.forEach(club => {
+                        currentLeague.removeClub(club);
+                        lowerLeague.addClub(club);
                     });
                 }
             }
@@ -535,6 +538,7 @@ class SeasonManager {
         });
     }
 }
+
 
 function calculateInput() { //called when the calculate button is pressed, turns user input into actual matches
     const leagueName = activeLeague.name;
@@ -1134,6 +1138,7 @@ window.onload = function exampleFunction(){
     //add a checkbox for each league, so the user can choose which leagues to play in, and which leagues to keep track of
     const checkboxContainer = document.getElementById('checkboxContainer');
     for (let i = 0; i < dLeagues.length; i++) {
+        if(dLeagues[i].playable == false) continue;
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = 'checkbox' + i;
