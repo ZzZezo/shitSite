@@ -223,7 +223,7 @@ dClubs = [
 dLeagues=[
     //explanation here: https://i.imgur.com/Np8uMPQ.png (i have no idea what any of that means lmao)
     new League("1.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i]),[],[],[17,18],[16],[1,2,3,4],[5],[6],"DFB",1),
-    new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),[1,2],[3],[17,18],[16],[],[],[],"DFB,2"),
+    new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),[1,2],[3],[17,18],[16],[],[],[],"DFB",2),
     new League("3.Bundesliga", Array.from({ length: 20 }, (_, i) => dClubs[i + 124]),[1,2],[3],[17,18,19,20],[],[],[],[],"DFB",3),
     new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),[],[],[10],[],[1],[2],[3,4],"HNS",1,true,4),
     new League("La Liga", Array.from({ length: 20 }, (_, i) => dClubs[i + 18]),[],[],[18,19,20],[],[1,2,3,4],[5],[6],"ESP",1),

@@ -13,9 +13,11 @@ let activeLeague; //the league thats currently selected, used to dropdown.value
 let finshedLeagues = [];
 
 let seasonCalendar; //stores the one Object of the Calendar class
+let seasonManager;
 
 let isSeasonOver = false; //set to true when season is over, but maybe won't be needed ?
 
+let userRandomness = 13.5;
 
 //debug variables
 let debug_fast_skip = false; //if true, fills out every game with 1-1
@@ -170,7 +172,7 @@ class League {
         console.log(this.name+": Added "+club.name);
     }
 
-    fullSimulation(randomness){//the higher the randomness value the LESS random are the results
+    fullSimulation(randomness){//the higher the randomness value the LESS random are the results //maybe 13 is good?
         let simulatedList = [...this.clubs];//copys all clubs to the new list
         let weightedList = simulatedList.map(club =>({ //creates new array with objects out of list
            weightedClub: club, 
@@ -407,9 +409,131 @@ class Calendar{
         for (let i = 1; i<=matchdays;i++){
             let index = this.calendarIndex + gameInterval * i;
             this.Calendar.splice(index,0,name);
-            console.log(index);
         }
       }
+}
+
+class SeasonManager {
+    constructor() {
+    }
+
+    handleSeasonTransition() {
+        // Store the current standings before resetting
+        const leagueStandings = {};
+        dLeagues.forEach(league => {
+            leagueStandings[league.name] = [...league.sortedClubs];
+        });
+
+        // Group leagues by association
+        const leaguesByAssociation = {};
+        dLeagues.forEach(league => {
+            if (!leaguesByAssociation[league.association]) {
+                leaguesByAssociation[league.association] = [];
+            }
+            leaguesByAssociation[league.association].push(league);
+        });
+        
+        // Handle each association separately
+        for (const association in leaguesByAssociation) {
+            // Sort leagues inside association
+            const sortedLeagues = leaguesByAssociation[association].sort((a, b) => a.level - b.level);
+            
+            // Handle promotion+relegation
+            for (let i = 0; i < sortedLeagues.length; i++) {
+                const currentLeague = sortedLeagues[i];
+                const lowerLeague = sortedLeagues[i + 1];
+                const higherLeague = sortedLeagues[i - 1];
+
+                // Use stored standings for relegation/promotion decisions
+                currentLeague.sortedClubs = leagueStandings[currentLeague.name];
+                
+                // Get the clubs to be relegated/promoted
+                const clubsToRelegate = this.getClubsToRelegate(currentLeague);
+                const clubsToPromote = this.getClubsToPromote(currentLeague);
+
+                // Handle relegation
+                if (clubsToRelegate.length > 0 && lowerLeague) {
+                    console.log(currentLeague.name + " Relegation:")
+                    clubsToRelegate.forEach(club => {
+                        currentLeague.removeClub(club);
+                        lowerLeague.addClub(club);
+                    });
+                }
+
+                // Handle promotion
+                if (clubsToPromote.length > 0 && higherLeague) {
+                    console.log(currentLeague.name + " Promotion:")
+                    clubsToPromote.forEach(club => {
+                        currentLeague.removeClub(club);
+                        higherLeague.addClub(club);
+                    });
+                }
+            }
+        }
+
+        // Reset league statistics for the new season after all promotions/relegations are done
+        this.resetLeagueStats();
+        return 1;
+    }
+
+    // Rest of the SeasonManager class methods remain unchanged
+    getClubsToRelegate(league) {
+        const sortedClubs = [...league.sortedClubs];
+        const clubsToRelegate = [];
+
+        league.relegatePositions.forEach(position => {
+            const clubName = sortedClubs[position - 1].name;
+            const club = league.clubs.find(c => c.name === clubName);
+            if (club) clubsToRelegate.push(club);
+        });
+
+        if(league.relegatePlayoffs.length > 0) {
+            league.relegatePlayoffs.forEach(position => {
+                const clubName = sortedClubs[position - 1].name;
+                const club = league.clubs.find(c => c.name === clubName);
+                if (club) clubsToRelegate.push(club);
+            });
+        }
+
+        return clubsToRelegate;
+    }
+
+    getClubsToPromote(league) {
+        const sortedClubs = [...league.sortedClubs];
+        const clubsToPromote = [];
+
+        league.promotePositions.forEach(position => {
+            const clubName = sortedClubs[position - 1].name;
+            const club = league.clubs.find(c => c.name === clubName);
+            if (club) clubsToPromote.push(club);
+        });
+
+        if(league.promotePlayoffs.length > 0) {
+            league.promotePlayoffs.forEach(position => {
+                const clubName = sortedClubs[position - 1].name;
+                const club = league.clubs.find(c => c.name === clubName);
+                if (club) clubsToPromote.push(club);
+            });
+        }
+
+        return clubsToPromote;
+    }
+
+    resetLeagueStats() {
+        dLeagues.forEach(league => {
+            league.matches = [];
+            league.crntweek = 0;
+            league.matchdaysPlayed = 0;
+            league.sortedClubs = league.init_sortedClubs(league.clubs);
+            league.matchplan = league.generateMatchplan();
+            
+            league.clubs.forEach(club => {
+                club.matches = [];
+                club.leagueStats = {};
+                club.initializeLeagueStats(league.name);
+            });
+        });
+    }
 }
 
 function calculateInput() { //called when the calculate button is pressed, turns user input into actual matches
@@ -870,8 +994,41 @@ function isPowerOfTwo(n) {
 }
 
 function seasonOver(){
-    alert("The Season is Over. Because I can't code you now gotta reset everything! WW");
-    updateDropdownOptionsByList(loadedLeagues);
+    simulateUnloadedLeagues();
+
+    const startNewSeason = confirm("Season is over! Would you like to promote clubs and start a new season?");
+    
+    if (startNewSeason) {
+        let test = seasonManager.handleSeasonTransition();
+        // Reset calendar
+        seasonCalendar = new Calendar(loadedLeagues);
+        loadedCups.forEach(cup => {
+            seasonCalendar.spreadIntoCalendar(cup.name, cup.totalRounds);
+        });
+        
+        // Start new season
+        activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
+        activeLeague = dLeagues.find(league => league.name === activeLeagueName);
+        showMatches(activeLeague.name);
+        updateTabel(activeLeague.getSortedClubs(), activeLeague);
+        dropdown.style.display = "none";
+        switchToNextInput(true);
+    }
+    else {
+        updateDropdownOptionsByList(loadedLeagues);
+    }
+}
+
+function simulateUnloadedLeagues(){
+    const notLoadedLeagues = dLeagues.filter(league => !loadedLeagues.includes(league));
+
+    notLoadedLeagues.forEach(league => {
+        let simulatedList = league.fullSimulation(userRandomness);
+
+        league.sortedClubs = simulatedList.map(simulatedClub => {
+            return { name: simulatedClub.weightedClub.name };
+        });
+    })
 }
 
 function switchToCup(cup){
@@ -909,6 +1066,9 @@ function showCupMatches(cup) {
         inputG2.classList.add("goalInput");
         inputG2.onkeyup = function() {switchToNextInput()};
 
+        if(debug_fast_skip)inputG1.value=0;
+        if(debug_fast_skip)inputG2.value=3;
+
         let innerContainer = document.createElement("div");
         //add to container
         innerContainer.classList.add("inputContainer");
@@ -942,8 +1102,9 @@ function startGame(){
     updateDropdownOptions();
 
     seasonCalendar = new Calendar(loadedLeagues);
+    seasonManager = new SeasonManager();
 
-    loadedCups.forEach(cup => {
+    if(loadedCups.length>0)loadedCups.forEach(cup => {
         seasonCalendar.spreadIntoCalendar(cup.name,cup.totalRounds);
     });
 
@@ -968,7 +1129,8 @@ dropdown.addEventListener('change', function() {
 
 window.onload = function exampleFunction(){ 
     loadedLeagues = [];
-    loadedCups = [dTournaments[0]];//currently tmp later also dynamic like the leagues
+    loadedCups = [];
+    // loadedCups = [dTournaments[0]];//currently tmp later also dynamic like the leagues
     //add a checkbox for each league, so the user can choose which leagues to play in, and which leagues to keep track of
     const checkboxContainer = document.getElementById('checkboxContainer');
     for (let i = 0; i < dLeagues.length; i++) {
