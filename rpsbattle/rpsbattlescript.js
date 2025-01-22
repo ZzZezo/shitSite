@@ -1,3 +1,6 @@
+const STORAGE_PREFIX = 'rpsbattle_'; // Replace with your project's unique identifier
+
+
 const battlefield = document.getElementById('battlefield');
 let entities = [];
 let tickAmnt = 0; //how many ticks the game run
@@ -579,30 +582,50 @@ function jsonfyTemplate(template){
     return JSON.stringify(template);
 }
 
-function saveToStorage(){ //saving and loading currently shuffles the order, which i dont fully understand why it does so
-    localStorage.clear();
-
+function saveToStorage() {
+    clearProjectStorage();
     AllEntitiesExisting.forEach(template => {
-        console.log("Saving "+template.name);
-        localStorage.setItem(template.name, jsonfyTemplate(template));
+        console.log("Saving " + template.name);
+        const prefixedKey = STORAGE_PREFIX + template.name;
+        localStorage.setItem(prefixedKey, jsonfyTemplate(template));
     });
 }
 
-function loadFromStorage(){ //saving and loading currently shuffles the order, which i dont fully understand why it does so
+function loadFromStorage() {
     let elementBox = document.getElementById("elementbox");
     while (elementBox.children.length > 1) {
         elementBox.removeChild(elementBox.firstChild);
     }
 
-    for(i=0;i<localStorage.length;i++){
-        let key = localStorage.key(i);
-        let value = localStorage.getItem(key);
-        let template = JSON.parse(value);
-        AllEntitiesExisting[i] = new EntityTemplate(template);
-        console.log("Loaded "+template.name);
+    // Get only keys for this project
+    const projectKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith(STORAGE_PREFIX)) {
+            projectKeys.push(key);
+        }
     }
+
+    // Load entities
+    projectKeys.forEach((prefixedKey, index) => {
+        const value = localStorage.getItem(prefixedKey);
+        const template = JSON.parse(value);
+        AllEntitiesExisting[index] = new EntityTemplate(template);
+        console.log("Loaded " + template.name);
+    });
+
     updateDropdownOptions();
     document.getElementById("elementSettings").style.display = "none";
+}
+
+// Helper function to clear only this project's data
+function clearProjectStorage() {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key.startsWith(STORAGE_PREFIX)) {
+            localStorage.removeItem(key);
+        }
+    }
 }
 
 //BUTTONS etc.

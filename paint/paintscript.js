@@ -424,7 +424,7 @@ function confirmDeleteItem(nr) {
   savedAuthores.splice(nr, 1);
 
   //clear localStorage
-  localStorage.clear();
+  // localStorage.clear();
 
   //load arrays into localStorage
   for (let i = 0; i < 1000; i++) {
