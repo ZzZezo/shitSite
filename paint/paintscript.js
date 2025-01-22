@@ -1,3 +1,5 @@
+const CANVAS_PREFIX = 'paint_';
+
 var canvas = document.getElementById("myCanvas");
 canvas.width = window.innerWidth / 1.5;
 canvas.height = window.innerHeight / 1.5;
@@ -330,26 +332,11 @@ function saveCanvas(nr) {
       author = answer;
 
       savedCanvases[nr] = canvas.toDataURL();
-      console.log(savedCanvases[nr]);
-
-      //showing on list
-      var boldNr = document.createElement("span");
-      boldNr.style.fontWeight = "bold";
-      boldNr.appendChild(document.createTextNode(nr));
-
-      var textNode = document.createTextNode(": " + imageName + ", " + author);
-      var lineBreak = document.createElement("br");
-
-      document.getElementById("Artlist").appendChild(boldNr);
-      document.getElementById("Artlist").appendChild(textNode);
-      document.getElementById("Artlist").appendChild(lineBreak);
-
-      //saving to local storage
-      let key = nr;
+      const key = CANVAS_PREFIX + nr;
       localStorage.setItem(key, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + imageName + "/z/z/z/author/z/z/z/" + author);
 
+      updateArtlist();
       createPopup("Gespeichert!", "Dein Kunstwerk wurde gespeichert. (ID: " + nr + ")", 1, ["OK"], [closePopup]);
-
     })
   });
 }
@@ -384,8 +371,8 @@ function editItem(nr) {
     newimageName = answer;
     createPrompt("Bearbeiten", "Und wer bist du WIRKLICH?", function (answer) {
       newauthor = answer;
-
-      localStorage.setItem(nr, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + newimageName + "/z/z/z/author/z/z/z/" + newauthor);
+      const key = CANVAS_PREFIX + nr;
+      localStorage.setItem(key, savedCanvases[nr] + "/z/z/z/name/z/z/z/" + newimageName + "/z/z/z/author/z/z/z/" + newauthor);
       updateArtlist();
     });
   });
@@ -401,41 +388,37 @@ function deleteItem(nr) {
 }
 
 function confirmDeleteItem(nr) {
-  //copy local storage to Arrays
   savedCanvases = [];
   savedNames = [];
   savedAuthores = [];
+  
   for (let i = 0; i < 1000; i++) {
-    if (localStorage.getItem(i) != null) {
-      let myItem = localStorage.getItem(i)
+    const key = CANVAS_PREFIX + i;
+    if (localStorage.getItem(key) != null) {
+      let myItem = localStorage.getItem(key);
       let parts = myItem.split("/z/z/z/");
-      let URL = parts[0];
-      savedCanvases[i] = URL;
+      savedCanvases[i] = parts[0];
       savedNames[i] = parts[2];
       savedAuthores[i] = parts[4];
     }
   }
 
-  //remove index nr from arrays
   savedCanvases.splice(nr, 1);
   savedNames.splice(nr, 1);
   savedAuthores.splice(nr, 1);
 
-  //clear localStorage
-  // localStorage.clear();
+  clearProjectItems();
 
-  //load arrays into localStorage
   for (let i = 0; i < 1000; i++) {
     if (savedCanvases[i] != null) {
-      localStorage.setItem(i, savedCanvases[i] + "/z/z/z/name/z/z/z/" + savedNames[i] + "/z/z/z/author/z/z/z/" + savedAuthores[i]);
+      const key = CANVAS_PREFIX + i;
+      localStorage.setItem(key, savedCanvases[i] + "/z/z/z/name/z/z/z/" + savedNames[i] + "/z/z/z/author/z/z/z/" + savedAuthores[i]);
     }
   }
 
-  // localStorage.clear();
   updateArtlist();
   closePopup();
 }
-
 
 function exportImage() {
   navigator.clipboard.writeText(canvas.toDataURL());
@@ -458,15 +441,16 @@ function importImage() {
 
 function updateArtlist() {
   document.getElementById("Artlist").innerHTML = "";
+  
   for (let i = 0; i < 1000; i++) {
-    if (localStorage.getItem(i) != null) {
-      let myItem = localStorage.getItem(i)
+    const key = CANVAS_PREFIX + i;
+    if (localStorage.getItem(key) != null) {
+      let myItem = localStorage.getItem(key);
       let parts = myItem.split("/z/z/z/");
       let URL = parts[0];
       let imageName = parts[2];
       let author = parts[4];
 
-      //showing on list
       var boldNr = document.createElement("span");
       boldNr.style.fontWeight = "bold";
       boldNr.appendChild(document.createTextNode(i));
@@ -479,6 +463,15 @@ function updateArtlist() {
       document.getElementById("Artlist").appendChild(lineBreak);
 
       savedCanvases[i] = URL;
+    }
+  }
+}
+
+function clearProjectItems() {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const key = localStorage.key(i);
+    if (key.startsWith(CANVAS_PREFIX)) {
+      localStorage.removeItem(key);
     }
   }
 }
