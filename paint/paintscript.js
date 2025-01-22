@@ -1,5 +1,3 @@
-const isMobile = navigator.userAgentData.mobile;
-
 var canvas = document.getElementById("myCanvas");
 canvas.width = window.innerWidth / 1.5;
 canvas.height = window.innerHeight / 1.5;
