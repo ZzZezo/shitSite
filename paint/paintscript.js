@@ -476,6 +476,9 @@ function clearProjectItems() {
   }
 }
 
+function alertCustom(message){
+  createPopup("Error", message, 1, ["OK"], [closePopup]);
+}
 
 
 document.addEventListener('wheel', function (event) {

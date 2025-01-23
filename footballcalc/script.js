@@ -44,9 +44,9 @@ class Club { //all clubs
 }
 
 class League {
-    constructor(name, clubs = [], promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],association="FIFA",level=1,hasChampion=true,terms = 2,playable = true) {
+    constructor(name, clubs = [], matchLimit = 0, promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],association="FIFA",level=1,hasChampion=true,terms = 2,playable = true) {
         this.name = name; //whats it called (e.g.: "Premier League")
-        this.clubs = clubs;
+        this.clubs = clubs; //list of all participating clubs
         this.sortedClubs = this.init_sortedClubs(clubs); //all clubs of the league, but in order they are shown in tabel
         this.matches = [];
         //who gets relegated/promoted
@@ -56,7 +56,7 @@ class League {
         this.relegatePlayoffs = relegatePlayoffs;
         //what association and what level the league is, used for promotion and relegation
         this.association = association;
-        this.level = level;
+        this.level = level; //the higher the level, the lower the league -> Bundesliga.level=1  2.Bundesliga.level=2
         //who qualifies for Champions-, Euro- and Conferenceleague
         this.CLPositions = CLPositions;
         this.ELPositions = ELPositions;
@@ -66,6 +66,9 @@ class League {
         //Hin und rückrunden
         this.terms = terms;
         this.crntweek = 0; //tracks what week we are in (spieltag)
+
+        this.matchLimit = matchLimit; //the max amnt of games each club gonna play, no matter, if they didnt play every other team (will go over this limit if terms is not 1)
+        if(this.matchLimit <=0) this.matchLimit = 999999; //so if 0 is input that means there is no limit at all
 
         this.matchplan = this.generateMatchplan(); //array: [Spieltag][Spiel] --> e.g.: [7][2] = Spieltag 8, Spiel 3
         this.matchesThisSeason = this.matchplan.length;
@@ -108,6 +111,7 @@ class League {
     }
 
     generateMatchplan(totalRounds = this.clubs.length - 1){
+        if(totalRounds>this.matchLimit) totalRounds = this.matchLimit; //limits the games
         let clubs = [...this.clubs]; //creates a copy of the clubs array
         clubs = clubs.sort((a,b)=>0.5-Math.random());//shuffles the array, so the matchplan will be unique for everyone.
         let matchplan = [];
@@ -369,6 +373,7 @@ class Calendar{
           matchdays: league.matchdaysThisSeason,
         }));
         const calendar = [];
+        let leaguesLeft = leagues.length;
       
         //find lowest number of matchdays
         const minMatchdays = Math.min(...leagues.map(league => league.matchdays));
@@ -379,16 +384,19 @@ class Calendar{
             if (league.matchdays > 0) {
               calendar.push(league);
               league.matchdays--;
+              if(league.matchdays == 0) leaguesLeft-=1;
             }
           });
         }
         //add the remaining matchdays to the calendar at a random position
-        for (let i = 0; i < minMatchdays; i++) {
-          leagues.forEach(league => {
+        //for (let i = 0; i < minMatchdays; i++) { // @future erik: lol u cant just put minMatchdays here too. (i just copy pasted it for now) (wont work later) @past erik: i am future erik and i wanna kill u for not just implementing this correctly, i just spent 3h debugging bcs of this u bastard
+        while(leaguesLeft > 0){
+            leagues.forEach(league => {
             if (league.matchdays > 0) {
               const randomIndex = Math.floor(Math.random() * calendar.length);
               calendar.splice(randomIndex, 0, league);
               league.matchdays--;
+              if(league.matchdays == 0) leaguesLeft-=1;
             }
           });
         }
@@ -637,13 +645,14 @@ function matchesCalculated(lastLeague,leagueDone=false) {
         seasonOver();
         return;
     }
+    //continue if not
     lastLeague.crntweek +=1;
 
     activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
     activeLeague = dLeagues.find(league => league.name === activeLeagueName);
     if(!activeLeague){ //IF NOT A LEAGUE, LOOK FOR TORNAMENT INSTEAD
         activeLeague = dTournaments.find(tournament => tournament.name === activeLeagueName);
-        if(!activeLeague){ //if also not a tournament lick my balls idk how that got into the calendar then...
+        if(!activeLeague){ //if also not a tournament... idk... lick my balls cuz idk how that got into the calendar then...
             throw new Error(`League/Cup ${activeLeagueName} not found.`);
         }
         //run this if it is a cup
