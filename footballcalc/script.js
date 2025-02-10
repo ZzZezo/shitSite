@@ -22,6 +22,7 @@ let userRandomness = 13.5;
 //debug variables
 let debug_fast_skip = false; //if true, fills out every game with 1-1
 let debug_console_tables = false; //if true, prints the tables to the console
+let debug_log_everything = false; //if true, a lot more things are being logged in the console
 
 class Club { //all clubs
     constructor(name,HardcodedRating) {
@@ -44,7 +45,7 @@ class Club { //all clubs
 }
 
 class League {
-    constructor(name, clubs = [], matchLimit = 0, promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],association="FIFA",level=1,hasChampion=true,terms = 2,playable = true) {
+    constructor(name, clubs = [], matchLimit = 0, promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],association="FIFA",level=1,hasChampion=true,terms = 2,playable = true,knockoutTeams = 0) {
         this.name = name; //whats it called (e.g.: "Premier League")
         this.clubs = clubs; //list of all participating clubs
         this.sortedClubs = this.init_sortedClubs(clubs); //all clubs of the league, but in order they are shown in tabel
@@ -66,13 +67,20 @@ class League {
         //Hin und rückrunden
         this.terms = terms;
         this.crntweek = 0; //tracks what week we are in (spieltag)
+        this.lastShownMatchIndex = 0;
+        //for uefa cups
+        //the number of teams that will qualify for the knockout stage (if 0, behaves like a normal league)
+        this.knockoutTeams = knockoutTeams;
+        this.knockoutTeamsList = [];
+        this.isInKnockoutPhase = false;
 
         this.matchLimit = matchLimit; //the max amnt of games each club gonna play, no matter, if they didnt play every other team (will go over this limit if terms is not 1)
         if(this.matchLimit <=0) this.matchLimit = 999999; //so if 0 is input that means there is no limit at all
 
         this.matchplan = this.generateMatchplan(); //array: [Spieltag][Spiel] --> e.g.: [7][2] = Spieltag 8, Spiel 3
         this.matchesThisSeason = this.matchplan.length;
-        this.matchdaysThisSeason = this.matchesThisSeason / (this.clubs.length / 2);
+        this.matchdaysThisSeason = Math.floor(this.matchesThisSeason / (this.clubs.length / 2))
+        if(this.knockoutTeams>0) this.matchdaysThisSeason+=logBase2(this.knockoutTeams);
         // console.log(this.name+": "+this.matchdaysThisSeason);
         this.matchdaysPlayed = 0;
         
@@ -152,6 +160,22 @@ class League {
             matchplan = [...matchplan, ...termMatches];//append term to matchplan
         }
 
+        //@UEFA, add knockout stage. we dont know which teams qualified yet so this is a placeholder.
+        //this means we have to update the teams whenever the previous matchday was finished (first time after the 8. matchday, then after every knockout matchday)
+        if(this.knockoutTeams > 0){
+            //get the amnt of rounds. should be the number of teams with log 2, if my math doesnt stand corrected
+            let knockoutRounds = logBase2(this.knockoutTeams);
+            let projectedTeamsLeft = this.knockoutTeams;
+            let knockoutMatches = [];
+            for(let i = 0; i < knockoutRounds; i++){
+                for(let j = 0; j < projectedTeamsLeft / 2; j++){
+                    knockoutMatches.push([null,null])
+                }
+                projectedTeamsLeft = projectedTeamsLeft / 2;
+            }
+            matchplan = [...matchplan, ...knockoutMatches];
+        }
+
         return matchplan;
     }
 
@@ -161,7 +185,7 @@ class League {
         newClub.initializeLeagueStats(this.name);
         this.matchplan = this.generateMatchplan();//this line probably should be done somewhere else later
         this.sortedClubs = this.init_sortedClubs(this.clubs);//so should this
-        console.log(this.name+": Replaced "+oldClub.name + " with "+newClub.name);
+        if(debug_log_everything)console.log(this.name+": Replaced "+oldClub.name + " with "+newClub.name);
     }
 
     removeClub(club){
@@ -169,14 +193,14 @@ class League {
         this.clubs.splice(index,1);
         this.matchplan = this.generateMatchplan();//this line probably should be done somewhere else later
         this.sortedClubs = this.init_sortedClubs(this.clubs);//so should this
-        console.log(this.name+": Removed "+club.name);
+        if(debug_log_everything)console.log(this.name+": Removed "+club.name);
     }
 
     addClub(club){
         this.clubs.push(club);
         this.matchplan = this.generateMatchplan();//this line probably should be done somewhere else later
         this.sortedClubs = this.init_sortedClubs(this.clubs);//so should this
-        console.log(this.name+": Added "+club.name);
+        if(debug_log_everything)console.log(this.name+": Added "+club.name);
     }
 
     fullSimulation(randomness){//the higher the randomness value the LESS random are the results //maybe 13 is good?
@@ -293,11 +317,13 @@ class Cup{
         if(isPowerOfTwo(this.remainingClubs.length) && this.remainingClubs.length>=2){
             this.drawNewRound();
             document.getElementById("LeagueTable").style.display = "block";
+            if(debug_log_everything)console.log("CALL A");
             matchesCalculated(this,false);
         }
         else if(this.remainingClubs.length=1){
             console.log(this.remainingClubs[0].name + " wins the cup!");
             document.getElementById("LeagueTable").style.display = "block";
+            if(debug_log_everything)console.log("CALL B");
             matchesCalculated(this,false);
         }
         else throw new Error("Cup has an invalid number of clubs left!");
@@ -372,6 +398,7 @@ class Calendar{
           name: league.name,
           matchdays: league.matchdaysThisSeason,
         }));
+        // console.log(leagues);
         const calendar = [];
         let leaguesLeft = leagues.length;
       
@@ -388,18 +415,24 @@ class Calendar{
             }
           });
         }
+
         //add the remaining matchdays to the calendar at a random position
         //for (let i = 0; i < minMatchdays; i++) { // @future erik: lol u cant just put minMatchdays here too. (i just copy pasted it for now) (wont work later) @past erik: i am future erik and i wanna kill u for not just implementing this correctly, i just spent 3h debugging bcs of this u bastard
-        while(leaguesLeft > 0){
+        while (leaguesLeft > 0) {
             leagues.forEach(league => {
-            if (league.matchdays > 0) {
-              const randomIndex = Math.floor(Math.random() * calendar.length);
-              calendar.splice(randomIndex, 0, league);
-              league.matchdays--;
-              if(league.matchdays == 0) leaguesLeft-=1;
-            }
-          });
+                if (league.matchdays > 0) {
+                    const randomIndex = Math.floor(Math.random() * calendar.length);
+                    calendar.splice(randomIndex, 0, league);
+                    league.matchdays--;
+        
+                    if (league.matchdays === 0) {
+                        leaguesLeft--;
+                    }
+                }
+            });
         }
+        
+
 
         //update the calendar to only return league names not objects
         for (let i = 0; i < calendar.length; i++) {
@@ -466,6 +499,7 @@ class SeasonManager {
                 if (clubsToPromote.length > 0 && higherLeague) {
                     console.log("%c"+currentLeague.name + " Promotion:","color:cornflowerblue")
                     clubsToPromote.forEach(club => {
+                        console.log(club.name);
                         currentLeague.removeClub(club);
                         higherLeague.addClub(club);
                     });
@@ -475,6 +509,7 @@ class SeasonManager {
                 if (clubsToRelegate.length > 0 && lowerLeague) {
                     console.log("%c"+currentLeague.name + " Relegation:","color:cornflowerblue")
                     clubsToRelegate.forEach(club => {
+                        console.log(club.name);
                         currentLeague.removeClub(club);
                         lowerLeague.addClub(club);
                     });
@@ -532,12 +567,16 @@ class SeasonManager {
 
     resetLeagueStats() {
         dLeagues.forEach(league => {
+            league.isInKnockoutPhase=false;
+
             league.matches = [];
             league.crntweek = 0;
+            league.lastShownMatchIndex = 0;
             league.matchdaysPlayed = 0;
             league.sortedClubs = league.init_sortedClubs(league.clubs);
             league.matchplan = league.generateMatchplan();
             
+
             league.clubs.forEach(club => {
                 club.matches = [];
                 club.leagueStats = {};
@@ -548,10 +587,11 @@ class SeasonManager {
 }
 
 
-function calculateInput() { //called when the calculate button is pressed, turns user input into actual matches
+async function calculateInput() { //called when the calculate button is pressed, turns user input into actual matches
     const leagueName = activeLeague.name;
     const league = activeLeague;
     let todaysMatches = [];
+    let todaysWinnerNames = [];
     if (!league) {
         throw new Error(`League ${leagueName} not found.`);
     }
@@ -586,6 +626,28 @@ function calculateInput() { //called when the calculate button is pressed, turns
 
         if(isNaN(homeGoals) || isNaN(awayGoals)){
             throw new Error("Goals cannot be empty.");//also throws when goals entered ar not an int
+        }
+
+        if(homeGoals>awayGoals) todaysWinnerNames.push(homeClub.name);
+        else if(homeGoals<awayGoals) todaysWinnerNames.push(awayClub.name);
+        else if(homeGoals==awayGoals&&league.isInKnockoutPhase){
+            //@UEFA
+            //here should be the same logic inside as for penalty on cups
+            // Handle penalty shootout asynchronously
+            const winner = await new Promise((resolve) => {
+                createPopup(
+                    this.name,
+                    "Who wins in Penalty Shootout?",
+                    2,
+                    [homeClub.name, awayClub.name],
+                    [
+                        () => resolve(homeClub),
+                        () => resolve(awayClub),
+                    ]
+                );
+            });
+            todaysWinnerNames.push(winner.name);
+            closePopup();
         }
 
         // Proceed with creating and handling the match if both clubs are in the league
@@ -624,15 +686,72 @@ function calculateInput() { //called when the calculate button is pressed, turns
         }
         return a.losses - b.losses; //else sort by who lost the least games
     });
+
+    //@UEFA
+    //knocks out the teams/proceeds to the next round
+    if(league.knockoutTeams > 0){
+        //only goes inside if league has a knockout system at all
+        if(league.matchLimit==league.crntweek+1 && !league.isInKnockoutPhase){
+            //i hope this finds out weither the knockout phase should start rn (meaning it just calculated the last games of group phase)
+            //if so set the variable to true so we know now
+            console.log(league.name+" knockout phase started");
+            league.isInKnockoutPhase = true;
+
+            //now randomly let the top 16 teams play each other (we assume league.knockoutTeams is 16 in the example that the comments describe)
+            //first we need to get the top 16 teams from league.sortedClubs
+            const top16Teams = sortedClubs.slice(0, league.knockoutTeams);
+            //we also need to store them in the list btw
+            league.knockoutTeamsList = [...top16Teams];
+            //now we have to shuffle that list
+            top16Teams.sort(() => Math.random() - 0.5);
+            //now we should have a shuffled list of top 16 teams
+            //now we have to fill these into the matchplan
+            //so we need to find the matchplan index now
+            const matchplanIndex = (league.crntweek+1)*league.clubs.length/2;
+            //in the first round there will be league.knockoutTeams/2 matches
+            for (let i = 0; i < league.knockoutTeams/2; i++) {
+                league.matchplan[matchplanIndex+i] = [top16Teams[i],top16Teams[league.knockoutTeams-i-1]];
+            }
+            //okay this should IN THEORY (meaning its definitely not) be done
+        }
+        else if(league.isInKnockoutPhase){
+            //this should only run after a round has just been calculated, for example after quarter finale
+            console.log("okay so we just played a knockout round for "+league.name);
+            //okay we now need to get the winning teams from the day, stored (hopefully) in todaysWinnerNames
+            const advancingTeams = todaysWinnerNames;
+            //we also need to store them in the list btw
+            league.knockoutTeamsList = [...advancingTeams];
+            //now we have to shuffle that list
+            advancingTeams.sort(() => Math.random() - 0.5);
+            //now we should have a shuffled list of all teams that are still participating
+            //if this list is only containing a single club, it means we have our winner. so
+            if(advancingTeams.length==1){
+                let LeagueChampion = advancingTeams[0];
+                console.log(LeagueChampion +" has won "+league.name);
+            }
+            //now we have to fill these into the matchplan
+            //here i wanna try a different method. we can try getting the first entry from the matchplan where its value is [null,null]
+            const index = league.matchplan.findIndex(item => item[0] === null && item[1] === null); //this should do said thing
+            //in the next round there will be advancingTeams/2 matches
+            for (let i = 0; i < advancingTeams.length / 2; i++) {
+                league.matchplan[index + i] = [
+                    { name: advancingTeams[i] }, 
+                    { name: advancingTeams[advancingTeams.length - i - 1] }
+                ];
+            }
+            //okay this should IN THEORY (meaning its definitely not) be done
+        }
+    }
     
     if(debug_console_tables)console.table(sortedClubs);
     updateTabel(sortedClubs,league);
     league.updateStats(sortedClubs);
-
+    if(debug_log_everything)console.log("CALL C");
     matchesCalculated(league);
 }
 
 function matchesCalculated(lastLeague,leagueDone=false) {
+    if(debug_log_everything)console.log("huh")
     seasonCalendar.calendarIndex+=1;
     // console.log("Remaining:" + seasonCalendar.getRemaining());
     resetClubInfo();
@@ -694,23 +813,52 @@ function showMatches(leagueName) {
 
 //-------------NEW MATCHMAKING--------------
     let matchesAmntMatchday = league.clubs.length / 2;
+    if(league.isInKnockoutPhase){
+        matchesAmntMatchday = league.knockoutTeamsList.length/2;
+    }
     let remainingMatches = matchesAmntMatchday;
-    while(remainingMatches > 0){
-        if(league.matchplan[(matchesAmntMatchday-remainingMatches)+league.crntweek*matchesAmntMatchday]){
-            t1=league.matchplan[(matchesAmntMatchday-remainingMatches)+league.crntweek*matchesAmntMatchday][0].name;
-            t2=league.matchplan[(matchesAmntMatchday-remainingMatches)+league.crntweek*matchesAmntMatchday][1].name;
-            remainingMatches--;
-        }
-        else{
-            matchesCalculated(league,true);
-            remainingMatches = 0;
+
+    if(debug_log_everything)console.log(`Spieltag: ${league.crntweek}, Geplante Matches: ${matchesAmntMatchday}`);
+
+    while (remainingMatches > 0) {
+        // let index = (matchesAmntMatchday - remainingMatches) + league.crntweek * matchesAmntMatchday;
+        let index = league.lastShownMatchIndex;
+        let match = league.matchplan[index];
+
+        if(debug_log_everything)console.log(`\n[DEBUG] Prüfe Match Index: ${index}`);
+        if(debug_log_everything)console.log(`[DEBUG] Prüfe Last Shown Match Index: ${league.lastShownMatchIndex}`);
+
+        if (match) {
+            try {
+                t1 = match[0].name;
+                t2 = match[1].name;
+                
+                if(debug_log_everything)console.log(`  → Match gefunden: ${t1} vs. ${t2}`);
+                remainingMatches--;
+            } catch (error) {
+                console.error(`[ERROR] Fehler bei Match ${index}:`, error);
+
+                remainingMatches = 0;
+                league.matchdaysPlayed += 1;
+                container.appendChild(document.createElement("br"));
+
+                const calcButton = document.createElement("button");
+                calcButton.id = "calcButton";
+                calcButton.innerText = "Continue";
+                calcButton.onclick = calculateInput;
+                calcButton.disabled = false;
+                container.appendChild(calcButton);
+                return;
+            }
+        } else {
+            console.warn(`[WARN] Kein Match gefunden an Index ${index}. Schleife wird abgebrochen.`);
             return;
         }
         
         
 //-------------NEW MATCHMAKING--------------
 
-
+        league.lastShownMatchIndex+=1;
         //show in html
         const inputT1 = document.createElement("input");
             inputT1.type = "text";
@@ -1113,14 +1261,11 @@ function startGame(){
     if(loadedLeagues.length<1)return;
     document.getElementById('checkboxContainer').style.display = "none";
     updateDropdownOptions();
-
     seasonCalendar = new Calendar(loadedLeagues);
     seasonManager = new SeasonManager();
-
     if(loadedCups.length>0)loadedCups.forEach(cup => {
         seasonCalendar.spreadIntoCalendar(cup.name,cup.totalRounds);
     });
-
     activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
     activeLeague = dLeagues.find(league => league.name === activeLeagueName);
     showMatches(activeLeague.name);
@@ -1182,4 +1327,3 @@ window.onload = function exampleFunction(){
     // test.drawNewRound();
     // console.log(test.matchplan);
 }
-
