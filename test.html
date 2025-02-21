@@ -1,69 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Devs Playground</title>
-  <style>
-    body,
-    html {
-      height: 99%;
-      font-family: "Old Sans Serif";
-      background-color: #008080;
-      cursor: url('../assets/images/old_pointer.png'), auto;
-    }
-
-    table {
-      margin: auto;
-      border-collapse: collapse;
-      width: 320px;
-      height: 320px;
-    }
-
-    td {
-      width: 40px;
-      height: 40px;
-    }
-
-    .white {
-      background-color: #f3d3a7;
-    }
-
-    .black {
-      background-color: #995d35;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Mojang Username</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
 <body>
-  <table>
-    <tbody>
-      <tr>
-        <td class="white"></td>
-        <td class="black"></td>
-        <td class="white"></td>
-      </tr>
-      <tr>
-        <td class="black"></td>
-        <td class="white"></td>
-        <td class="black"></td>
-      </tr>
-      <tr>
-        <td class="white"></td>
-        <td class="black"></td>
-        <td class="white"></td>
-      </tr>
-    </tbody>
-  </table>
+    <h1>Mojang Username Info</h1>
+    <pre id="output">Loading...</pre>
+
+    <script>
+        $.ajax({
+    url: "https://api.allorigins.win/get?url=" + encodeURIComponent("https://api.mojang.com/users/profiles/minecraft/FullRiskk"),
+    type: "GET",
+    dataType: "json",
+    success: function(response) {
+        let jsonData = JSON.parse(response.contents);
+        console.log(jsonData);
+    },
+    error: function(xhr, status, error) {
+        console.error("Error:", error);
+    }
+});
+
+    </script>
 </body>
-
-<script>
-  //the function the submit-button should run has to be implemented in the main script and not in the "library script"
-  createPrompt("Title","Question?",function(answer){
-    //the user input will be saved in the variable "answer"
-    console.log("Answer: "+ answer);//this would print the users input
-  })
-</script>
-
 </html>

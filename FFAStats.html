@@ -97,7 +97,8 @@
         <div v-if="playerData" class="window">
             <div class="title-bar">
                 <img :src="`https://mc-heads.net/avatar/${playerName}/32`" 
-                     class="pixel-avatar">
+                class="pixel-avatar"
+                @click.stop="openNameMc">
                 {{ playerName }}'s Hero Stats
                 <div class="flex-grow"></div>
                 <button class="close-button" @click="playerData = null">✕</button>
@@ -113,7 +114,8 @@
                             <div>📈 K/D Ratio: {{ (playerData.kills/playerData.deaths).toFixed(2) }}</div>
                         </div>
                         <div>
-                            <div>🔥 Streak: {{ playerData.highestKillStreak }}</div>
+                            <div>🔥 Current Streak: {{ playerData.currentKillStreak }}</div>
+                            <div>🏆 Highest Streak: {{ playerData.highestKillStreak }}</div>
                             <div>💰 Bounty: {{ playerData.bounty }}</div>
                             <div>✨ Total XP: {{ playerData.xp.toLocaleString() }}</div>
                         </div>
@@ -170,22 +172,38 @@ createApp({
     },
     methods: {
         async fetchStats() {
+            playerData = null;
             if (!this.username) return;
             this.loading = true;
             this.error = null;
             
             try {
-                // Ashcon API Call
-                const ashconResponse = await axios.get(
-                    `https://api.ashcon.app/mojang/v2/user/${this.username}`
+                // API Call
+                const apiResponse = await axios.get(
+                    `https://api.allorigins.win/get?url=` + encodeURIComponent(`https://api.mojang.com/users/profiles/minecraft/${this.username}`)
                 );
 
-                this.playerName = ashconResponse.data.username;
-                const uuid = ashconResponse.data.uuid;
+                // Parse the JSON response from allorigins
+                const playerData = JSON.parse(apiResponse.data.contents);
+
+                this.playerName = playerData.name;
+                const rawUuid = playerData.id;
+
+                // Format UUID: 8-4-4-4-12
+                const formattedUuid = rawUuid.replace(
+                    /(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/,
+                    "$1-$2-$3-$4-$5"
+                );
+
+                console.log("Player Name:", this.playerName);
+                console.log("Formatted UUID:", formattedUuid);
+
+                // Save formatted UUID
+                this.uuid = formattedUuid;                
 
                 // HGLabor API Call
                 const hgResponse = await axios.get(
-                    `https://api.hglabor.de/stats/FFA/${uuid}`
+                    `https://api.hglabor.de/stats/FFA/${this.uuid}`
                 );
                 
                 this.playerData = hgResponse.data;
@@ -229,7 +247,11 @@ createApp({
                 'radius': 'Radius'
             };
             return replacements[stat] || this.formatSkillName(stat);
-        }
+        },
+        openNameMc() {
+        const uuid = this.playerData.playerId.replace(/-/g, '');
+        window.open(`https://namemc.com/profile/${uuid}`, '_blank');
+}
     }
 }).mount('#app');   
     </script>
