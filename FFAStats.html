@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Hero FFA Stats | HGLabor</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'MS Sans';
+            src: url('assets/font/ms-sans-serif.woff') format('woff');
+        }
+        
+        body {
+            background: #008080;
+            font-family: 'MS Sans', sans-serif;
+        }
+        
+        .window {
+            max-width: 800px;
+            margin: 2rem auto;
+            box-shadow: 3px 3px 0 #000;
+            background-color: #c0c0c0;
+        }
+        
+        .title-bar {
+            background: #000080;
+            padding: 4px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .pixel-avatar {
+            image-rendering: pixelated;
+            width: 32px;
+            height: 32px;
+            border: 2px solid #c0c0c0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px;
+            padding: 8px;
+        }
+        
+        .hero-card {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #fff #808080 #808080 #fff;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        
+        .hero-card:hover {
+            background: #a0a0a0;
+        }
+        
+        .skill-name {
+            color: #000080;
+            font-weight: bold;
+            margin: 4px 0;
+        }
+        
+        .close-button {
+            float: right;
+            padding: 0 4px;
+            margin: -2px;
+            border: 2px solid;
+            border-color: #808080 #fff #fff #808080;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Search Box -->
+        <div class="window" style="max-width: 400px; margin-top: 50px">
+            <div class="title-bar">
+                <span>Player Search</span>
+            </div>
+            <div class="p-4">
+                <div class="flex gap-2">
+                    <input v-model="username" 
+                         type="text" 
+                         placeholder="Enter Minecraft Name..."
+                         class="w-full px-2 py-1">
+                    <button @click="fetchStats" class="px-4">🔍 Search</button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Player Stats -->
+        <div v-if="playerData" class="window">
+            <div class="title-bar">
+                <img :src="`https://mc-heads.net/avatar/${playerName}/32`" 
+                     class="pixel-avatar">
+                {{ playerName }}'s Hero Stats
+                <div class="flex-grow"></div>
+                <button class="close-button" @click="playerData = null">✕</button>
+            </div>
+    
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="hero-card" style="grid-column: 1 / -1">
+                    <div class="flex justify-between">
+                        <div>
+                            <div>⚔️ Kills: {{ playerData.kills }}</div>
+                            <div>💀 Deaths: {{ playerData.deaths }}</div>
+                            <div>📈 K/D Ratio: {{ (playerData.kills/playerData.deaths).toFixed(2) }}</div>
+                        </div>
+                        <div>
+                            <div>🔥 Streak: {{ playerData.highestKillStreak }}</div>
+                            <div>💰 Bounty: {{ playerData.bounty }}</div>
+                            <div>✨ Total XP: {{ playerData.xp.toLocaleString() }}</div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Heroes -->
+                <div v-for="(hero, name) in playerData.heroes" 
+                     :key="name" 
+                     class="hero-card"
+                     :class="{ 'bg-gray-300': expandedHero === name }"
+                     @click="toggleHero(name)">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold">{{ formatHeroName(name) }}</span>
+                        <span v-if="expandedHero === name">▼</span>
+                        <span v-else>▶</span>
+                    </div>
+    
+                    <div v-if="expandedHero === name" class="mt-2">
+                        <div v-for="(ability, abilityName) in hero" :key="abilityName">
+                            <div class="skill-name">{{ formatSkillName(abilityName) }}</div>
+                            <div v-for="(stat, statName) in ability" :key="statName" 
+                               class="ml-2 mb-2">
+                                <div class="flex justify-between text-xs">
+                                    <span>{{ formatStatName(statName) }}</span>
+                                    <span>{{ stat.experiencePoints.toLocaleString() }}</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" 
+                                       :style="{ width: calculateProgress(stat.experiencePoints) + '%' }">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            username: '',
+            playerData: null,
+            loading: false,
+            expandedHero: null,
+            playerName: null,
+            error: null
+        }
+    },
+    methods: {
+        async fetchStats() {
+            if (!this.username) return;
+            this.loading = true;
+            this.error = null;
+            
+            try {
+                // Ashcon API Call
+                const ashconResponse = await axios.get(
+                    `https://api.ashcon.app/mojang/v2/user/${this.username}`
+                );
+
+                this.playerName = ashconResponse.data.username;
+                const uuid = ashconResponse.data.uuid;
+
+                // HGLabor API Call
+                const hgResponse = await axios.get(
+                    `https://api.hglabor.de/stats/FFA/${uuid}`
+                );
+                
+                this.playerData = hgResponse.data;
+            } catch (error) {
+                this.handleError(error);
+            }
+            
+            this.loading = false;
+        },
+        handleError(error) {
+            if (error.response?.status === 404) {
+                this.error = 'Player not found! Check spelling.';
+            } else if (error.response?.status === 429) {
+                this.error = 'Too many requests! Slow down.';
+            } else {
+                this.error = 'Error fetching data. Try again later.';
+            }
+            setTimeout(() => this.error = null, 5000);
+        },
+        calculateProgress(xp) {
+            const max = 50000;
+            return Math.min((xp / max) * 100, 100);
+        },
+        toggleHero(hero) {
+            this.expandedHero = this.expandedHero === hero ? null : hero;
+        },
+        formatHeroName(name) {
+            return name.charAt(0).toUpperCase() + name.slice(1);
+        },
+        formatSkillName(skill) {
+            return skill.split('_').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        },
+        formatStatName(stat) {
+            const replacements = {
+                'cooldown': 'CDR',
+                'experiencePoints': 'XP',
+                'max_duration': 'Duration',
+                'max_size': 'Size',
+                'radius': 'Radius'
+            };
+            return replacements[stat] || this.formatSkillName(stat);
+        }
+    }
+}).mount('#app');   
+    </script>
+</body>
+</html>
