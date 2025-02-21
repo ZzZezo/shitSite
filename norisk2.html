@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Hero FFA Stats | HGLabor</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #008080;
+            font-family: Arial, sans-serif;
+            color: black;
+        }
+
+        .window {
+            background: #c0c0c0;
+            border: 3px solid;
+            border-color: #dfdfdf #000000 #000000 #dfdfdf;
+            margin: 8px;
+            box-shadow: 3px 3px 0px #000000;
+        }
+
+        .title-bar {
+            background: #000080;
+            color: white;
+            padding: 3px 6px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        button {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            padding: 3px 12px;
+            font-size: 12px;
+            min-width: 75px;
+        }
+
+        button:active {
+            border-color: #808080 #ffffff #ffffff #808080;
+        }
+
+        input {
+            background: white;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 4px;
+            width: 100%;
+        }
+
+        .progress-bar {
+            background: white;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            height: 16px;
+        }
+
+        .progress-fill {
+            background: #000080;
+            height: 100%;
+        }
+
+        .taskbar {
+            background: #c0c0c0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 32px;
+            border-top: 2px solid #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="p-2">
+        <!-- Main Window -->
+        <div class="window">
+            <div class="title-bar">Hero FFA Stats v1.0</div>
+            <div class="p-4 space-y-4">
+                <!-- Search Bar -->
+                <div class="flex gap-2">
+                    <input v-model="username" type="text" placeholder="Enter Minecraft Username...">
+                    <button @click="fetchStats">Search</button>
+                </div>
+
+                <!-- Stats Window -->
+                <div v-if="playerData" class="window">
+                    <div class="title-bar">
+                        {{ playerName }}'s Statistics
+                        <div class="float-right text-xs">UUID: {{ playerData.playerId }}</div>
+                    </div>
+                    <div class="p-4 grid grid-cols-4 gap-4">
+                        <div>
+                            <div class="text-sm">K/D Ratio</div>
+                            <div class="text-xl font-bold">
+                                {{ (playerData.kills / playerData.deaths).toFixed(2) }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm">Kill Streak</div>
+                            <div class="text-xl font-bold">
+                                {{ playerData.highestKillStreak }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm">Total XP</div>
+                            <div class="text-xl font-bold">
+                                {{ playerData.xp.toLocaleString() }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm">Bounty</div>
+                            <div class="text-xl font-bold">
+                                {{ playerData.bounty }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Heroes Section -->
+                <div v-if="playerData" class="window">
+                    <div class="title-bar">Hero Progression</div>
+                    <div class="p-4 grid grid-cols-3 gap-4">
+                        <div v-for="(hero, name) in playerData.heroes" :key="name" 
+                             class="window p-2 cursor-pointer"
+                             @click="toggleHero(name)">
+                            <div class="font-bold text-sm mb-2">{{ name.toUpperCase() }}</div>
+                            
+                            <div v-if="expandedHero === name" class="space-y-2">
+                                <div v-for="(ability, abilityName) in hero" :key="abilityName">
+                                    <div class="text-xs underline">{{ abilityName }}</div>
+                                    <div v-for="(stat, statName) in ability" :key="statName" 
+                                         class="ml-2 mb-2">
+                                        <div class="flex justify-between text-xs">
+                                            <span>{{ statName }}</span>
+                                            <span>{{ stat.experiencePoints.toLocaleString() }}</span>
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" 
+                                                 :style="{ width: calculateProgress(stat.experiencePoints) + '%' }">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div v-if="loading" class="window p-4 text-center">
+                    <div class="flex items-center justify-center gap-2">
+                        <div class="animate-bounce">●</div>
+                        <div class="animate-bounce delay-100">●</div>
+                        <div class="animate-bounce delay-200">●</div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div v-if="error" class="window p-2 mb-4 text-red-600 text-sm">
+                    ⚠️ {{ error }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    username: '',
+                    playerData: null,
+                    loading: false,
+                    expandedHero: null,
+                    playerName: null,
+                    error: null
+                }
+            },
+            methods: {
+                async fetchStats() {
+                    if (!this.username) return;
+                    this.loading = true;
+                    this.error = null;
+                    
+                    try {
+                        // Mojang API Call für UUID
+                        const mojangResponse = await axios.get(
+                            `https://api.mojang.com/users/profiles/minecraft/${this.username}`
+                        );
+
+                        // UUID formatieren
+                        const rawUUID = mojangResponse.data.id;
+                        const formattedUUID = `${rawUUID.slice(0,8)}-${rawUUID.slice(8,12)}-${rawUUID.slice(12,16)}-${rawUUID.slice(16,20)}-${rawUUID.slice(20)}`;
+                        this.playerName = mojangResponse.data.name;
+
+                        // HGLabor API Call mit formatierter UUID
+                        const hgResponse = await axios.get(
+                            `https://api.hglabor.de/stats/FFA/${formattedUUID}`
+                        );
+                        
+                        this.playerData = hgResponse.data;
+                    } catch (error) {
+                        this.handleError(error);
+                    }
+                    
+                    this.loading = false;
+                },
+                formatUUID(rawUUID) {
+                    return rawUUID.replace(/(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/, "$1-$2-$3-$4-$5");
+                },
+                handleError(error) {
+                    if (error.response?.status === 404) {
+                        this.error = 'Player not found!';
+                    } else {
+                        this.error = 'Error fetching data. Try again later.';
+                    }
+                    setTimeout(() => this.error = null, 5000);
+                },
+                calculateProgress(xp) {
+                    const max = 50000;
+                    return Math.min((xp / max) * 100, 100);
+                },
+                toggleHero(hero) {
+                    this.expandedHero = this.expandedHero === hero ? null : hero;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
