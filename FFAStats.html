@@ -92,6 +92,16 @@
                 </div>
             </div>
         </div>
+
+        <!-- Error Message -->
+        <div v-if="error" class="window mt-4" style="max-width: 400px; background: #ffc0c0">
+            <div class="title-bar bg-red-600">
+                ⚠️ Error
+            </div>
+            <div class="p-4 text-red-800">
+                {{ error }}
+            </div>
+        </div>
     
         <!-- Player Stats -->
         <div v-if="playerData" class="window">
@@ -172,56 +182,75 @@ createApp({
     },
     methods: {
         async fetchStats() {
-            playerData = null;
             if (!this.username) return;
-            this.loading = true;
+            
+            // Reset previous data
+            this.playerData = null;
+            this.playerName = null;
             this.error = null;
+            this.loading = true;
             
             try {
-                // API Call
                 const apiResponse = await axios.get(
-                    `https://api.allorigins.win/get?url=` + encodeURIComponent(`https://api.mojang.com/users/profiles/minecraft/${this.username}`)
+                    `https://api.allorigins.win/get?url=` + 
+                    encodeURIComponent(`https://api.mojang.com/users/profiles/minecraft/${this.username}`)
                 );
 
-                // Parse the JSON response from allorigins
+                // Check if response is valid
+                if (!apiResponse.data.contents) {
+                    throw new Error('Player not found');
+                }
+
                 const playerData = JSON.parse(apiResponse.data.contents);
+                
+                // Additional validation
+                if (!playerData?.id || !playerData?.name) {
+                    throw new Error('Invalid player data');
+                }
 
                 this.playerName = playerData.name;
-                const rawUuid = playerData.id;
-
-                // Format UUID: 8-4-4-4-12
-                const formattedUuid = rawUuid.replace(
+                const formattedUuid = playerData.id.replace(
                     /(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/,
                     "$1-$2-$3-$4-$5"
                 );
 
-                console.log("Player Name:", this.playerName);
-                console.log("Formatted UUID:", formattedUuid);
-
-                // Save formatted UUID
-                this.uuid = formattedUuid;                
-
-                // HGLabor API Call
                 const hgResponse = await axios.get(
-                    `https://api.hglabor.de/stats/FFA/${this.uuid}`
+                    `https://api.hglabor.de/stats/FFA/${formattedUuid}`
                 );
+                
+                // Check if HGLabor data exists
+                if (!hgResponse.data?.playerId) {
+                    throw new Error('Player has no FFA stats');
+                }
                 
                 this.playerData = hgResponse.data;
             } catch (error) {
                 this.handleError(error);
+                // Clear any partial data
+                this.playerData = null;
+                this.playerName = null;
             }
             
             this.loading = false;
         },
         handleError(error) {
-            if (error.response?.status === 404) {
-                this.error = 'Player not found! Check spelling.';
+            if (error.message.includes('Player not found')) {
+                this.error = 'Player does not exist!';
+            } else if (error.message.includes('Invalid player data')) {
+                this.error = 'Player does not exist';
+            } else if (error.message.includes('no FFA stats')) {
+                this.error = 'Player has no FFA statistics';
+            } else if (error.message.includes('404')) {
+                this.error = 'Player has no FFA statistics';
             } else if (error.response?.status === 429) {
-                this.error = 'Too many requests! Slow down.';
+                this.error = 'Too many requests! Wait 5 seconds';
             } else {
-                this.error = 'Error fetching data. Try again later.';
+                this.error = 'Connection error. Try again later.';
             }
-            setTimeout(() => this.error = null, 5000);
+            
+            setTimeout(() => {
+                this.error = null;
+            }, 5000);
         },
         calculateProgress(xp) {
             const max = 50000;
