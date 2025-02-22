@@ -73,6 +73,20 @@
             border: 2px solid;
             border-color: #808080 #fff #fff #808080;
         }
+
+        table {
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+        }
+
+        th, td {
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+        }
+
+        .pixel-avatar {
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -87,9 +101,60 @@
                     <input v-model="username" 
                          type="text" 
                          placeholder="Enter Minecraft Name..."
-                         class="w-full px-2 py-1">
+                         class="w-full px-2 py-1"
+                         @keyup.enter="fetchStats">
                     <button @click="fetchStats" class="px-4">🔍 Search</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Top Liste -->
+        <div v-if="!playerData" class="window" style="max-width: 900px; margin-top: 20px">
+            <div class="title-bar">
+                🏆 Top Players - Sorted by {{ currentSort.charAt(0).toUpperCase()+currentSort.slice(1) }}
+            </div>
+            <div class="p-4">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-300">
+                            <th class="border-2 border-gray-500 p-1 text-left">#</th>
+                            <th class="border-2 border-gray-500 p-1 text-left">Player</th>
+                            <th v-for="col in sortableColumns" 
+                                :key="col"
+                                class="border-2 border-gray-500 p-1 cursor-pointer hover:bg-gray-400"
+                                @click="currentSort = col"
+                                :class="{ 'bg-gray-400': currentSort === col }">
+                                {{ col.toUpperCase() }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(player, index) in topList" 
+                            :key="player.playerId"
+                            class="hover:bg-gray-200">
+                            <td class="border-2 border-gray-500 p-1">{{ index + 1 }}</td>
+                            <td class="border-2 border-gray-500 p-1">
+                                <a :href="`https://namemc.com/profile/${player.playerId}`" 
+                                   target="_blank"
+                                   title="View NameMC Profile">
+                                    <img :src="`https://mc-heads.net/avatar/${player.playerId}/32`" 
+                                         class="pixel-avatar inline-block mr-2">
+                                </a>
+                                <span class="cursor-pointer hover:underline" 
+                                      @click="loadPlayerStats(player.playerId, player.playerName)">
+                                    {{ player.playerName }}
+                                </span>
+                            </td>
+                            <td class="border-2 border-gray-500 p-1 text-right">{{ player.kills.toLocaleString() }}</td>
+                            <td class="border-2 border-gray-500 p-1 text-right">{{ player.deaths.toLocaleString() }}</td>
+                            <td class="border-2 border-gray-500 p-1 text-right">{{ player.currentKillStreak.toLocaleString() }}</td>
+                            <td class="border-2 border-gray-500 p-1 text-right">{{ player.highestKillStreak.toLocaleString() }}</td>
+                            <td class="border-2 border-gray-500 p-1 text-right">{{ player.bounty.toLocaleString() }}</td>
+                            <td class="border-2 border-gray-500 p-1 text-right">{{ player.xp.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div v-if="errorTopList" class="text-red-600 mt-2">⚠️ {{ errorTopList }}</div>
             </div>
         </div>
 
@@ -127,7 +192,7 @@
                             <div>🔥 Current Streak: {{ playerData.currentKillStreak }}</div>
                             <div>🏆 Highest Streak: {{ playerData.highestKillStreak }}</div>
                             <div>💰 Bounty: {{ playerData.bounty }}</div>
-                            <div>✨ Total XP: {{ playerData.xp.toLocaleString() }}</div>
+                            <div>✨ XP: {{ playerData.xp.toLocaleString() }}</div>
                         </div>
                     </div>
                 </div>
@@ -167,122 +232,195 @@
     </div>
 
     <script>
-const { createApp } = Vue;
+        const { createApp } = Vue;
 
-createApp({
-    data() {
-        return {
-            username: '',
-            playerData: null,
-            loading: false,
-            expandedHero: null,
-            playerName: null,
-            error: null
-        }
-    },
-    methods: {
-        async fetchStats() {
-            if (!this.username) return;
-            
-            // Reset previous data
-            this.playerData = null;
-            this.playerName = null;
-            this.error = null;
-            this.loading = true;
-            
-            try {
-                const apiResponse = await axios.get(
-                    `https://api.allorigins.win/get?url=` + 
-                    encodeURIComponent(`https://api.mojang.com/users/profiles/minecraft/${this.username}`)
-                );
-
-                // Check if response is valid
-                if (!apiResponse.data.contents) {
-                    throw new Error('Player not found');
+        createApp({
+            data() {
+                return {
+                    username: '',
+                    playerData: null,
+                    loading: false,
+                    expandedHero: null,
+                    playerName: null,
+                    error: null,
+                    topList: [],
+                    currentSort: 'kills',
+                    sortableColumns: ['kills', 'deaths', 'currentKillStreak', 'highestKillStreak', 'bounty','xp'],
+                    errorTopList: null
                 }
-
-                const playerData = JSON.parse(apiResponse.data.contents);
-                
-                // Additional validation
-                if (!playerData?.id || !playerData?.name) {
-                    throw new Error('Invalid player data');
+            },
+            mounted() {
+                this.fetchTopList();
+            },
+            watch: {
+                currentSort() {
+                    this.fetchTopList();
                 }
+            },
+            methods: {
+                async fetchStats() {
+                    if (!this.username) return;
+                    
+                    // Reset previous data
+                    this.playerData = null;
+                    this.playerName = null;
+                    this.error = null;
+                    this.loading = true;
+                    this.topList = [];
+                    
+                    try {
+                        const apiResponse = await axios.get(
+                            `https://api.allorigins.win/get?url=` + 
+                            encodeURIComponent(`https://api.mojang.com/users/profiles/minecraft/${this.username}`)
+                        );
 
-                this.playerName = playerData.name;
-                const formattedUuid = playerData.id.replace(
-                    /(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/,
-                    "$1-$2-$3-$4-$5"
-                );
+                        // Check if response is valid
+                        if (!apiResponse.data.contents) {
+                            throw new Error('Player not found');
+                        }
 
-                const hgResponse = await axios.get(
-                    `https://api.hglabor.de/stats/FFA/${formattedUuid}`
-                );
-                
-                // Check if HGLabor data exists
-                if (!hgResponse.data?.playerId) {
-                    throw new Error('Player has no FFA stats');
-                }
-                
-                this.playerData = hgResponse.data;
-            } catch (error) {
-                this.handleError(error);
-                // Clear any partial data
-                this.playerData = null;
-                this.playerName = null;
+                        const playerData = JSON.parse(apiResponse.data.contents);
+                        
+                        // Additional validation
+                        if (!playerData?.id || !playerData?.name) {
+                            throw new Error('Invalid player data');
+                        }
+
+                        this.playerName = playerData.name;
+                        const formattedUuid = playerData.id.replace(
+                            /(\w{8})(\w{4})(\w{4})(\w{4})(\w{12})/,
+                            "$1-$2-$3-$4-$5"
+                        );
+
+                        const hgResponse = await axios.get(
+                            `https://api.hglabor.de/stats/FFA/${formattedUuid}`
+                        );
+                        
+                        // Check if HGLabor data exists
+                        if (!hgResponse.data?.playerId) {
+                            throw new Error('Player has no FFA stats');
+                        }
+                        
+                        this.playerData = hgResponse.data;
+                    } catch (error) {
+                        this.handleError(error);
+                        // Clear any partial data
+                        this.playerData = null;
+                        this.playerName = null;
+                    }
+                    
+                    this.loading = false;
+                },
+                handleError(error) {
+                    if (error.message.includes('Player not found')) {
+                        this.error = 'Player does not exist!';
+                    } else if (error.message.includes('Invalid player data')) {
+                        this.error = 'Player does not exist';
+                    } else if (error.message.includes('no FFA stats')) {
+                        this.error = 'Player has no FFA statistics';
+                    } else if (error.message.includes('404')) {
+                        this.error = 'Player has no FFA statistics';
+                    } else if (error.response?.status === 429) {
+                        this.error = 'Too many requests! Wait 5 seconds';
+                    } else {
+                        this.error = 'Connection error. Try again later.';
+                    }
+                    
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 5000);
+                },
+                calculateProgress(xp) {
+                    const max = 50000;
+                    return Math.min((xp / max) * 100, 100);
+                },
+                toggleHero(hero) {
+                    this.expandedHero = this.expandedHero === hero ? null : hero;
+                },
+                formatHeroName(name) {
+                    return name.charAt(0).toUpperCase() + name.slice(1);
+                },
+                formatSkillName(skill) {
+                    return skill.split('_').map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ');
+                },
+                formatStatName(stat) {
+                    const replacements = {
+                        'cooldown': 'Cooldown',
+                        'experiencePoints': 'XP',
+                        'max_duration': 'Duration',
+                        'max_size': 'Size',
+                        'radius': 'Radius'
+                    };
+                    return replacements[stat] || this.formatSkillName(stat);
+                },
+                openNameMc() {
+                const uuid = this.playerData.playerId.replace(/-/g, '');
+                window.open(`https://namemc.com/profile/${uuid}`, '_blank');
+                },
+                async fetchTopList() {
+                    try {
+                        const response = await axios.get(
+                            `https://api.hglabor.de/stats/FFA/top?sort=${this.currentSort}`
+                        );
+                        
+                        // UUIDs in batches abfragen
+                        const playersWithNames = await Promise.all(
+                            response.data.map(async player => {
+                                try {
+                                    const mojangResponse = await axios.get(
+                                        `https://api.ashcon.app/mojang/v2/user/${player.playerId}`
+                                    );
+                                    return {
+                                        ...player,
+                                        playerName: mojangResponse.data.username
+                                    };
+                                } catch (error) {
+                                    console.error('Name lookup failed:', error);
+                                    return { ...player, playerName: 'Unknown' };
+                                }
+                            })
+                        );
+
+                        this.topList = playersWithNames;
+                        this.errorTopList = null;
+                    } catch (error) {
+                        this.errorTopList = 'Failed to load leaderboard';
+                        console.error('Toplist error:', error);
+                    }
+                },
+                async loadPlayerStats(uuid, cachedName) {
+                    // Reset previous data
+                    this.playerData = null;
+                    this.playerName = cachedName;
+                    this.error = null;
+                    this.loading = true;
+                    this.topList = [];
+
+                    try {
+                        // Direkter API-Call mit UUID
+                        const hgResponse = await axios.get(
+                            `https://api.hglabor.de/stats/FFA/${uuid}`
+                        );
+                        
+                        // Holen des aktuellen Namens
+                        const ashconResponse = await axios.get(
+                            `https://api.ashcon.app/mojang/v2/user/${uuid}`
+                        );
+                        
+                        this.playerData = hgResponse.data;
+                        this.playerName = ashconResponse.data.username;
+                    } catch (error) {
+                        this.handleError(error);
+                        this.playerData = null;
+                        this.playerName = null;
+                    }
+                    
+                    this.loading = false;
+                },
             }
-            
-            this.loading = false;
-        },
-        handleError(error) {
-            if (error.message.includes('Player not found')) {
-                this.error = 'Player does not exist!';
-            } else if (error.message.includes('Invalid player data')) {
-                this.error = 'Player does not exist';
-            } else if (error.message.includes('no FFA stats')) {
-                this.error = 'Player has no FFA statistics';
-            } else if (error.message.includes('404')) {
-                this.error = 'Player has no FFA statistics';
-            } else if (error.response?.status === 429) {
-                this.error = 'Too many requests! Wait 5 seconds';
-            } else {
-                this.error = 'Connection error. Try again later.';
-            }
-            
-            setTimeout(() => {
-                this.error = null;
-            }, 5000);
-        },
-        calculateProgress(xp) {
-            const max = 50000;
-            return Math.min((xp / max) * 100, 100);
-        },
-        toggleHero(hero) {
-            this.expandedHero = this.expandedHero === hero ? null : hero;
-        },
-        formatHeroName(name) {
-            return name.charAt(0).toUpperCase() + name.slice(1);
-        },
-        formatSkillName(skill) {
-            return skill.split('_').map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1)
-            ).join(' ');
-        },
-        formatStatName(stat) {
-            const replacements = {
-                'cooldown': 'Cooldown',
-                'experiencePoints': 'XP',
-                'max_duration': 'Duration',
-                'max_size': 'Size',
-                'radius': 'Radius'
-            };
-            return replacements[stat] || this.formatSkillName(stat);
-        },
-        openNameMc() {
-        const uuid = this.playerData.playerId.replace(/-/g, '');
-        window.open(`https://namemc.com/profile/${uuid}`, '_blank');
-}
-    }
-}).mount('#app');   
+        }).mount('#app');   
     </script>
 </body>
 </html>
