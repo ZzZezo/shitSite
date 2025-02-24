@@ -55,7 +55,7 @@
             border-color: #fff #808080 #808080 #fff;
             padding: 8px;
             cursor: pointer;
-            transition: all 0.1s;
+            transition: all 0.2s;
         }
         
         .hero-card:hover {
@@ -214,6 +214,48 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Leaderboard Positions -->
+                <div class="hero-card" style="grid-column: 1 / -1">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-bold">🏆 Leaderboard Positions</div>
+                            <div v-if="loading">
+                                Loading leaderboard positions...
+                            </div>
+                            <div v-else-if="Object.keys(leaderboardPositions).length > 0">
+                                <ul>
+                                    <li v-for="(position, category) in leaderboardPositions" :key="category">
+                                        {{ formatCategoryName(category) }}: #{{ position }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div v-else>
+                                Not ranked in any leaderboard.
+                            </div>
+                        </div>
+                        <div v-if="hasTopThreePositions" class="flex items-center">
+                            <div v-for="(trophy, index) in getAllTrophies" :key="index" class="text-center">
+                                <img :src="`/assets/images/${trophy.type}.png`" alt="Trophy" class="w-20 h-20 mt-5">
+                                <div class="text-xl">{{ getCategoryEmoji(trophy.category) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Favorite Hero -->
+                <div class="hero-card" style="grid-column: 1 / -1">
+                    <div class="font-bold">❤️ Favorite Hero</div>
+                    <div v-if="favoriteHero">
+                        {{ formatHeroName(favoriteHero) }}
+                    </div>
+                    <div v-else class="text-gray-500 italic">
+                        Play more games to discover your favorite hero! 🚀
+                    </div>
+                    <div v-else>
+                        No hero data available.
+                    </div>
+                </div>
     
                 <!-- Heroes -->
                 <div v-for="(hero, name) in playerData.heroes" 
@@ -275,7 +317,9 @@
                     sortableColumns: ['kills', 'deaths', 'currentKillStreak', 'highestKillStreak', 'bounty', 'xp'],
                     errorTopList: null,
                     heroProperties: {},
-                    path: window.location.pathname
+                    path: window.location.pathname,
+                    topLists: {},
+                    leaderboardPositions: {}
                 };
             },
             mounted() {
@@ -285,6 +329,35 @@
             watch: {
                 currentSort() {
                     this.fetchTopList();
+                }
+            },
+            computed:{
+                favoriteHero() {
+                    if (!this.playerData || !this.playerData.heroes) return null;
+                    let maxXp = 0;
+                    let favorite = null;
+                    for (const [heroName, abilities] of Object.entries(this.playerData.heroes)) {
+                        const totalXp = Object.values(abilities).reduce((sum, ability) => 
+                            sum + Object.values(ability).reduce((statSum, stat) => statSum + stat.experiencePoints, 0), 0);
+                        if (totalXp > maxXp) {
+                            maxXp = totalXp;
+                            favorite = heroName;
+                        }
+                    }
+                    return favorite;
+                },
+                hasTopThreePositions() {
+                    return Object.values(this.leaderboardPositions).some(pos => pos <= 3);
+                },
+                getAllTrophies() {
+                    const trophies = [];
+                    for (const [category, position] of Object.entries(this.leaderboardPositions)) {
+                        if (position <= 3) {
+                            const type = position === 1 ? 'gold' : position === 2 ? 'silver' : 'bronze';
+                            trophies.push({ type, category });
+                        }
+                    }
+                    return trophies;
                 }
             },
             methods: {
@@ -297,6 +370,8 @@
                     this.loading = true;
                     this.topList = [];
                     this.heroProperties = {};
+                    this.topLists = {};           // Reset top lists
+                    this.leaderboardPositions = {}; // Reset leaderboard positions
                     
                     document.title = this.username + " | HGLabor";
 
@@ -330,6 +405,7 @@
                         }
                         
                         this.playerData = hgResponse.data;
+                        document.title = this.playerName + " | HGLabor";
 
                         // Fetch hero properties
                         const heroNames = Object.keys(this.playerData.heroes);
@@ -350,6 +426,27 @@
                         );
                         const properties = await Promise.all(propertyPromises);
                         this.heroProperties = Object.fromEntries(properties);
+
+                        // Fetch all top lists concurrently
+                        const topListPromises = this.sortableColumns.map(col =>
+                            axios.get(`https://api.hglabor.de/stats/FFA/top?sort=${col}`)
+                                .then(response => [col, response.data])
+                                .catch(error => {
+                                    console.error(`Failed to fetch top list for ${col}:`, error);
+                                    return [col, []]; // Return empty list on error
+                                })
+                        );
+                        const topLists = await Promise.all(topListPromises);
+                        this.topLists = Object.fromEntries(topLists);
+
+                        // Check leaderboard positions
+                        this.leaderboardPositions = {};
+                        for (const [col, list] of Object.entries(this.topLists)) {
+                            const playerIndex = list.findIndex(player => player.playerId === this.playerData.playerId);
+                            if (playerIndex !== -1) {
+                                this.leaderboardPositions[col] = playerIndex + 1; // Rank starts from 1
+                            }
+                        }
                     } catch (error) {
                         this.handleError(error);
                         this.playerData = null;
@@ -479,6 +576,8 @@
                     this.loading = true;
                     this.topList = [];
                     this.heroProperties = {};
+                    this.topLists = {};
+                    this.leaderboardPositions = {};
 
                     document.title = this.playerName + " | HGLabor";
 
@@ -511,6 +610,27 @@
                         );
                         const properties = await Promise.all(propertyPromises);
                         this.heroProperties = Object.fromEntries(properties);
+
+                        // Fetch all top lists concurrently
+                        const topListPromises = this.sortableColumns.map(col =>
+                            axios.get(`https://api.hglabor.de/stats/FFA/top?sort=${col}`)
+                                .then(response => [col, response.data])
+                                .catch(error => {
+                                    console.error(`Failed to fetch top list for ${col}:`, error);
+                                    return [col, []];
+                                })
+                        );
+                        const topLists = await Promise.all(topListPromises);
+                        this.topLists = Object.fromEntries(topLists);
+
+                        // Check leaderboard positions
+                        this.leaderboardPositions = {};
+                        for (const [col, list] of Object.entries(this.topLists)) {
+                            const playerIndex = list.findIndex(player => player.playerId === this.playerData.playerId);
+                            if (playerIndex !== -1) {
+                                this.leaderboardPositions[col] = playerIndex + 1;
+                            }
+                        }
                     } catch (error) {
                         this.handleError(error);
                         this.playerData = null;
@@ -529,6 +649,34 @@
                 closeButtonClicked(){
                     this.playerData = null;
                     this.fetchTopList();
+                },
+                formatCategoryName(category) {
+                    const categoryNames = {
+                        kills: '⚔️ Kills',
+                        deaths: '💀 Deaths',
+                        currentKillStreak: '🔥 Current Kill Streak',
+                        highestKillStreak: '🏆 Highest Kill Streak',
+                        bounty: '💰 Bounty',
+                        xp: '✨ XP'
+                    };
+                    return categoryNames[category] || category.charAt(0).toUpperCase() + category.slice(1);
+                },
+                getTrophyType(position) {
+                    if (position === 1) return 'gold';
+                    if (position === 2) return 'silver';
+                    if (position === 3) return 'bronze';
+                    return '';
+                },
+                getCategoryEmoji(category) {
+                    const emojis = {
+                        kills: '⚔️',
+                        deaths: '💀',
+                        currentKillStreak: '🔥',
+                        highestKillStreak: '🏆',
+                        bounty: '💰',
+                        xp: '✨'
+                    };
+                    return emojis[category] || '🏅'; // Fallback emoji
                 }
             }
         }).mount('#app');   
