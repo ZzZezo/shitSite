@@ -6,16 +6,17 @@
     <script src="https://unpkg.com/vue@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="icon" href="assets/images/relaxo_icon.png" type="image/x-icon">
+    <link rel="icon" href="/assets/images/relaxo_icon.png" type="image/x-icon">
     <style>
         @font-face {
             font-family: 'MS Sans';
             src: url('/assets/font/ms-sans-serif.woff') format('woff');
         }
         
-        body {
+        body,html {
             background: #008080;
             font-family: 'MS Sans', sans-serif;
+            cursor: url('/assets/images/old_pointer.png'), auto;
         }
         
         .window {
@@ -69,10 +70,15 @@
         
         .close-button {
             float: right;
-            padding: 0 4px;
+            padding: 3px 10px;
+            padding-top: 4px;
             margin: -2px;
-            border: 2px solid;
-            border-color: #808080 #fff #fff #808080;
+            border: 1px outset #e0dbdb;
+            color:black;
+            background-color: #c0c0c0;;
+            font-family: "Arial";
+            font-weight: bolder;
+            font-size: 12px;
         }
 
         table {
@@ -188,7 +194,7 @@
                      @click.stop="openNameMc">
                 {{ playerName }}'s Hero Stats
                 <div class="flex-grow"></div>
-                <button class="close-button" @click="playerData = null">✕</button>
+                <button class="close-button" @click="playerData = null">X</button>
             </div>
     
             <!-- Stats Overview -->
@@ -292,6 +298,8 @@
                     this.topList = [];
                     this.heroProperties = {};
                     
+                    document.title = this.username + " | HGLabor";
+
                     try {
                         const apiResponse = await axios.get(
                             `https://api.allorigins.win/get?url=` + 
@@ -462,6 +470,7 @@
                         this.errorTopList = 'Failed to load leaderboard';
                         console.error('Toplist error:', error);
                     }
+                    document.title = "Hero FFA Stats | HGLabor"
                 },
                 async loadPlayerStats(uuid, cachedName) {
                     this.playerData = null;
@@ -470,6 +479,8 @@
                     this.loading = true;
                     this.topList = [];
                     this.heroProperties = {};
+
+                    document.title = this.playerName + " | HGLabor";
 
                     try {
                         const hgResponse = await axios.get(
