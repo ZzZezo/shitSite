@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/ffastats/*"
+  to = "/ffastats.html"
+  status = 200

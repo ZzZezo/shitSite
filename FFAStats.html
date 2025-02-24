@@ -510,7 +510,7 @@
                 },
                 openProfileFromPath(){
                     const lastPathSegment = this.path.split('/').pop().replace(".html","");
-                    if(lastPathSegment==="FFAStats") return;
+                    if(lastPathSegment==="ffastats"||lastPathSegment==="FFAStats" || lastPathSegment === "FFAstats") return;
                     if(lastPathSegment.length<1)return;
                     alert(lastPathSegment);
                 }
