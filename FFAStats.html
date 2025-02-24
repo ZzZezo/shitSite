@@ -513,7 +513,7 @@
                     if(lastPathSegment==="ffastats"||lastPathSegment==="FFAStats" || lastPathSegment === "FFAstats") return;
                     if(lastPathSegment.length<1)return;
                     this.username = lastPathSegment;
-                    fetchStats();
+                    this.fetchStats();
                 }
             }
         }).mount('#app');   
