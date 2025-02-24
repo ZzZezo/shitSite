@@ -268,11 +268,13 @@
                     currentSort: 'kills',
                     sortableColumns: ['kills', 'deaths', 'currentKillStreak', 'highestKillStreak', 'bounty', 'xp'],
                     errorTopList: null,
-                    heroProperties: {}
+                    heroProperties: {},
+                    path: window.location.pathname
                 };
             },
             mounted() {
                 this.fetchTopList();
+                this.openProfileFromPath();
             },
             watch: {
                 currentSort() {
@@ -505,6 +507,12 @@
                     }
                     
                     this.loading = false;
+                },
+                openProfileFromPath(){
+                    const lastPathSegment = this.path.split('/').pop().replace(".html","");
+                    if(lastPathSegment==="FFAStats") return;
+                    if(lastPathSegment.length<1)return;
+                    alert(lastPathSegment);
                 }
             }
         }).mount('#app');   
