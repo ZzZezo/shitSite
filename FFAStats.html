@@ -194,7 +194,7 @@
                      @click.stop="openNameMc">
                 {{ playerName }}'s Hero Stats
                 <div class="flex-grow"></div>
-                <button class="close-button" @click="playerData = null">X</button>
+                <button class="close-button" @click="closeButtonClicked">X</button>
             </div>
     
             <!-- Stats Overview -->
@@ -525,6 +525,10 @@
                     if(lastPathSegment.length<1)return;
                     this.username = lastPathSegment;
                     this.fetchStats();
+                },
+                closeButtonClicked(){
+                    this.playerData = null;
+                    this.fetchTopList();
                 }
             }
         }).mount('#app');   
