@@ -3,27 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Mojang Username</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>TEST</title>
 </head>
-<body>
-    <h1>Mojang Username Info</h1>
-    <pre id="output">Loading...</pre>
-
-    <script>
-        $.ajax({
-    url: "https://api.allorigins.win/get?url=" + encodeURIComponent("https://api.mojang.com/users/profiles/minecraft/FullRiskk"),
-    type: "GET",
-    dataType: "json",
-    success: function(response) {
-        let jsonData = JSON.parse(response.contents);
-        console.log(jsonData);
-    },
-    error: function(xhr, status, error) {
-        console.error("Error:", error);
+<style>
+    html, body {
+    background-color: #008080;
+    height: 99%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
     }
-});
 
-    </script>
+    button{
+        padding: 15px 75px;
+        font-size: 50px;
+        border-radius: 10px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+</style>
+<body>
+    <button id="increment-button">0</button>
 </body>
+
+<script>
+    const button = document.getElementById('increment-button');
+  
+    // Fetch the current counter value when the page loads
+    async function getCounter() {
+      const response = await fetch('/api/getCounter');
+      const data = await response.json();
+      button.innerText = data.counter;
+    }
+  
+    // Increment the counter when the button is clicked
+    button.addEventListener('click', async () => {
+      await fetch('/api/incrementCounter', { method: 'POST' });
+      getCounter(); // Update the counter display
+    });
+  
+    // Initial counter load
+    getCounter();
+  </script>
+
 </html>
