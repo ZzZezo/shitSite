@@ -7,7 +7,7 @@ This entire Website was started only because I wanted to code something rather t
 
 
 and thats it lol
-oh yeah if u wanna try it out (idk why you would ever wanna do something this foolish and unreasonable but ok) here's the link: https://diestimmen.com/
+oh yeah if u wanna try it out (idk why you would ever wanna do something this foolish and unreasonable but ok) here's the link: https://IWannaJumpOffACliff.com
 
 
 Good Night <3
