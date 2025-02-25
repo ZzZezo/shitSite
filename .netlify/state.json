@@ -1,0 +1,20 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Illingen",
+			"country": {
+				"code": "DE",
+				"name": "Germany"
+			},
+			"subdivision": {
+				"code": "BW",
+				"name": "Baden-Wurttemberg"
+			},
+			"timezone": "Europe/Berlin",
+			"latitude": 48.95,
+			"longitude": 8.9224,
+			"postalCode": "75428"
+		},
+		"timestamp": 1740442539513
+	}
+}
