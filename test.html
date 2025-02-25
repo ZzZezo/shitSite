@@ -28,25 +28,7 @@
 </body>
 
 <script>
-    const button = document.getElementById('increment-button');
-  
-    // Fetch the current counter value when the page loads
-    async function getCounter() {
-        const response = await fetch('/.netlify/functions/getCounter');
-        const data = await response.json();
-        document.getElementById('increment-button').innerHTML = data.counter;
-    }
-
-    async function incrementCounter() {
-        await fetch('/.netlify/functions/incrementCounter', { method: 'POST' });
-        getCounter(); // Refresh counter
-    }
-  
-    // Increment the counter when the button is clicked
-    document.getElementById('increment-button').addEventListener('click', incrementCounter);
-  
-    // Initial counter load
-    getCounter();
+    if(Intl.DateTimeFormat().resolvedOptions().timeZone.split("/")[1] == "Zagreb")alert("tmm")
   </script>
 
 </html>

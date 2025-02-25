@@ -2,8 +2,10 @@
 <html lang="en" class="custom_cursor">
 
 <head>
-    <link rel="stylesheet" href="style.css">
     <script src="countdown.js"></script>
+
+    <link rel="stylesheet" href="popupBox/popupBoxStyle.css">
+    <script src="popupBox/popupBoxScript.js"></script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,9 +13,120 @@
     <link rel="icon" href="assets/images/dali_clock_icon.png" type="image/x-icon">
 </head>
 
-<body id="countdown_body">
-    <p id="countdown_numbers">1337 Sekunden
-    <p>
+<style>
+    @font-face {
+        font-family: 'Bluescreen';
+        src: url('assets/font/bluescreen.woff') format('woff');
+    }
+
+    @keyframes badgeUnlock {
+        0% {
+            transform: scale(1) rotate(0deg);
+            filter: brightness(1) hue-rotate(0deg);
+            border: 2px solid gold;
+        }
+        10% {
+            transform: scale(2) rotate(360deg);
+            filter: brightness(2) hue-rotate(90deg);
+            border: 5px dashed pink;
+        }
+        20% {
+            transform: scale(1.5) rotate(-180deg);
+            filter: brightness(1.5) hue-rotate(180deg);
+            border: 10px double lime;
+        }
+        30% {
+            transform: scale(2.5) rotate(720deg);
+            filter: brightness(3) hue-rotate(270deg);
+            border: 15px solid purple;
+        }
+        40% {
+            transform: scale(1.8) rotate(-360deg) translateX(20px) translateY(-20px);
+            filter: brightness(2) hue-rotate(360deg);
+            border: 8px dotted red;
+        }
+        50% {
+            transform: scale(2) rotate(1080deg); /* Extra spin! */
+            filter: brightness(2.5) hue-rotate(450deg);
+            border: 12px dashed cyan;
+        }
+        60% {
+            transform: scale(3) rotate(-540deg); /* Oversized bounce */
+            filter: brightness(3.5) hue-rotate(540deg);
+            border: 20px solid orange;
+        }
+        70% {
+            transform: scale(1.5) rotate(1440deg) translateX(-30px) translateY(30px);
+            filter: brightness(2) hue-rotate(630deg);
+            border: 10px double yellow;
+        }
+        80% {
+            transform: scale(2.2) rotate(-720deg);
+            filter: brightness(2.8) hue-rotate(720deg);
+            border: 15px dotted magenta;
+        }
+        90% {
+            transform: scale(1.2) rotate(360deg) translateX(10px) translateY(-10px);
+            filter: brightness(1.5) hue-rotate(810deg);
+            border: 5px solid teal;
+        }
+        100% {
+            transform: scale(1) rotate(0deg);
+            filter: brightness(1) hue-rotate(0deg);
+            border: 2px solid gold;
+        }
+    }
+
+    body,html{
+        cursor: url('assets/images/old_pointer.png'), auto;
+        background-color: teal;
+        color: black;
+        font-family: 'Bluescreen';
+    }
+
+    .badge-unlock {
+        animation: badgeUnlock 5.5s ease-in-out 1; /* 3 seconds, runs once */
+    }
+
+    #countdown_numbers {
+        font-size: 100px;
+        font-weight: 1000;
+        text-align: center;
+        margin-top: 250px;
+        color:black;
+    }
+
+    .badge {
+        position: absolute;
+        width: 100px;
+        height: auto;
+        /* Badge enhancements */
+        filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.75));
+        transform: rotate(-10deg); /* Slight tilt for a casual, pinned-on look */
+        transition: transform 0.4s ease; /* Smooth hover effect */
+        /* Use CSS variables for random values */
+        transform: rotate(var(--angle)) scale(var(--scale));
+        transition: transform 0.3s ease;
+    }
+
+    .badge:hover {
+        transform: rotate(0deg) scale(1.3); /* Straightens and enlarges on hover */
+        filter: contrast(1.2) saturate(1.5);
+    }
+</style>
+
+<body>
+    <audio id="badgeSound" src="https://www.myinstants.com/media/sounds/what-the-hell-goofy-ahh-slv-sounds.mp3" preload="auto"></audio>
+    <img id="BastiGHG" class="badge" src="assets/images/badges/bastighg.png" style="top: 10%; left: 70%; display: none;"></div>
+    <img id="10M" class="badge" src="assets/images/badges/10M.png" style="top: 50%; left: 79%; display: none; width: 140px;"></div>
+    <img id="1M" class="badge" src="assets/images/badges/1M.png" style="top: 51%; left: 5%; display: none;"></div>
+    <img id="xMas" class="badge" src="assets/images/badges/xMas.png" style="top: 77%; left: 32%; display: none;"></div>
+    <img id="april_fools" class="badge" src="assets/images/badges/april_fools.png" style="top: 37%; left: 89%; display: none; border: 1px solid lightgray; height:100px"></div>
+    <img id="xMas" class="badge" src="assets/images/badges/halloween.png" style="top: 16%; left: 12%; display: none;"></div>
+    <img id="HR" class="badge" src="assets/images/badges/HR.png" style="top: 15%; left: 32%; display: none;"></div>
+
+
+    <p id="countdown_numbers">1337 Sekunden</p>
 </body>
 
 </html>

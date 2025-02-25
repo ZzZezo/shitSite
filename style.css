@@ -98,25 +98,6 @@
     background-image: linear-gradient(to bottom, #000000, #1e2b30);
 }
 
-
-/* COUNTDOWN START */
-#countdown_body {
-    background-color: teal;
-    color: black;
-    font-family: 'Bluescreen';
-}
-
-#countdown_numbers {
-    font-size: 100px;
-    font-weight: 1000;
-    text-align: center;
-    margin-top: 250px;
-    color:black;
-}
-/* COUNTDOWN END */
-
-
-
 /* Windows 98 Button START */
 .win98-button {
     background-color: #c0c0c0;
