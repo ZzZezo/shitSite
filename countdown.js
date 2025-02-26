@@ -1,4 +1,5 @@
 var secondsLeft = 1337;
+var secondsWatching = 0;
 var now = new Date();
 var endTime = new Date();
 endTime.setFullYear(now.getFullYear() + 1);
@@ -11,10 +12,12 @@ endTime.setSeconds(0);
 
 function updateCountdown() {
     secondsLeft = calculateTimeSeconds();
+    secondsWatching+=1;
     var output = secondsLeft + " Sekunden";
     document.getElementById("countdown_numbers").innerHTML = output;
     
     // Badge conditions with saving
+    //10M
     if (secondsLeft === 10000000) {
         const badgeElement = document.getElementById("10M");
         if (badgeElement && badgeElement.style.display !== "block") {
@@ -23,7 +26,7 @@ function updateCountdown() {
             triggerBadgeAnimation(badgeElement);
         }
     }
-
+    //1M
     if (secondsLeft === 1000000) {
         const badgeElement = document.getElementById("1M");
         if (badgeElement && badgeElement.style.display !== "block") {
@@ -32,7 +35,7 @@ function updateCountdown() {
             triggerBadgeAnimation(badgeElement);
         }
     }
-
+    //GHG
     if (secondsLeft === 787787 || secondsLeft === 787) {
         const badgeElement = document.getElementById("BastiGHG");
         if (badgeElement && badgeElement.style.display !== "block") {
@@ -41,9 +44,67 @@ function updateCountdown() {
             triggerBadgeAnimation(badgeElement);
         }
     }
+    //FIBONACCI
+    if (secondsLeft === 11235813) {
+        const badgeElement = document.getElementById("fibonacci");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("fibonacci","Fibonacci Sequence 🌀🔢", "Received on exactly 11235813 seconds");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
+    //pi
+    if (secondsLeft === 3141592) {
+        const badgeElement = document.getElementById("pi");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("pi","π", "Received on exactly 3141592 seconds");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
+    //SATAN
+    if (secondsLeft === 6666666) {
+        const badgeElement = document.getElementById("satan");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("satan","Hail Satan...", "6666666");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
+    //among us king
+    if (secondsLeft === 15062018) {
+        const badgeElement = document.getElementById("amogus");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("amogus","Among Us King 💛👑", "Appears when Seconds match with the Among Us Release Date (15th of June 2018)");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
+
 
     if (secondsLeft <= -1) {
         alert("Happy New Year lol");
+        createPopup("Happy New Year!", "happy new year lol", 1, ["Thanks! <3"], [closePopup]);
+    }
+
+    //TIMEWASTE
+    if (secondsWatching === 10000) {
+        const badgeElement = document.getElementById("timeWaste");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("timeWaste","Is this really what you wanna do with your life?", "Obtained after watching the Counter for 10k seconds straight...\nGo out... Read a book... Heck- Even scrolling Reels is better...\n Get help. Please.");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
+
+    //luck
+    if (Math.floor(Math.random() * 7777) == 69) {
+        const badgeElement = document.getElementById("lucker");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("lucker","🎲 CASINO 🎰", "Just be INSANELY lucky :)");
+            triggerBadgeAnimation(badgeElement);
+        }
     }
 }
 
@@ -101,6 +162,7 @@ function showBadgeDetails(badgeId) {
 
 function updateDayBadges() {
     now = new Date();
+    //christmas
     if (now.getMonth() === 11 && now.getDate() === 24) {
         const badgeElement = document.getElementById("xMas");
         if (badgeElement && badgeElement.style.display !== "block") {
@@ -109,6 +171,7 @@ function updateDayBadges() {
             triggerBadgeAnimation(badgeElement);
         }
     }
+    //april fools
     if (now.getMonth() === 3 && now.getDate() === 1) {
         const badgeElement = document.getElementById("april_fools");
         if (badgeElement && badgeElement.style.display !== "block") {
@@ -117,6 +180,7 @@ function updateDayBadges() {
             triggerBadgeAnimation(badgeElement);
         }
     }
+    //halloween
     if (now.getMonth() === 9 && now.getDate() === 31) {
         const badgeElement = document.getElementById("halloween");
         if (badgeElement && badgeElement.style.display !== "block") {
@@ -125,6 +189,27 @@ function updateDayBadges() {
             triggerBadgeAnimation(badgeElement);
         }
     }
+    //my birthday
+    if (now.getMonth() === 2 && now.getDate() === 9) {
+        const badgeElement = document.getElementById("birthday");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("birthday","Happy Birthday to me! 🤠", "Obtainable on March 9th :)");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
+
+    //420
+    if(now.getHours()===4 && now.getMinutes()===20 && now.getSeconds()===0){
+        const badgeElement = document.getElementById("420");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("420","04:20", "🚬🌿\nOpen the Countdown Page exactly at the right time...");
+            triggerBadgeAnimation(badgeElement);
+        }
+    } 
+
+    //Croatia
     if (Intl.DateTimeFormat().resolvedOptions().timeZone.split("/")[1] === "Zagreb") {
         const badgeElement = document.getElementById("HR");
         if (badgeElement && badgeElement.style.display !== "block") {
