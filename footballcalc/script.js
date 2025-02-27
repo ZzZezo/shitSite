@@ -266,7 +266,7 @@ class Cup{
             //get club NAMES
             const name_homeClub = teamInputs[i].value;
             const name_awayClub = teamInputs[i + 1].value;
-            //get club obj from club names
+            //get club obj from club name
             const homeClub = this.clubs.find(club => club.name === name_homeClub);
             const awayClub = this.clubs.find(club => club.name === name_awayClub);
             //get goals
@@ -601,42 +601,52 @@ async function calculateInput() { //called when the calculate button is pressed,
         if (innerContainer.tagName !== 'DIV') {
             continue; //skip Calc Button and other non-DIV elements
         }
-        const homeClubName = innerContainer.children[0].value; //if you wonder why the number dont seem to match. its because of the <br> elements.
-        const awayClubName = innerContainer.children[3].value; //if you wonder why the number dont seem to match. its because of the <br> elements.
-        const homeGoals = parseInt(innerContainer.children[1].value); //if you wonder why the number dont seem to match. its because of the <br> elements.
-        const awayGoals = parseInt(innerContainer.children[4].value); //if you wonder why the number dont seem to match. its because of the <br> elements.
+        const homeClubName = innerContainer.children[0].value;
+        const awayClubName = innerContainer.children[3].value;
+        const homeGoals = parseInt(innerContainer.children[1].value);
+        const awayGoals = parseInt(innerContainer.children[4].value);
         
-        const homeClub = dClubs.find(club => club.name === homeClubName);
-        const awayClub = dClubs.find(club => club.name === awayClubName);
-
-        if (!homeClub || !awayClub) {
-            throw new Error(`One or both clubs (${homeClubName}, ${awayClubName}) not found in dClubs.`);
+        // Search for clubs in dClubs first, then in the pools if not found
+        let homeClub = dClubs.find(club => club.name === homeClubName);
+        if (!homeClub) {
+            homeClub = clPool.find(club => club.name === homeClubName) ||
+                       elPool.find(club => club.name === homeClubName) ||
+                       colPool.find(club => club.name === homeClubName);
+        }
+        
+        let awayClub = dClubs.find(club => club.name === awayClubName);
+        if (!awayClub) {
+            awayClub = clPool.find(club => club.name === awayClubName) ||
+                       elPool.find(club => club.name === awayClubName) ||
+                       colPool.find(club => club.name === awayClubName);
         }
 
-         // Check if both clubs are in the league
+        if (!homeClub || !awayClub) {
+            throw new Error(`One or both clubs (${homeClubName}, ${awayClubName}) not found in dClubs or pools.`);
+        }
+
+        // Check if both clubs are in the league
         const homeClubInLeague = league.clubs.includes(homeClub);
         const awayClubInLeague = league.clubs.includes(awayClub);
 
         if (!homeClubInLeague || !awayClubInLeague) {
             throw new Error(`One or both clubs (${homeClubName}, ${awayClubName}) are not in the ${leagueName} league.`);
         }
-        if(homeGoals<0 || awayGoals<0){
+        if (homeGoals < 0 || awayGoals < 0) {
             throw new Error("Goals cannot be negative.");
         }
 
-        if(isNaN(homeGoals) || isNaN(awayGoals)){
-            throw new Error("Goals cannot be empty.");//also throws when goals entered ar not an int
+        if (isNaN(homeGoals) || isNaN(awayGoals)) {
+            throw new Error("Goals cannot be empty."); //also throws when goals entered are not an int
         }
 
-        if(homeGoals>awayGoals) todaysWinnerNames.push(homeClub.name);
-        else if(homeGoals<awayGoals) todaysWinnerNames.push(awayClub.name);
-        else if(homeGoals==awayGoals&&league.isInKnockoutPhase){
-            //@UEFA
-            //here should be the same logic inside as for penalty on cups
+        if (homeGoals > awayGoals) todaysWinnerNames.push(homeClub.name);
+        else if (homeGoals < awayGoals) todaysWinnerNames.push(awayClub.name);
+        else if (homeGoals === awayGoals && league.isInKnockoutPhase) {
             // Handle penalty shootout asynchronously
             const winner = await new Promise((resolve) => {
                 createPopup(
-                    this.name,
+                    leagueName, // Use leagueName instead of this.name
                     "Who wins in Penalty Shootout?",
                     2,
                     [homeClub.name, awayClub.name],
@@ -687,66 +697,42 @@ async function calculateInput() { //called when the calculate button is pressed,
         return a.losses - b.losses; //else sort by who lost the least games
     });
 
-    //@UEFA
-    //knocks out the teams/proceeds to the next round
-    if(league.knockoutTeams > 0){
-        //only goes inside if league has a knockout system at all
-        if(league.matchLimit==league.crntweek+1 && !league.isInKnockoutPhase){
-            //i hope this finds out weither the knockout phase should start rn (meaning it just calculated the last games of group phase)
-            //if so set the variable to true so we know now
-            console.log(league.name+" knockout phase started");
+    // @UEFA: Handle knockout phase
+    if (league.knockoutTeams > 0) {
+        if (league.matchLimit === league.crntweek + 1 && !league.isInKnockoutPhase) {
+            console.log(league.name + " knockout phase started");
             league.isInKnockoutPhase = true;
 
-            //now randomly let the top 16 teams play each other (we assume league.knockoutTeams is 16 in the example that the comments describe)
-            //first we need to get the top 16 teams from league.sortedClubs
             const top16Teams = sortedClubs.slice(0, league.knockoutTeams);
-            //we also need to store them in the list btw
             league.knockoutTeamsList = [...top16Teams];
-            //now we have to shuffle that list
             top16Teams.sort(() => Math.random() - 0.5);
-            //now we should have a shuffled list of top 16 teams
-            //now we have to fill these into the matchplan
-            //so we need to find the matchplan index now
-            const matchplanIndex = (league.crntweek+1)*league.clubs.length/2;
-            //in the first round there will be league.knockoutTeams/2 matches
-            for (let i = 0; i < league.knockoutTeams/2; i++) {
-                league.matchplan[matchplanIndex+i] = [top16Teams[i],top16Teams[league.knockoutTeams-i-1]];
+            const matchplanIndex = (league.crntweek + 1) * league.clubs.length / 2;
+            for (let i = 0; i < league.knockoutTeams / 2; i++) {
+                league.matchplan[matchplanIndex + i] = [top16Teams[i], top16Teams[league.knockoutTeams - i - 1]];
             }
-            //okay this should IN THEORY (meaning its definitely not) be done
-        }
-        else if(league.isInKnockoutPhase){
-            //this should only run after a round has just been calculated, for example after quarter finale
-            console.log("okay so we just played a knockout round for "+league.name);
-            //okay we now need to get the winning teams from the day, stored (hopefully) in todaysWinnerNames
+        } else if (league.isInKnockoutPhase) {
+            console.log("okay so we just played a knockout round for " + league.name);
             const advancingTeams = todaysWinnerNames;
-            //we also need to store them in the list btw
             league.knockoutTeamsList = [...advancingTeams];
-            //now we have to shuffle that list
             advancingTeams.sort(() => Math.random() - 0.5);
-            //now we should have a shuffled list of all teams that are still participating
-            //if this list is only containing a single club, it means we have our winner. so
-            if(advancingTeams.length==1){
+            if (advancingTeams.length === 1) {
                 let LeagueChampion = advancingTeams[0];
-                console.log(LeagueChampion +" has won "+league.name);
+                console.log(LeagueChampion + " has won " + league.name);
             }
-            //now we have to fill these into the matchplan
-            //here i wanna try a different method. we can try getting the first entry from the matchplan where its value is [null,null]
-            const index = league.matchplan.findIndex(item => item[0] === null && item[1] === null); //this should do said thing
-            //in the next round there will be advancingTeams/2 matches
+            const index = league.matchplan.findIndex(item => item[0] === null && item[1] === null);
             for (let i = 0; i < advancingTeams.length / 2; i++) {
                 league.matchplan[index + i] = [
                     { name: advancingTeams[i] }, 
                     { name: advancingTeams[advancingTeams.length - i - 1] }
                 ];
             }
-            //okay this should IN THEORY (meaning its definitely not) be done
         }
     }
     
-    if(debug_console_tables)console.table(sortedClubs);
-    updateTabel(sortedClubs,league);
+    if (debug_console_tables) console.table(sortedClubs);
+    updateTabel(sortedClubs, league);
     league.updateStats(sortedClubs);
-    if(debug_log_everything)console.log("CALL C");
+    if (debug_log_everything) console.log("CALL C");
     matchesCalculated(league);
 }
 
@@ -1139,6 +1125,150 @@ function updateClubInfo(clubSorted){
 
 }
 
+function populateInternationalLeagues() {
+    const qualifiedClubs = new Set();
+    const clQualifiers = [];
+    const elQualifiers = [];
+    const colQualifiers = [];
+
+    // Function to get qualifying clubs from a league based on positions
+    const getQualifyingClubs = (league, positions) => {
+        return positions.map(pos => {
+            const clubName = league.sortedClubs[pos - 1]?.name;
+            return league.clubs.find(club => club.name === clubName);
+        }).filter(club => club); // Filter out undefined
+    };
+
+    // Step 1: Collect all qualifiers from domestic leagues
+    dLeagues.forEach(domesticLeague => {
+        if (domesticLeague.association !== "UCL" && 
+            domesticLeague.association !== "UEL" && 
+            domesticLeague.association !== "UCoL") {
+            // Champions League qualifiers
+            if (domesticLeague.CLPositions?.length > 0) {
+                const qualifiers = getQualifyingClubs(domesticLeague, domesticLeague.CLPositions);
+                qualifiers.forEach(club => {
+                    if (!qualifiedClubs.has(club)) {
+                        clQualifiers.push(club);
+                        qualifiedClubs.add(club);
+                    }
+                });
+            }
+            // Europa League qualifiers
+            if (domesticLeague.ELPositions?.length > 0) {
+                const qualifiers = getQualifyingClubs(domesticLeague, domesticLeague.ELPositions);
+                qualifiers.forEach(club => {
+                    if (!qualifiedClubs.has(club)) {
+                        elQualifiers.push(club);
+                        qualifiedClubs.add(club);
+                    }
+                });
+            }
+            // Conference League qualifiers
+            if (domesticLeague.CoLPositions?.length > 0) {
+                const qualifiers = getQualifyingClubs(domesticLeague, domesticLeague.CoLPositions);
+                qualifiers.forEach(club => {
+                    if (!qualifiedClubs.has(club)) {
+                        colQualifiers.push(club);
+                        qualifiedClubs.add(club);
+                    }
+                });
+            }
+        }
+    });
+
+    console.log(`CL Qualifiers from domestic leagues: ${clQualifiers.length}`);
+    console.log(`EL Qualifiers from domestic leagues: ${elQualifiers.length}`);
+    console.log(`CoL Qualifiers from domestic leagues: ${colQualifiers.length}`);
+
+    // Step 2: Assign qualifiers and fill each league
+    const processLeague = (leagueName, qualifiers, fillPool) => {
+        const league = dLeagues.find(l => l.name === leagueName);
+        if (!league) {
+            console.error(`League ${leagueName} not found`);
+            return;
+        }
+
+        // Clear current clubs
+        league.clubs = [];
+        league.sortedClubs = [];
+        league.matches = [];
+        league.matchplan = [];
+
+        // Add domestic qualifiers
+        league.clubs = [...qualifiers];
+        console.log(`${leagueName} - Assigned qualifiers: ${league.clubs.length}`);
+
+        // Fill remaining slots (up to 36) from the specific pool
+        const targetClubCount = 36;
+        const remainingSlots = targetClubCount - league.clubs.length;
+        if (remainingSlots > 0) {
+            // Shuffle the pool to randomize selection
+            const shuffledPool = [...fillPool].sort(() => Math.random() - 0.5);
+            let addedCount = 0;
+
+            for (let i = 0; i < shuffledPool.length && addedCount < remainingSlots; i++) {
+                const club = shuffledPool[i];
+                if (!qualifiedClubs.has(club)) { // Ensure no duplicates across competitions
+                    league.clubs.push(club);
+                    qualifiedClubs.add(club);
+                    addedCount++;
+                }
+            }
+
+            if (addedCount < remainingSlots) {
+                console.warn(`${leagueName} - Not enough unique clubs in pool to fill all slots (Added: ${addedCount}, Needed: ${remainingSlots})`);
+            }
+        }
+
+        console.log(`${leagueName} - Total clubs after filling: ${league.clubs.length}`);
+
+        // Initialize league stats and regenerate matchplan
+        league.clubs.forEach(club => club.initializeLeagueStats(league.name));
+        league.sortedClubs = league.init_sortedClubs(league.clubs);
+        league.matchplan = league.generateMatchplan();
+    };
+
+    // Process all leagues with their respective pools
+    processLeague("Champions League", clQualifiers, clPool);
+    processLeague("Europa League", elQualifiers, elPool);
+    processLeague("Conference League", colQualifiers, colPool);
+
+    // Final verification
+    const cl = dLeagues.find(l => l.name === "Champions League");
+    const el = dLeagues.find(l => l.name === "Europa League");
+    const col = dLeagues.find(l => l.name === "Conference League");
+    console.log(`Final Counts - CL: ${cl.clubs.length}, EL: ${el.clubs.length}, CoL: ${col.clubs.length}`);
+    if (debug_log_everything) {
+        console.log("CL Clubs:", cl.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+        console.log("EL Clubs:", el.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+        console.log("CoL Clubs:", col.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+    }
+}
+
+// Call this function at the start of a new season, after standings are finalized
+function startNewSeasonWithInternationalLeagues() {
+    // First handle domestic league transitions
+    seasonManager.handleSeasonTransition();
+
+    // Then populate international leagues
+    populateInternationalLeagues();
+
+    // Reset calendar with all leagues (including international ones)
+    seasonCalendar = new Calendar(loadedLeagues);
+    loadedCups.forEach(cup => {
+        seasonCalendar.spreadIntoCalendar(cup.name, cup.totalRounds);
+    });
+
+    // Start with first league
+    activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
+    activeLeague = dLeagues.find(league => league.name === activeLeagueName);
+    showMatches(activeLeague.name);
+    updateTabel(activeLeague.getSortedClubs(), activeLeague);
+    dropdown.style.display = "none";
+    switchToNextInput(true);
+}
+
 
 function areAllLeaguesDone() {
     return loadedLeagues.every(
@@ -1154,32 +1284,17 @@ function isPowerOfTwo(n) {
     return n > 0 && (n & (n - 1)) === 0;
 }
 
-function seasonOver(){
+function seasonOver() {
     simulateUnloadedLeagues();
 
     const startNewSeason = confirm("Season is over! Would you like to promote clubs and start a new season?");
     
     if (startNewSeason) {
-        let test = seasonManager.handleSeasonTransition();
-        // Reset calendar
-        seasonCalendar = new Calendar(loadedLeagues);
-        loadedCups.forEach(cup => {
-            seasonCalendar.spreadIntoCalendar(cup.name, cup.totalRounds);
-        });
-        
-        // Start new season
-        activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
-        activeLeague = dLeagues.find(league => league.name === activeLeagueName);
-        showMatches(activeLeague.name);
-        updateTabel(activeLeague.getSortedClubs(), activeLeague);
-        dropdown.style.display = "none";
-        switchToNextInput(true);
-    }
-    else {
+        startNewSeasonWithInternationalLeagues();
+    } else {
         updateDropdownOptionsByList(loadedLeagues);
     }
 }
-
 function simulateUnloadedLeagues(){
     const notLoadedLeagues = dLeagues.filter(league => !loadedLeagues.includes(league));
 
@@ -1320,6 +1435,10 @@ window.onload = function exampleFunction(){
     startButton.addEventListener('click', startGame);
     checkboxContainer.appendChild(startButton);
 
+    populateInternationalLeagues();
+    console.log("CL:", dLeagues.find(l => l.name === "Champions League").clubs.length);
+    console.log("EL:", dLeagues.find(l => l.name === "Europa League").clubs.length);
+    console.log("CoL:", dLeagues.find(l => l.name === "Conference League").clubs.length);
 
     //Below is example for club (so i understand later how cup class is intended to work lmao)
     // dLeagues[0].clubs.splice(11,2);

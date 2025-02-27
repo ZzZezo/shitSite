@@ -241,3 +241,66 @@ dLeagues=[
 dTournaments=[
     new Cup("DFB Pokal", [...dLeagues[0].clubs,...dLeagues[1].clubs,...dLeagues[2].clubs,...dClubs.slice(180,198).sort(() => Math.random() - 0.5).slice(0, 8)],false)
 ]
+
+const clPool = [
+    new Club("Porto", 900), new Club("Benfica", 920), new Club("Sporting CP", 880), // Portugal
+    new Club("Zenit", 870), new Club("Spartak Moscow", 850), new Club("CSKA Moscow", 860), // Russia
+    new Club("Salzburg", 880), new Club("Rapid Wien", 820), // Austria
+    new Club("Shakhtar Donetsk", 890), new Club("Dynamo Kyiv", 870), // Ukraine
+    new Club("Club Brugge", 840), new Club("Anderlecht", 830), // Belgium
+    new Club("Celtic", 860), new Club("Rangers", 850), // Scotland
+    new Club("Olympiacos", 830), new Club("PAOK", 820), // Greece
+    new Club("Crvena Zvezda", 870), new Club("Partizan", 860), // Serbia
+    new Club("Ludogorets", 840), new Club("Levski Sofia", 810), // Bulgaria
+    new Club("Slovan Bratislava", 830), // Slovakia
+    new Club("Ferencváros", 820), // Hungary
+    new Club("Maribor", 810), // Slovenia
+    new Club("Dinamo Minsk", 800), // Belarus
+    new Club("Sheriff Tiraspol", 790), // Moldova
+    new Club("HJK Helsinki", 780), // Finland
+    new Club("Rosenborg", 800), // Norway
+    new Club("Copenhagen", 850), // Denmark
+    new Club("Malmo FF", 840) // Sweden
+];
+
+const elPool = [
+    new Club("Braga", 800), new Club("Vitória Guimarães", 780), // Portugal
+    new Club("Lokomotiv Moscow", 790), new Club("Krasnodar", 780), // Russia
+    new Club("LASK", 760), new Club("Sturm Graz", 750), // Austria
+    new Club("Metalist Kharkiv", 770), new Club("Zorya Luhansk", 760), // Ukraine
+    new Club("Gent", 760), new Club("Standard Liège", 750), // Belgium
+    new Club("Hibernian", 740), new Club("Hearts", 730), // Scotland
+    new Club("Panathinaikos", 760), new Club("AEK Athens", 750), // Greece
+    new Club("BATE Borisov", 720), new Club("Dinamo Minsk", 710), // Belarus
+    new Club("Partizan", 780), new Club("Vojvodina", 750), // Serbia
+    new Club("CSKA Sofia", 760), new Club("Beroe", 740), // Bulgaria
+    new Club("Slovan Bratislava", 770), new Club("DAC Dunajská Streda", 750), // Slovakia
+    new Club("Újpest", 740), new Club("Debreceni VSC", 720), // Hungary
+    new Club("Olimpija Ljubljana", 730), new Club("Domžale", 710), // Slovenia
+    new Club("Sheriff Tiraspol", 730), new Club("Petrocub Hîncești", 710), // Moldova
+    new Club("KuPS", 720), new Club("SJK Seinäjoki", 700), // Finland
+    new Club("Molde", 750), new Club("Vålerenga", 720), // Norway
+    new Club("Midtjylland", 770), new Club("Aarhus GF", 750), // Denmark
+    new Club("Djurgårdens IF", 750), new Club("Hammarby", 740) // Sweden
+];
+
+const colPool = [
+    new Club("Famalicão", 700), new Club("Arouca", 690), // Portugal
+    new Club("Rostov", 710), new Club("Rubin Kazan", 700), // Russia
+    new Club("Austria Wien", 720), new Club("Wolfsberger AC", 710), // Austria
+    new Club("Vorskla Poltava", 690), new Club("Dnipro-1", 680), // Ukraine
+    new Club("Antwerp", 700), new Club("Genk", 690), // Belgium
+    new Club("Aberdeen", 680), new Club("Motherwell", 670), // Scotland
+    new Club("Aris Thessaloniki", 690), new Club("Asteras Tripolis", 680), // Greece
+    new Club("Sheriff Tiraspol", 670), new Club("Zimbru Chișinău", 660), // Moldova
+    new Club("Radnički Niš", 680), new Club("Čukarički", 670), // Serbia
+    new Club("CSKA 1948", 690), new Club("Slavia Sofia", 680), // Bulgaria
+    new Club("Zlaté Moravce", 670), new Club("Trenčín", 660), // Slovakia
+    new Club("Paksi FC", 680), new Club("Mezőkövesd", 660), // Hungary
+    new Club("Celje", 670), new Club("Koper", 660), // Slovenia
+    new Club("Petrocub Hîncești", 680), new Club("Milsami Orhei", 660), // Moldova
+    new Club("SJK Seinäjoki", 680), new Club("Inter Turku", 660), // Finland
+    new Club("Kristiansund", 690), new Club("Sarpsborg 08", 670), // Norway
+    new Club("Viborg", 690), new Club("Silkeborg", 670), // Denmark
+    new Club("IFK Norrköping", 690), new Club("Kalmar FF", 670) // Sweden
+];
