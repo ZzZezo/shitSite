@@ -394,6 +394,7 @@ class Calendar{
     }
       
       initCalendar() {
+        if(this.partakingLeagues.length == 0) return [];
         const leagues = this.partakingLeagues.map(league => ({
           name: league.name,
           matchdays: league.matchdaysThisSeason,
@@ -526,23 +527,52 @@ class SeasonManager {
     getClubsToRelegate(league) {
         const sortedClubs = [...league.sortedClubs];
         const clubsToRelegate = [];
-
+    
         league.relegatePositions.forEach(position => {
-            const clubName = sortedClubs[position - 1].name;
+            const clubName = sortedClubs[position - 1]?.name;
+    
+            // Only log when clubName is undefined or invalid
+            if (!clubName) {
+                console.error('Error: Club name is undefined at position in relegatePositions:', position);
+                return;  // Skip processing for this position if clubName is invalid
+            }
+    
             const club = league.clubs.find(c => c.name === clubName);
-            if (club) clubsToRelegate.push(club);
+            
+            // Only log if the club is not found
+            if (!club) {
+                console.error('Error: Club not found in league.clubs for name:', clubName);
+                return;  // Skip processing for this position if club is not found
+            }
+    
+            clubsToRelegate.push(club);
         });
-
-        if(league.relegatePlayoffs.length > 0) {
+    
+        if (league.relegatePlayoffs.length > 0) {
             league.relegatePlayoffs.forEach(position => {
-                const clubName = sortedClubs[position - 1].name;
+                const clubName = sortedClubs[position - 1]?.name;
+    
+                // Only log when clubName is undefined or invalid
+                if (!clubName) {
+                    console.error('Error: Club name is undefined at position in relegatePlayoffs:', position);
+                    return;  // Skip processing for this position if clubName is invalid
+                }
+    
                 const club = league.clubs.find(c => c.name === clubName);
-                if (club) clubsToRelegate.push(club);
+                
+                // Only log if the club is not found
+                if (!club) {
+                    console.error('Error: Club not found in league.clubs for name:', clubName);
+                    return;  // Skip processing for this position if club is not found
+                }
+    
+                clubsToRelegate.push(club);
             });
         }
-
+    
         return clubsToRelegate;
     }
+    
 
     getClubsToPromote(league) {
         const sortedClubs = [...league.sortedClubs];
@@ -1372,19 +1402,41 @@ function loadFromStorage(){
 
 }
 
-function startGame(){
-    if(loadedLeagues.length<1)return;
+function startGame() {
+    if (loadedLeagues.length < 1 && loadedCups.length < 1) return;
+
     document.getElementById('checkboxContainer').style.display = "none";
     updateDropdownOptions();
+
+    // Initialize the calendar with the loaded leagues and cups
     seasonCalendar = new Calendar(loadedLeagues);
     seasonManager = new SeasonManager();
-    if(loadedCups.length>0)loadedCups.forEach(cup => {
-        seasonCalendar.spreadIntoCalendar(cup.name,cup.totalRounds);
-    });
+
+    if (loadedCups.length > 0) {
+        loadedCups.forEach(cup => {
+            seasonCalendar.spreadIntoCalendar(cup.name, cup.totalRounds);
+        });
+    }
+
+    // Get the first item in the calendar (could be a league or a cup)
     activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
+
+    // Check if the active item is a league or a cup
     activeLeague = dLeagues.find(league => league.name === activeLeagueName);
-    showMatches(activeLeague.name);
-    updateTabel(activeLeague.getSortedClubs(),activeLeague)
+    if (!activeLeague) {
+        // If it's not a league, it must be a cup
+        activeLeague = dTournaments.find(cup => cup.name === activeLeagueName);
+        if (!activeLeague) {
+            throw new Error(`League/Cup ${activeLeagueName} not found.`);
+        }
+        // If it's a cup, switch to cup mode
+        switchToCup(activeLeague);
+    } else {
+        // If it's a league, show matches and update the table
+        showMatches(activeLeague.name);
+        updateTabel(activeLeague.getSortedClubs(), activeLeague);
+    }
+
     dropdown.style.display = "none";
     switchToNextInput(true);
 }
@@ -1400,14 +1452,40 @@ dropdown.addEventListener('change', function() {
     dropdown.style.display = "none";
 });
 
-window.onload = function exampleFunction(){ 
+window.onload = function exampleFunction() {
     loadedLeagues = [];
     loadedCups = [];
-    // loadedCups = [dTournaments[0]];//currently tmp later also dynamic like the leagues
-    //add a checkbox for each league, so the user can choose which leagues to play in, and which leagues to keep track of
+
+    // Set up the real participants for the first season
+    const clLeague = dLeagues.find(l => l.name === "Champions League");
+    const elLeague = dLeagues.find(l => l.name === "Europa League");
+    const colLeague = dLeagues.find(l => l.name === "Conference League");
+
+    // Assign real clubs and initialize
+    clLeague.clubs = realChampionsLeagueClubs;
+    clLeague.clubs.forEach(club => club.initializeLeagueStats(clLeague.name));
+    clLeague.sortedClubs = clLeague.init_sortedClubs(clLeague.clubs);
+    clLeague.matchplan = clLeague.generateMatchplan();
+
+    elLeague.clubs = realEuropaLeagueClubs;
+    elLeague.clubs.forEach(club => club.initializeLeagueStats(elLeague.name));
+    elLeague.sortedClubs = elLeague.init_sortedClubs(elLeague.clubs);
+    elLeague.matchplan = elLeague.generateMatchplan();
+
+    colLeague.clubs = realConferenceLeagueClubs;
+    colLeague.clubs.forEach(club => club.initializeLeagueStats(colLeague.name));
+    colLeague.sortedClubs = colLeague.init_sortedClubs(colLeague.clubs);
+    colLeague.matchplan = colLeague.generateMatchplan();
+
+    // Log initial setup for verification
+    console.log("CL Initial Clubs:", clLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+    console.log("EL Initial Clubs:", elLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+    console.log("CoL Initial Clubs:", colLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+
+    // Set up checkbox container for playable leagues
     const checkboxContainer = document.getElementById('checkboxContainer');
     for (let i = 0; i < dLeagues.length; i++) {
-        if(dLeagues[i].playable == false) continue;
+        if (dLeagues[i].playable == false) continue;
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = 'checkbox' + i;
@@ -1426,23 +1504,36 @@ window.onload = function exampleFunction(){
         checkboxContainer.appendChild(checkbox);
         checkboxContainer.appendChild(label);
         checkboxContainer.appendChild(document.createElement('br'));
-
     }
-    //button to call startGame funciton
+
+    checkboxContainer.appendChild(document.createElement('br'));
+
+    // Set up checkbox container for playable cups
+    for (let i = 0; i < dTournaments.length; i++) {
+        // Assuming dTournaments is an array of cup objects similar to dLeagues
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = 'cupCheckbox' + i;
+        checkbox.name = 'cupCheckbox';
+        checkbox.value = dTournaments[i].name;
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                loadedCups.push(dTournaments[i]);
+            } else {
+                loadedCups = loadedCups.filter(cup => cup.name !== dTournaments[i].name);
+            }
+        });
+        const label = document.createElement('label');
+        label.htmlFor = 'cupCheckbox' + i;
+        label.textContent = dTournaments[i].name;
+        checkboxContainer.appendChild(checkbox);
+        checkboxContainer.appendChild(label);
+        checkboxContainer.appendChild(document.createElement('br'));
+    }
+
     checkboxContainer.appendChild(document.createElement('br'));
     const startButton = document.createElement('button');
     startButton.textContent = 'Start Game';
     startButton.addEventListener('click', startGame);
     checkboxContainer.appendChild(startButton);
-
-    populateInternationalLeagues();
-    console.log("CL:", dLeagues.find(l => l.name === "Champions League").clubs.length);
-    console.log("EL:", dLeagues.find(l => l.name === "Europa League").clubs.length);
-    console.log("CoL:", dLeagues.find(l => l.name === "Conference League").clubs.length);
-
-    //Below is example for club (so i understand later how cup class is intended to work lmao)
-    // dLeagues[0].clubs.splice(11,2);
-    // const test = new Cup("TestCup",dLeagues[0].clubs);
-    // test.drawNewRound();
-    // console.log(test.matchplan);
-}
+};
