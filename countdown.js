@@ -80,6 +80,15 @@ function updateCountdown() {
             triggerBadgeAnimation(badgeElement);
         }
     }
+    //einstein
+    if (secondsLeft === 14031879) {
+        const badgeElement = document.getElementById("einstein");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("einstein","Albert Einstein 🧠", "Appears when Seconds match with Einsteins Birthday (14th of March 1879)");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
 
 
     if (secondsLeft <= -1) {
@@ -235,6 +244,17 @@ function triggerBadgeAnimation(badgeElement) {
         badgeElement.classList.remove('badge-unlock');
     }, 5500);
 }
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "k" || event.key === "K") {
+        const badgeElement = document.getElementById("press_k");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("press_k","You pressed K!", "Bro what did u expect would happen why did u do this 💀💀💀");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
+}); 
 
 window.addEventListener('load', function() {
     const badges = document.querySelectorAll('.badge');

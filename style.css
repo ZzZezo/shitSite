@@ -130,22 +130,22 @@
 /*WINDOWS ICONS*/
 .desktop_icon {
     display: inline-block;
-    margin: 22px;
+    margin: 15px;
     text-align: center;
 }
 
 .desktop_icon img {
-    width: 96px;
-    height: 96px;
+    width: 86px;
+    height: 86px;
     border: 3px solid #808080;
     border-radius: 9px;
 }
 
 .desktop_icon span {
     display: block;
-    margin-top: 10px;
+    margin-top: 4px;
     font-family: 'Old Sans Serif';
-    font-size: 18px;
+    font-size: 16px;
     color: white;
 }
 
