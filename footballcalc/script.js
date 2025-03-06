@@ -217,12 +217,13 @@ class League {
 }
 
 class Cup{
-    constructor(name,clubs = [], HasThirdPlace = false){
+    constructor(name,clubs = [], HasThirdPlace = false, country = "World"){
         this.name = name;
         this.clubs = clubs;
         if(!isPowerOfTwo(this.clubs.length) || this.clubs.length < 2) console.warn(`Cup ${this.name} has ${this.clubs.length} participants.`);
         this.remainingClubs = this.clubs;
         this.HasThirdPlace = HasThirdPlace; //yep, this does absolutely nothing but nice to store it anyways :D
+        this.country = country;
         this.matches = [];
         this.totalRounds = this.calculateRounds();
         this.matchplan = [];
@@ -1402,10 +1403,91 @@ function loadFromStorage(){
 
 }
 
+function showInfo(flag, country) {
+    let container = flag.parentElement;
+    Array.from(container.children).forEach(child => child.classList.remove("selectedFlag"));
+    let infoElement = container.querySelector('.info');
+    if(infoElement)infoElement.remove();
+
+    container.appendChild(createInfoBox(country));
+
+    flag.classList.add("selectedFlag");
+}
+
+function createInfoBox(country) {
+    checkboxContainer = document.createElement('div');
+    checkboxContainer.style.left = '30%';
+    checkboxContainer.style.display = 'block';
+    checkboxContainer.className = 'info';
+
+    // Set up checkbox container for playable leagues
+    for (let i = 0; i < dLeagues.length; i++) {
+        if(country=="Germany") if (dLeagues[i].playable == false || dLeagues[i].association != "DFB") continue;
+        if(country=="Croatia") if (dLeagues[i].playable == false || dLeagues[i].association != "HNS") continue;
+        if(country=="Spain") if (dLeagues[i].playable == false || dLeagues[i].association != "ESP") continue;
+        if(country=="England") if (dLeagues[i].playable == false || dLeagues[i].association != "ENG") continue;
+        if(country=="Italy") if (dLeagues[i].playable == false || dLeagues[i].association != "ITA") continue;
+        if(country=="France") if (dLeagues[i].playable == false || dLeagues[i].association != "FRA") continue;
+        if(country=="Netherlands") if (dLeagues[i].playable == false || dLeagues[i].association != "NED") continue;
+        if(country=="Turkey") if (dLeagues[i].playable == false || dLeagues[i].association != "TUR") continue;
+        if(country=="UEFA") if (dLeagues[i].playable == false || dLeagues[i].association != "UCL" && dLeagues[i].association != "UEL" && dLeagues[i].association != "UCoL") continue;
+
+        const checkbox = document.createElement('input');
+        checkbox.classList.add("win95-checkbox");
+        checkbox.type = 'checkbox';
+        checkbox.id = 'checkbox' + i;
+        checkbox.name = 'checkbox';
+        checkbox.value = dLeagues[i].name;
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                loadedLeagues.push(dLeagues[i]);
+            } else {
+                loadedLeagues = loadedLeagues.filter(league => league.name !== dLeagues[i].name);
+            }
+        });
+        const label = document.createElement('label');
+        label.htmlFor = 'checkbox' + i;
+        label.textContent = dLeagues[i].name;
+        if(loadedLeagues.find(league => league.name === dLeagues[i].name)) checkbox.checked = true;
+        checkboxContainer.appendChild(checkbox);
+        checkboxContainer.appendChild(label);
+        checkboxContainer.appendChild(document.createElement('br'));
+    }
+
+    // Set up checkbox container for playable cups
+    for (let i = 0; i < dTournaments.length; i++) {
+        if(dTournaments[i].country != country) continue;
+        // Assuming dTournaments is an array of cup objects similar to dLeagues
+        const checkbox = document.createElement('input');
+        checkbox.classList.add("win95-checkbox");
+        checkbox.type = 'checkbox';
+        checkbox.id = 'cupCheckbox' + i;
+        checkbox.name = 'cupCheckbox';
+        checkbox.value = dTournaments[i].name;
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                loadedCups.push(dTournaments[i]);
+            } else {
+                loadedCups = loadedCups.filter(cup => cup.name !== dTournaments[i].name);
+            }
+        });
+        const label = document.createElement('label');
+        label.htmlFor = 'cupCheckbox' + i;
+        label.textContent = dTournaments[i].name;
+        if(loadedCups.find(cup => cup.name === dTournaments[i].name)) checkbox.checked = true;
+        checkboxContainer.appendChild(checkbox);
+        checkboxContainer.appendChild(label);
+        checkboxContainer.appendChild(document.createElement('br'));
+    }
+
+    return checkboxContainer;
+}
+
 function startGame() {
     if (loadedLeagues.length < 1 && loadedCups.length < 1) return;
 
     document.getElementById('checkboxContainer').style.display = "none";
+    document.getElementById('FlagGrid').style.display = "none";
     updateDropdownOptions();
 
     // Initialize the calendar with the loaded leagues and cups
@@ -1482,56 +1564,6 @@ window.onload = function exampleFunction() {
     console.log("EL Initial Clubs:", elLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
     console.log("CoL Initial Clubs:", colLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
 
-    // Set up checkbox container for playable leagues
-    const checkboxContainer = document.getElementById('checkboxContainer');
-    for (let i = 0; i < dLeagues.length; i++) {
-        if (dLeagues[i].playable == false) continue;
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = 'checkbox' + i;
-        checkbox.name = 'checkbox';
-        checkbox.value = dLeagues[i].name;
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                loadedLeagues.push(dLeagues[i]);
-            } else {
-                loadedLeagues = loadedLeagues.filter(league => league.name !== dLeagues[i].name);
-            }
-        });
-        const label = document.createElement('label');
-        label.htmlFor = 'checkbox' + i;
-        label.textContent = dLeagues[i].name;
-        checkboxContainer.appendChild(checkbox);
-        checkboxContainer.appendChild(label);
-        checkboxContainer.appendChild(document.createElement('br'));
-    }
-
-    checkboxContainer.appendChild(document.createElement('br'));
-
-    // Set up checkbox container for playable cups
-    for (let i = 0; i < dTournaments.length; i++) {
-        // Assuming dTournaments is an array of cup objects similar to dLeagues
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = 'cupCheckbox' + i;
-        checkbox.name = 'cupCheckbox';
-        checkbox.value = dTournaments[i].name;
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                loadedCups.push(dTournaments[i]);
-            } else {
-                loadedCups = loadedCups.filter(cup => cup.name !== dTournaments[i].name);
-            }
-        });
-        const label = document.createElement('label');
-        label.htmlFor = 'cupCheckbox' + i;
-        label.textContent = dTournaments[i].name;
-        checkboxContainer.appendChild(checkbox);
-        checkboxContainer.appendChild(label);
-        checkboxContainer.appendChild(document.createElement('br'));
-    }
-
-    checkboxContainer.appendChild(document.createElement('br'));
     const startButton = document.createElement('button');
     startButton.textContent = 'Start Game';
     startButton.addEventListener('click', startGame);

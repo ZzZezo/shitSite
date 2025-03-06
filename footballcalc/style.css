@@ -138,3 +138,74 @@ body,html {
   background-color: #85C2C2;
   font-weight: bold;
 }
+
+#FlagGrid{
+  width: 30%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 3 equal columns */
+  gap: 20px;
+}
+
+.Flag{
+  width:200px;
+  height:auto;
+  image-rendering: pixelated;
+  position: relative;
+  filter: grayscale(50%);
+  box-sizing: border-box;
+}
+
+.Flag:hover{
+  outline: black 4px solid;
+  filter: none;
+}
+
+.selectedFlag{
+  outline: black 4px solid;
+  filter: none;
+}
+
+.info {
+  position: absolute;
+  background-color: #c0c0c0; /* Classic Win95 gray */
+  color: black;
+  padding: 8px;
+  border: 2px solid #808080; /* Darker gray for depth */
+  border-right-color: white;
+  border-bottom-color: white;
+  border-radius: 0; /* No rounded corners in Win95 */
+  box-shadow: inset -1px -1px #dfdfdf, inset 1px 1px #404040; /* Simulate Win95 3D effect */
+  display: none;
+  width: auto;
+  font-size: 16px;
+}
+
+.win95-checkbox {
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  background: #c0c0c0;
+  border: 2px solid #808080;
+  border-right-color: white;
+  border-bottom-color: white;
+  display: inline-block;
+  position: relative;
+  box-shadow: inset -1px -1px #dfdfdf, inset 1px 1px #404040;
+  vertical-align: middle;
+}
+
+/* Add the classic checkmark when checked */
+.win95-checkbox:checked::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  width: 5px;
+  height: 8px;
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+label{
+  vertical-align: middle;
+}

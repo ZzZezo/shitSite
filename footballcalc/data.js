@@ -485,22 +485,22 @@ dLeagues=[
 
 dTournaments = [
     // DFB Pokal (Germany): Includes Bundesliga, 2. Bundesliga, 3. Bundesliga, and some lower-tier clubs
-    new Cup("DFB Pokal", [...dLeagues[0].clubs, ...dLeagues[1].clubs, ...dLeagues[2].clubs, ...dClubs.slice(180, 198).sort(() => Math.random() - 0.5).slice(0, 8)], false),
+    new Cup("DFB Pokal", [...dLeagues[0].clubs, ...dLeagues[1].clubs, ...dLeagues[2].clubs, ...dClubs.slice(180, 198).sort(() => Math.random() - 0.5).slice(0, 8)], false, "Germany"),
 
     // Hrvatski Nogometni Kup (Croatia): Includes 1.HNL, 2.HNL, and 3.HNL clubs, trimmed to 16 participants (power of two)
-    new Cup("Hrvatski Nogometni Kup", [...dLeagues[4].clubs, ...dLeagues[5].clubs, ...dLeagues[6].clubs].slice(0, 16), false),
+    new Cup("Hrvatski Nogometni Kup", [...dLeagues[4].clubs, ...dLeagues[5].clubs, ...dLeagues[6].clubs].slice(0, 16), false, "Croatia"),
 
     // Copa del Rey (Spain): Includes Primera División and Segunda División clubs, trimmed to 32 participants (power of two)
-    new Cup("Copa del Rey", [...dLeagues[7].clubs, ...dLeagues[8].clubs].slice(0, 32), false),
+    new Cup("Copa del Rey", [...dLeagues[7].clubs, ...dLeagues[8].clubs].slice(0, 32), false, "Spain"),
 
     // FA Cup (England): Includes Premier League, Championship, and League One clubs, trimmed to 64 participants (power of two)
-    new Cup("FA Cup", [...dLeagues[9].clubs, ...dLeagues[10].clubs, ...dLeagues[11].clubs].slice(0, 64), false),
+    new Cup("FA Cup", [...dLeagues[9].clubs, ...dLeagues[10].clubs, ...dLeagues[11].clubs].slice(0, 64), false, "England"),
 
     // Coppa Italia (Italy): Includes Serie A and Serie B clubs, trimmed to 32 participants (power of two)
-    new Cup("Coppa Italia", [...dLeagues[12].clubs, ...dLeagues[13].clubs].slice(0, 32), false),
+    new Cup("Coppa Italia", [...dLeagues[12].clubs, ...dLeagues[13].clubs].slice(0, 32), false, "Italy"),
 
     // Coupe de France (France): Includes Ligue 1, Ligue 2, and Ligue 3 clubs, trimmed to 64 participants (power of two)
-    new Cup("Coupe de France", [...dLeagues[15].clubs, ...dLeagues[16].clubs, ...dLeagues[17].clubs].slice(0, 32), false)
+    new Cup("Coupe de France", [...dLeagues[15].clubs, ...dLeagues[16].clubs, ...dLeagues[17].clubs].slice(0, 32), false, "France"),
 ];
 
 const clPool = [
