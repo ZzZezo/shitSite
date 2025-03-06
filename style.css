@@ -83,7 +83,7 @@
     font-weight: normal;
     font-family: 'Special Elite';
     margin: 0;
-    padding: 95px;
+    padding: 75px;
     background-image: linear-gradient(to bottom, #000000, teal);
 }
 
@@ -94,7 +94,7 @@
     font-weight: normal;
     font-family: 'Special Elite';
     margin: 0;
-    padding: 95px;
+    padding: 85px;
     background-image: linear-gradient(to bottom, #000000, #1e2b30);
 }
 
@@ -154,7 +154,7 @@
 }
 
 .desktop_container {
-    margin-top: 75px;
+    margin-top: 0px;
     margin-left: 75px;
     margin-right: 75px;
 }

@@ -89,6 +89,15 @@ function updateCountdown() {
             triggerBadgeAnimation(badgeElement);
         }
     }
+    //rickroll
+    if (secondsLeft === 25102009) {
+        const badgeElement = document.getElementById("rickroll");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("rickroll","Rickrolled!", "Appears when Seconds match with the Release Date of Never Gonna Give You Up (25th of October 2009)");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
 
 
     if (secondsLeft <= -1) {
