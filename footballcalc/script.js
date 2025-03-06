@@ -644,12 +644,22 @@ async function calculateInput() { //called when the calculate button is pressed,
                        elPool.find(club => club.name === homeClubName) ||
                        colPool.find(club => club.name === homeClubName);
         }
+        if(!homeClub){
+            homeClub = realChampionsLeagueClubs.find(club => club.name === homeClubName) ||
+                       realEuropaLeagueClubs.find(club => club.name === homeClubName) ||
+                       realConferenceLeagueClubs.find(club => club.name === homeClubName);
+        }
         
         let awayClub = dClubs.find(club => club.name === awayClubName);
         if (!awayClub) {
             awayClub = clPool.find(club => club.name === awayClubName) ||
                        elPool.find(club => club.name === awayClubName) ||
                        colPool.find(club => club.name === awayClubName);
+        }
+        if(!awayClub){
+            awayClub = realChampionsLeagueClubs.find(club => club.name === awayClubName) ||
+                       realEuropaLeagueClubs.find(club => club.name === awayClubName) ||
+                       realConferenceLeagueClubs.find(club => club.name === awayClubName);
         }
 
         if (!homeClub || !awayClub) {
@@ -1072,7 +1082,7 @@ function updateTabel(sortedClubs,league){
 }
 
 function switchToNextInput(first) {
-    if(event.key=='Enter'||event.key=="F5")return;
+    if(event.key=='Enter'||event.key=="F5" || event.key == "Backspace")return;
     //create array of all items from class "goalInput"
     const goalInputs = document.querySelectorAll('.goalInput');
     //get the index of the current input element

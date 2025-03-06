@@ -538,7 +538,7 @@ const elPool = [
     new Club("Slovan Bratislava", 770), new Club("DAC Dunajská Streda", 750), // Slovakia
     new Club("Újpest", 740), new Club("Debreceni VSC", 720), // Hungary
     new Club("Olimpija Ljubljana", 730), new Club("Domžale", 710), // Slovenia
-    new Club("Sheriff Tiraspol", 730), new Club("Petrocub Hîncești", 710), // Moldova
+    new Club("Sheriff Tiraspol", 730), new Club("Olympiacos", 790), // Moldova
     new Club("KuPS", 720), new Club("SJK Seinäjoki", 700), // Finland
     new Club("Molde", 750), new Club("Vålerenga", 720), // Norway
     new Club("Midtjylland", 770), new Club("Aarhus GF", 750), // Denmark
@@ -602,7 +602,7 @@ const realChampionsLeagueClubs = [
     clPool.find(c => c.name === "Slovan Bratislava"), // Slovan Bratislava
     new Club("Sparta Prague", 820), // Not in dClubs or clPool
     clPool.find(c => c.name === "Sporting CP"), // Sporting CP
-    clPool.find(c => c.name === "Sturm Graz"), // Sturm Graz
+    elPool.find(c => c.name === "Sturm Graz"), // Sturm Graz
     dClubs.find(c => c.name === "Stuttgart"), // VfB Stuttgart
     new Club("Young Boys", 800) // Not in dClubs or clPool
 ].filter(Boolean); // Remove any undefined entries
@@ -659,10 +659,10 @@ const realConferenceLeagueClubs = [
     new Club("Cercle Brugge", 700), // Not in dClubs or colPool
     dClubs.find(c => c.name === "Chelsea"), // Chelsea
     clPool.find(c => c.name === "Copenhagen"), // Copenhagen
-    colPool.find(c => c.name === "Djurgårdens IF"), // Djurgårdens IF
+    elPool.find(c => c.name === "Djurgårdens IF"), // Djurgårdens IF
     new Club("Fiorentina", 830), // Use Florenz's rating as a proxy
-    colPool.find(c => c.name === "Gent"), // Gent
-    colPool.find(c => c.name === "Hearts"), // Heart of Midlothian
+    elPool.find(c => c.name === "Gent"), // Gent
+    elPool.find(c => c.name === "Hearts"), // Heart of Midlothian
     clPool.find(c => c.name === "HJK Helsinki"), // HJK Helsinki
     new Club("Víkingur Reykjavík", 670), // Not in dClubs or colPool
     new Club("Jagiellonia Białystok", 690), // Not in dClubs or colPool
@@ -673,14 +673,14 @@ const realConferenceLeagueClubs = [
     new Club("Lugano", 710), // Not in dClubs or colPool
     new Club("Maccabi Haifa", 730), // Not in dClubs or colPool
     new Club("Mladá Boleslav", 700), // Not in dClubs or colPool
-    colPool.find(c => c.name === "Molde"), // Molde
+    elPool.find(c => c.name === "Molde"), // Molde
     new Club("Noah", 670), // Not in dClubs or colPool
-    colPool.find(c => c.name === "Olimpija Ljubljana"), // Olimpija Ljubljana
+    elPool.find(c => c.name === "Olimpija Ljubljana"), // Olimpija Ljubljana
     new Club("Omonia", 710), // Not in dClubs or colPool
-    colPool.find(c => c.name === "Panathinaikos"), // Panathinaikos
+    elPool.find(c => c.name === "Panathinaikos"), // Panathinaikos
     new Club("Pafos", 690), // Not in dClubs or colPool
     colPool.find(c => c.name === "Petrocub Hîncești"), // Petrocub Hîncești
-    colPool.find(c => c.name === "Rapid Wien"), // Rapid Wien
+    clPool.find(c => c.name === "Rapid Wien"), // Rapid Wien
     new Club("Shamrock Rovers", 680), // Not in dClubs or colPool
     new Club("The New Saints", 660), // Not in dClubs or colPool
     new Club("Víkingur Reykjavík", 670), // Duplicate in list, only add once
