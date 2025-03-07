@@ -209,3 +209,24 @@ body,html {
 label{
   vertical-align: middle;
 }
+
+#startbutton{
+  /* make button full size */
+  width: 100%;
+  height: 50px;
+  background-color: #C0C0C0;
+  border: 2px outset #808080;
+  color: #000;
+  font-family: 'Old Sans Serif';
+  font-size: 20px;
+  padding: 5px 25px;
+  cursor: pointer;
+}
+
+#startbutton:hover{
+  background-color: #ADADAD;
+}
+
+#startbutton:active{
+  border-style: inset;
+}

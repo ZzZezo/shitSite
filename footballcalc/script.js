@@ -1426,7 +1426,8 @@ function showInfo(flag, country) {
 
 function createInfoBox(country) {
     checkboxContainer = document.createElement('div');
-    checkboxContainer.style.left = '30%';
+    if(window.innerWidth>=600)checkboxContainer.style.left = "460px";
+    else checkboxContainer.style.left = "0px";
     checkboxContainer.style.display = 'block';
     checkboxContainer.className = 'info';
 
@@ -1454,6 +1455,13 @@ function createInfoBox(country) {
             } else {
                 loadedLeagues = loadedLeagues.filter(league => league.name !== dLeagues[i].name);
             }
+            const startButton = document.getElementById("startbutton");
+            if(loadedLeagues.length>= 1 || loadedCups.length >= 1){
+                startButton.style.display = "block";
+                if((loadedCups.length+loadedLeagues.length)>1)startButton.textContent = "⚽ Start Game ("+ (loadedLeagues.length + loadedCups.length) + " Competitions selected)"
+                else if((loadedCups.length+loadedLeagues.length)==1)startButton.textContent = "⚽ Start Game ("+ (loadedLeagues.length + loadedCups.length) + " Competition selected)"
+            }
+            else startButton.style.display = "none";
         });
         const label = document.createElement('label');
         label.htmlFor = 'checkbox' + i;
@@ -1480,6 +1488,13 @@ function createInfoBox(country) {
             } else {
                 loadedCups = loadedCups.filter(cup => cup.name !== dTournaments[i].name);
             }
+            const startButton = document.getElementById("startbutton");
+            if(loadedLeagues.length>= 1 || loadedCups.length >= 1){
+                startButton.style.display = "block";
+                if((loadedCups.length+loadedLeagues.length)>1)startButton.textContent = "⚽ Start Game ("+ (loadedLeagues.length + loadedCups.length) + " Competitions selected)"
+                else if((loadedCups.length+loadedLeagues.length)==1)startButton.textContent = "⚽ Start Game ("+ (loadedLeagues.length + loadedCups.length) + " Competition selected)"
+            }
+            else startButton.style.display = "none";
         });
         const label = document.createElement('label');
         label.htmlFor = 'cupCheckbox' + i;
@@ -1575,7 +1590,9 @@ window.onload = function exampleFunction() {
     console.log("CoL Initial Clubs:", colLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
 
     const startButton = document.createElement('button');
+    startButton.id="startbutton";
     startButton.textContent = 'Start Game';
     startButton.addEventListener('click', startGame);
+    startButton.style.display = "none";
     checkboxContainer.appendChild(startButton);
 };
