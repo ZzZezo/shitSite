@@ -211,7 +211,6 @@ label{
 }
 
 #startbutton{
-  /* make button full size */
   width: 100%;
   height: 50px;
   background-color: #C0C0C0;
@@ -228,5 +227,27 @@ label{
 }
 
 #startbutton:active{
+  border-style: inset;
+}
+
+#editButton{
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: 10px;
+  width: 60px;
+  height: 60px;
+  background-color: #C0C0C0;
+  border: 2px outset #808080;
+  padding: 5px 25px;
+  cursor: pointer;
+}
+
+#editButton:hover{
+  background-color: #ADADAD;
+}
+
+#editButton:active{
   border-style: inset;
 }

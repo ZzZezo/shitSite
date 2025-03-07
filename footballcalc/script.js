@@ -1508,6 +1508,10 @@ function createInfoBox(country) {
     return checkboxContainer;
 }
 
+function openEditMode(){
+    createPopup("Edit Mode","Later you will be able to modify Teams here.", 1, ["Okay"], [closePopup])
+}
+
 function startGame() {
     if (loadedLeagues.length < 1 && loadedCups.length < 1) return;
 
