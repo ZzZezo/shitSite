@@ -17,7 +17,7 @@ let seasonManager;
 
 let isSeasonOver = false; //set to true when season is over, but maybe won't be needed ?
 
-let userRandomness = 13.5;
+let userRandomness = 1.5;
 
 //debug variables
 let debug_fast_skip = false; //if true, fills out every game with 1-1
@@ -42,13 +42,17 @@ class Club { //all clubs
     addMatch(match) {
         this.matches.push(match);
     }
+
+    getLeagues() {
+        return Object.keys(this.leagueStats);
+    }
 }
 
 class League {
     constructor(name, clubs = [], matchLimit = 0, promotePositions = [],promotePlayoffs=[],relegatePositions=[],relegatePlayoffs=[],CLPositions=[],ELPositions=[],CoLPositions=[],association="FIFA",level=1,hasChampion=true,terms = 2,playable = true,knockoutTeams = 0) {
         this.name = name; //whats it called (e.g.: "Premier League")
         this.clubs = clubs; //list of all participating clubs
-        this.sortedClubs = this.init_sortedClubs(clubs); //all clubs of the league, but in order they are shown in tabel
+        if(this.name != "Champions League" && this.name != "Europa League" && this.name != "Conference League") this.sortedClubs = this.init_sortedClubs(clubs); //all clubs of the league, but in order they are shown in tabel (is not done for uefa leagues cuz they are populated later on)
         this.matches = [];
         //who gets relegated/promoted
         this.promotePositions = promotePositions;
@@ -87,8 +91,8 @@ class League {
         //if the league can be played (or only simulated, used for lower divisions, so all playbable leagues can relegate clubs)
         this.playable = playable;
 
-        //init league stats for all clubs
-        clubs.forEach(club => club.initializeLeagueStats(this.name));
+        //init league stats for all clubs (is not done for uefa leagues cuz they are populated later on)
+        if(this.name != "Champions League" && this.name != "Europa League" && this.name != "Conference League") clubs.forEach(club => club.initializeLeagueStats(this.name));
     }
 
     addMatch(match) {
@@ -1104,66 +1108,111 @@ function resetClubInfo(){
     document.getElementById("ClubInfoContainer").innerHTML = "";
 }
 
-function updateClubInfo(clubSorted){
-    club = activeLeague.clubs.find(club => club.name == clubSorted.name);
+function updateClubInfo(clubSorted) {
+    const club = dClubs.find(club => club.name === clubSorted.name);
 
     resetClubInfo();
-    infoContainer = document.getElementById("ClubInfoContainer");
-
-    const leaguesHeader = document.createElement("h6");
-    leaguesHeader.textContent = activeLeague.name;
-    infoContainer.appendChild(leaguesHeader);
-
+    const infoContainer = document.getElementById("ClubInfoContainer");
+    
+    // Club name header
     const clubHeader = document.createElement("h1");
     clubHeader.textContent = club.name;
     infoContainer.appendChild(clubHeader);
 
-    // Create the match container
+    // League selection header
+    const leagues = ["All", ...club.getLeagues()];
+    let currentLeagueIndex = 0;
+
+    // Initialize with active league if available
+    if (activeLeague && activeLeague.name) {
+        const activeIndex = leagues.indexOf(activeLeague.name);
+        if (activeIndex !== -1) currentLeagueIndex = activeIndex;
+    }
+
+    // Create league navigation container
+    const leagueNav = document.createElement("div");
+    leagueNav.style.justifyContent = "center";
+    leagueNav.style.display = "flex";
+    leagueNav.style.alignItems = "center";
+    leagueNav.style.gap = "8px";
+
+    // Navigation arrows
+    const leftArrow = document.createElement("span");
+    leftArrow.innerHTML = "&larr;";
+    leftArrow.style.cursor = "pointer";
+
+    const leagueTitle = document.createElement("h4");
+    leagueTitle.textContent = leagues[currentLeagueIndex];
+
+    const rightArrow = document.createElement("span");
+    rightArrow.innerHTML = "&rarr;";
+    rightArrow.style.cursor = "pointer";
+
+    // Assemble navigation
+    if(leagues.length > 2) leagueNav.appendChild(leftArrow);
+    leagueNav.appendChild(leagueTitle);
+    if(leagues.length > 2) leagueNav.appendChild(rightArrow);
+    infoContainer.appendChild(leagueNav);
+
+    // Match table setup
     const matchContainer = document.createElement("div");
     matchContainer.classList.add("matchContainer");
-
-    // Create the table
     const matchTable = document.createElement("table");
-    matchTable.classList.add("matchHeader"); // Apply the CSS class for styling
+    matchTable.classList.add("matchHeader");
 
-    // Add the header row to the table
+    // Table header
     const headerRow = document.createElement("tr");
-    ["Home Team", "Home Goals", "Away Goals", "Away Team"].forEach(header => {
+    ["Home Team", "Home Goals", "Away Goals", "Away Team"].forEach(text => {
         const th = document.createElement("th");
-        th.textContent = header;
+        th.textContent = text;
         headerRow.appendChild(th);
     });
     matchTable.appendChild(headerRow);
-
-    // Populate the table with match data
-    club.matches.forEach(match => {
-        const matchRow = document.createElement("tr");
-        const homeCell = document.createElement("td");
-        homeCell.textContent = match.homeClub.name;
-
-        const homeGoalsCell = document.createElement("td");
-        homeGoalsCell.textContent = match.homeGoals;
-
-        const awayGoalsCell = document.createElement("td");
-        awayGoalsCell.textContent = match.awayGoals;
-
-        const awayCell = document.createElement("td");
-        awayCell.textContent = match.awayClub.name;
-
-        matchRow.appendChild(homeCell);
-        matchRow.appendChild(homeGoalsCell);
-        matchRow.appendChild(awayGoalsCell);
-        matchRow.appendChild(awayCell);
-
-        matchTable.appendChild(matchRow);
-    });
-
-    // Append the table to the match container
     matchContainer.appendChild(matchTable);
-
-    // Append the match container to the info container
     infoContainer.appendChild(matchContainer);
 
+    // Match rendering function
+    const updateMatches = (leagueFilter) => {
+        // Clear existing matches
+        while (matchTable.rows.length > 1) matchTable.deleteRow(1);
+
+        club.matches.forEach(match => {
+            if (leagueFilter === "All" || match.league.name === leagueFilter) {
+                const row = document.createElement("tr");
+                
+                const homeCell = document.createElement("td");
+                homeCell.textContent = match.homeClub.name;
+                
+                const homeGoals = document.createElement("td");
+                homeGoals.textContent = match.homeGoals;
+                
+                const awayGoals = document.createElement("td");
+                awayGoals.textContent = match.awayGoals;
+                
+                const awayCell = document.createElement("td");
+                awayCell.textContent = match.awayClub.name;
+
+                row.append(homeCell, homeGoals, awayGoals, awayCell);
+                matchTable.appendChild(row);
+            }
+        });
+    };
+
+    // Initial population
+    updateMatches(leagues[currentLeagueIndex]);
+
+    // Navigation handlers
+    leftArrow.addEventListener("click", () => {
+        currentLeagueIndex = (currentLeagueIndex - 1 + leagues.length) % leagues.length;
+        leagueTitle.textContent = leagues[currentLeagueIndex];
+        updateMatches(leagues[currentLeagueIndex]);
+    });
+
+    rightArrow.addEventListener("click", () => {
+        currentLeagueIndex = (currentLeagueIndex + 1) % leagues.length;
+        leagueTitle.textContent = leagues[currentLeagueIndex];
+        updateMatches(leagues[currentLeagueIndex]);
+    });
 }
 
 function populateInternationalLeagues() {
@@ -1289,11 +1338,11 @@ function populateInternationalLeagues() {
 
 // Call this function at the start of a new season, after standings are finalized
 function startNewSeasonWithInternationalLeagues() {
-    // First handle domestic league transitions
-    seasonManager.handleSeasonTransition();
-
     // Then populate international leagues
     populateInternationalLeagues();
+
+    // First handle domestic league transitions
+    seasonManager.handleSeasonTransition();
 
     // Reset calendar with all leagues (including international ones)
     seasonCalendar = new Calendar(loadedLeagues);
@@ -1574,25 +1623,27 @@ window.onload = function exampleFunction() {
     const colLeague = dLeagues.find(l => l.name === "Conference League");
 
     // Assign real clubs and initialize
-    clLeague.clubs = realChampionsLeagueClubs;
+    clLeague.clubs = [...realChampionsLeagueClubs];
     clLeague.clubs.forEach(club => club.initializeLeagueStats(clLeague.name));
     clLeague.sortedClubs = clLeague.init_sortedClubs(clLeague.clubs);
     clLeague.matchplan = clLeague.generateMatchplan();
 
-    elLeague.clubs = realEuropaLeagueClubs;
+    elLeague.clubs = [...realEuropaLeagueClubs];
     elLeague.clubs.forEach(club => club.initializeLeagueStats(elLeague.name));
     elLeague.sortedClubs = elLeague.init_sortedClubs(elLeague.clubs);
     elLeague.matchplan = elLeague.generateMatchplan();
 
-    colLeague.clubs = realConferenceLeagueClubs;
+    colLeague.clubs = [...realConferenceLeagueClubs];
     colLeague.clubs.forEach(club => club.initializeLeagueStats(colLeague.name));
     colLeague.sortedClubs = colLeague.init_sortedClubs(colLeague.clubs);
     colLeague.matchplan = colLeague.generateMatchplan();
 
     // Log initial setup for verification
-    console.log("CL Initial Clubs:", clLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
-    console.log("EL Initial Clubs:", elLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
-    console.log("CoL Initial Clubs:", colLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+    if(debug_log_everything){
+        console.log("CL Initial Clubs:", clLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+        console.log("EL Initial Clubs:", elLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+        console.log("CoL Initial Clubs:", colLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
+    }
 
     const startButton = document.createElement('button');
     startButton.id="startbutton";

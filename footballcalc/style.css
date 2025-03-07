@@ -114,7 +114,7 @@ body,html {
   margin-top: 0px;
   text-align: center;
   flex-grow: 1; /* Allows it to expand fully */
-  text-align: center;
+  align-items: center;
 }
 
 .matchContainer {
