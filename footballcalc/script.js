@@ -770,7 +770,7 @@ async function calculateInput() { //called when the calculate button is pressed,
         }
     }
     
-    if (debug_console_tables) console.table(sortedClubs);
+    if (debug_console_tables || debug_log_everything) console.table(sortedClubs);
     updateTabel(sortedClubs, league);
     league.updateStats(sortedClubs);
     if (debug_log_everything) console.log("CALL C");
@@ -1017,7 +1017,7 @@ function updateTabel(sortedClubs,league){
     theadrow.appendChild(winsHeader);
     theadrow.appendChild(drawsHeader);
     theadrow.appendChild(lossesHeader);
-    tableBody.appendChild(theadrow);
+    if(!league.isInKnockoutPhase)tableBody.appendChild(theadrow);
     sortedClubs.forEach(club => {
         const row = document.createElement("tr");
         const positionCell = document.createElement("td");
@@ -1077,7 +1077,7 @@ function updateTabel(sortedClubs,league){
                 element.style.backgroundColor=CoLColor;
             }
         });
-        tableBody.appendChild(row);
+        if(!league.isInKnockoutPhase)tableBody.appendChild(row);
     });
 }
 
@@ -1517,6 +1517,7 @@ function startGame() {
 
     document.getElementById('checkboxContainer').style.display = "none";
     document.getElementById('FlagGrid').style.display = "none";
+    document.getElementById('editButton').style.display = "none";
     updateDropdownOptions();
 
     // Initialize the calendar with the loaded leagues and cups
