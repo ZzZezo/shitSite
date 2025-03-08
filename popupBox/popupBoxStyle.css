@@ -94,3 +94,68 @@
 .popup-button:active {
   border-style: inset;
 }
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: #c0c0c0;
+  border-left: 2px solid #808080;
+  border-top: 2px solid #808080;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dfdfdf;
+  border-left: 2px solid white;
+  border-top: 2px solid white;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: inset -1px -1px #404040;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+}
+
+::-webkit-scrollbar-button:single-button {
+  background: #c0c0c0;
+  border-left: 2px solid #808080;
+  border-top: 2px solid #808080;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-button:single-button:active {
+  background: #a0a0a0;
+  border-left: 2px solid white;
+  border-top: 2px solid white;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+}
+
+::-webkit-scrollbar-corner {
+  background: #c0c0c0;
+}
+
+.popup-input {
+  padding: 5px;
+  border: 2px inset #808080;
+  font-family: "Old Sans Serif";
+  font-size: 16px;
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}
+
+.popup-input:focus {
+  padding: 5px;
+  border: 2px inset #808080;
+  font-family: "Old Sans Serif";
+  outline: none;
+  font-size: 16px;
+  cursor: url('../assets/images/old_pointer.png'), auto;
+}

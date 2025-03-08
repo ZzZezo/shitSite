@@ -1,6 +1,6 @@
 //library script (better not change stuff here cuz its global for entire project and u have no idea what any of this means💀☠️)
 
-function createPopup(titleText, mainText, options, buttonText,functionsToRun) {
+function createPopup(titleText, mainText, options, buttonText,functionsToRun, elements = []) {
     // Create the popup container
     const popup = document.createElement('div');
     popup.className = 'popup';
@@ -34,6 +34,11 @@ function createPopup(titleText, mainText, options, buttonText,functionsToRun) {
     //append to container
     popup.appendChild(titleBar);
     popup.appendChild(text);
+
+    //append elements
+    elements.forEach(element => {
+        popup.appendChild(element);
+    });
 
     //buttons
     let buttonContainer = document.createElement('div');

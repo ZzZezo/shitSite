@@ -20,7 +20,7 @@ function createPrompt(titleText, mainText,answerFunction){
     const closeButton = document.createElement('button');
     closeButton.className = 'popup-close';
     closeButton.innerText = 'X';
-    // closeButton.onclick = closePopup;
+    closeButton.onclick = closePopup;
 
     //append to titlebar
     titleBar.appendChild(title);
@@ -42,6 +42,12 @@ function createPrompt(titleText, mainText,answerFunction){
     const Input = document.createElement('input');
     Input.type = "text";
     Input.className = 'popup-input';
+    Input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            closePopup(); 
+            answerFunction(Input.value);
+        }
+    });
 
     const submitButton = document.createElement('button');
     submitButton.innerHTML = "Bestätigen"

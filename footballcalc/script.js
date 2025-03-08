@@ -17,7 +17,7 @@ let seasonManager;
 
 let isSeasonOver = false; //set to true when season is over, but maybe won't be needed ?
 
-let userRandomness = 1.5;
+let userRandomness = 13.5;
 
 //debug variables
 let debug_fast_skip = false; //if true, fills out every game with 1-1
@@ -1557,12 +1557,159 @@ function createInfoBox(country) {
     return checkboxContainer;
 }
 
-function openEditMode(){
-    createPopup("Edit Mode","Later you will be able to modify Teams here.", 1, ["Okay"], [closePopup])
+function openEditMode() {
+    //collect all clubs from dClubs and all pools
+    const allClubs = [...dClubs];
+    [clPool, elPool, colPool, realChampionsLeagueClubs, realEuropaLeagueClubs, realConferenceLeagueClubs].forEach(pool => {
+        pool.forEach(club => {
+            if (!allClubs.find(c => c.name === club.name)) {
+                allClubs.push(club);
+            }
+        });
+    });
+
+    const sortedClubs = allClubs.sort((a, b) => a.name.localeCompare(b.name));
+
+    //create the search container
+    const searchContainer = document.createElement('div');
+    searchContainer.style.marginTop = "-25px";
+
+    //add search input
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.classList.add('popup-input');
+    searchInput.style.width = '95%';
+    searchInput.placeholder = 'Search clubs...';
+    searchInput.style.marginBottom = "7px";
+
+    //create club list container
+    const clubList = document.createElement('div');
+    clubList.style.maxHeight = '60vh';
+    clubList.style.overflowY = 'auto';
+
+    //function to filter clubs
+    const filterClubList = (searchTerm) => {
+        const filtered = sortedClubs.filter(club => 
+            club.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        
+        clubList.innerHTML = '';
+        filtered.forEach(club => {
+            const clubItem = document.createElement('div');
+            clubItem.style.padding = '8px';
+            clubItem.style.cursor = 'pointer';
+            clubItem.style.borderBottom = '1px solid #ddd';
+            clubItem.textContent = club.name;
+            clubItem.addEventListener('click', () => showClubProfile(club));
+            clubList.appendChild(clubItem);
+        });
+    };
+
+    //initial population
+    filterClubList('');
+
+    //add input listener
+    searchInput.addEventListener('input', (e) => {
+        filterClubList(e.target.value);
+    });
+
+    //append to container
+    searchContainer.appendChild(searchInput);
+    searchContainer.appendChild(clubList);
+
+    //add clickable club items
+    sortedClubs.forEach(club => {
+        const clubItem = document.createElement('div');
+        clubItem.style.padding = '8px';
+        clubItem.style.cursor = 'pointer';
+        clubItem.style.borderBottom = '1px solid #ddd';
+        clubItem.textContent = club.name;
+        
+        clubItem.addEventListener('click', () => showClubProfile(club));
+        clubList.appendChild(clubItem);
+    });
+
+    //show popup with club list
+    createPopup(
+        "Edit Mode - Select Club",
+        "",
+        1,
+        ["Close"],
+        [closePopup],
+        [searchContainer]
+    );
+    searchInput.focus();
+}
+
+function showClubProfile(club) {
+    const profileContainer = document.createElement('div');
+    
+    // Club Name
+    const nameHeader = document.createElement('h2');
+    nameHeader.textContent = club.name;
+    profileContainer.appendChild(nameHeader);
+
+    // Leagues List
+    const leaguesHeader = document.createElement('h3');
+    // Get leagues from leagueStats
+    const leagues = Object.keys(club.leagueStats);
+    if(leagues.length>=1)leaguesHeader.textContent = 'Participating Leagues:';
+    profileContainer.appendChild(leaguesHeader);
+
+    const leaguesList = document.createElement('ul');
+
+    // Find leagues that include the club
+    dLeagues.forEach(league => {
+        if (league.clubs.includes(club)) {
+            if (!leagues.includes(league.name)) {
+                leagues.push(league.name);
+            }
+        }
+    });
+    
+    leagues.forEach(leagueName => {
+        const li = document.createElement('li');
+        li.textContent = leagueName;
+        leaguesList.appendChild(li);
+    });
+
+    // Back button
+    const backButton = document.createElement('button');
+    backButton.textContent = 'Back to List';
+    backButton.style.marginTop = '16px';
+    backButton.onclick = () => {
+        closePopup();
+        openEditMode();
+    };
+
+    profileContainer.appendChild(leaguesList);
+
+    closePopup();
+    createPopup("Club Profile", "", 2, ["Rename","Back"], [function(){showClubRename(club)},function(){closePopup();openEditMode();}], [profileContainer]);
+}
+
+function showClubRename(club) {
+    clubObj = dClubs.find(clubObj => clubObj.name === club.name);
+    closePopup();
+    createPrompt(club.name,"Enter the new Name here:",function(newName){
+        //the user input will be saved in the variable "answer"
+        if (newName) {
+            console.log("Renamed "+ club.name + " to " + newName);
+            club.name = newName;
+            clubObj.name = newName;
+            closePopup();
+            showClubProfile(club);
+        }
+    });
+    
 }
 
 function startGame() {
     if (loadedLeagues.length < 1 && loadedCups.length < 1) return;
+
+    loadedLeagues.forEach(league => {
+        league.sortedClubs = league.init_sortedClubs(league.clubs);
+    });
 
     document.getElementById('checkboxContainer').style.display = "none";
     document.getElementById('FlagGrid').style.display = "none";
