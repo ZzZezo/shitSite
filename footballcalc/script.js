@@ -19,6 +19,9 @@ let isSeasonOver = false; //set to true when season is over, but maybe won't be 
 
 let userRandomness = 13.5;
 
+//settings or idk
+let show_color_in_match_list = true;
+
 //debug variables
 let debug_fast_skip = false; //if true, fills out every game with 1-1
 let debug_console_tables = false; //if true, prints the tables to the console
@@ -1191,6 +1194,14 @@ function updateClubInfo(clubSorted) {
                 
                 const awayCell = document.createElement("td");
                 awayCell.textContent = match.awayClub.name;
+
+                if(show_color_in_match_list){
+                    if(match.homeGoals > match.awayGoals && club.name == match.homeClub.name) row.style.backgroundColor = "#8fffa2"; //green
+                    else if(match.homeGoals > match.awayGoals && club.name == match.awayClub.name) row.style.backgroundColor = "#ff7369"; //red
+                    else if(match.homeGoals < match.awayGoals && club.name == match.homeClub.name) row.style.backgroundColor = "#ff7369"; //red
+                    else if(match.homeGoals < match.awayGoals && club.name == match.awayClub.name) row.style.backgroundColor = "#8fffa2"; //green
+                    else row.style.backgroundColor = "#f7ffb0"; //yellowish
+                }
 
                 row.append(homeCell, homeGoals, awayGoals, awayCell);
                 matchTable.appendChild(row);
