@@ -142,7 +142,7 @@ body,html {
 #FlagGrid{
   width: 30%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 3 equal columns */
+  grid-template-columns: repeat(2, 1fr); /* 2 equal columns */
   gap: 20px;
 }
 
@@ -250,4 +250,17 @@ label{
 
 #editButton:active{
   border-style: inset;
+}
+
+
+
+
+/* MOBILE ADJUSTMENTS */
+@media (max-width: 600px) { /* Adjust breakpoint as needed */
+  #FlagGrid{
+    width: 30%;
+    display: grid;
+    grid-template-columns:1fr; /* 2 equal columns */
+    gap: 20px;
+  }
 }
