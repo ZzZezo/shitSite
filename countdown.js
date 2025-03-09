@@ -280,8 +280,8 @@ window.addEventListener('load', function() {
             showBadgeDetails(badge.id);
         });
     });
-    updateDayBadges();
     loadBadges();
+    updateDayBadges();
 });
 
 //initiate that thing
