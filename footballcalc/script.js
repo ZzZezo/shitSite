@@ -38,7 +38,7 @@ class Club { //all clubs
     //init league stats on league creation --> is called when a league is created, for any club in the league
     initializeLeagueStats(leagueName) {
         if (!this.leagueStats[leagueName]) {
-            this.leagueStats[leagueName] = 0;  // Set initial points to 0 for the league
+            this.leagueStats[leagueName] = 0;  //Set initial points to 0 for the league
         }
     }
 
@@ -88,7 +88,7 @@ class League {
         this.matchesThisSeason = this.matchplan.length;
         this.matchdaysThisSeason = Math.floor(this.matchesThisSeason / (this.clubs.length / 2))
         if(this.knockoutTeams>0) this.matchdaysThisSeason+=logBase2(this.knockoutTeams);
-        // console.log(this.name+": "+this.matchdaysThisSeason);
+        //console.log(this.name+": "+this.matchdaysThisSeason);
         this.matchdaysPlayed = 0;
         
         //if the league can be played (or only simulated, used for lower divisions, so all playbable leagues can relegate clubs)
@@ -151,10 +151,10 @@ class League {
                 }
             }
     
-            // Rotate teams, keeping the first team fixed
+            //Rotate teams, keeping the first team fixed
             clubs.splice(1, 0, clubs.pop());
     
-            // Add the current round to the matchplan
+            //Add the current round to the matchplan
             matchplan.push(...roundMatches); //pushes the array CONTENT into the array not the array itself (like array.concat())
         }
 
@@ -240,7 +240,7 @@ class Cup{
     }
 
     calculateRounds(){
-        // Calculate the number of rounds based on the number of clubs
+        //Calculate the number of rounds based on the number of clubs
         if(isPowerOfTwo(this.clubs.length) && this.clubs.length >= 2){
             return logBase2(this.clubs.length);
         }
@@ -300,7 +300,7 @@ class Cup{
                 clubsToKickOut.push(homeClub);
             }
             else if (homeGoals === awayGoals) {
-                // Handle penalty shootout asynchronously
+                //Handle penalty shootout asynchronously
                 const winner = await new Promise((resolve) => {
                     createPopup(
                         this.name,
@@ -339,12 +339,12 @@ class Cup{
 }
 
 class Match {
-    constructor(homeClub, awayClub, homeGoals, awayGoals, leagueName) {
+    constructor(homeClub, awayClub, homeGoals, awayGoals, leagueName, played = false) {
         this.homeClub = homeClub;
         this.awayClub = awayClub;
         this.homeGoals = homeGoals;
         this.awayGoals = awayGoals;
-        this.played = false;
+        this.played = played;
         
         // Find and assign the league object from the predefined list
         this.league = dLeagues.find(leagueObj => leagueObj.name === leagueName);
@@ -395,7 +395,7 @@ class Match {
 }
 
 class Calendar{
-    constructor(Leagues){
+    constructor(Leagues = []){
         this.partakingLeagues = Leagues;
         this.Calendar = this.initCalendar();
         this.calendarIndex = 0;
@@ -403,14 +403,17 @@ class Calendar{
       
       initCalendar() {
         if(this.partakingLeagues.length == 0) return [];
+        console.log(this.partakingLeagues.length);
+        console.log(this.partakingLeagues);
+        if(this.partakingLeagues.length == 0) return [];
         const leagues = this.partakingLeagues.map(league => ({
-          name: league.name,
-          matchdays: league.matchdaysThisSeason,
+            name: league.name,
+            matchdays: league.matchdaysThisSeason,
         }));
         // console.log(leagues);
         const calendar = [];
         let leaguesLeft = leagues.length;
-      
+        
         //find lowest number of matchdays
         const minMatchdays = Math.min(...leagues.map(league => league.matchdays));
         
@@ -428,19 +431,35 @@ class Calendar{
         //add the remaining matchdays to the calendar at a random position
         //for (let i = 0; i < minMatchdays; i++) { // @future erik: lol u cant just put minMatchdays here too. (i just copy pasted it for now) (wont work later) @past erik: i am future erik and i wanna kill u for not just implementing this correctly, i just spent 3h debugging bcs of this u bastard
         while (leaguesLeft > 0) {
+            console.log("Loop Iteration - leaguesLeft:", leaguesLeft);
+            
+            let didSomething = false; // Track if anything changed
+
+            console.log(leagues);
+        
             leagues.forEach(league => {
                 if (league.matchdays > 0) {
+                    console.log(`Processing league: ${league.name}, matchdays left: ${league.matchdays}`);
+                    
                     const randomIndex = Math.floor(Math.random() * calendar.length);
                     calendar.splice(randomIndex, 0, league);
                     league.matchdays--;
+                    didSomething = true;
         
                     if (league.matchdays === 0) {
                         leaguesLeft--;
+                        console.log(`League ${league.name} finished. leaguesLeft: ${leaguesLeft}`);
                     }
                 }
             });
+        
+            if (!didSomething) {
+                console.error("⚠️ Infinite Loop Detected: No changes happening!");
+                break;
+            }
         }
         
+        console.log("CCCCCCC");
 
 
         //update the calendar to only return league names not objects
@@ -853,6 +872,8 @@ function showMatches(leagueName) {
     let remainingMatches = matchesAmntMatchday;
 
     if(debug_log_everything)console.log(`Spieltag: ${league.crntweek}, Geplante Matches: ${matchesAmntMatchday}`);
+    if(debug_log_everything)console.log("[DEBUG] League: ", league);
+    if(debug_log_everything)console.log("[DEBUG] Matchplan: ", league.matchplan);
 
     while (remainingMatches > 0) {
         // let index = (matchesAmntMatchday - remainingMatches) + league.crntweek * matchesAmntMatchday;
@@ -992,6 +1013,7 @@ function updateDropdownOptionsByList(list){
 }
 
 function updateTabel(sortedClubs,league){
+    document.getElementById("LeagueTable").style.display = "block";
     //I know whats coming now is ass as fuck but i did that at 4am or so pls-
     //well do that better eventually. first things first.
     const tableBody = document.getElementById("LeagueTable");
@@ -1112,12 +1134,13 @@ function resetClubInfo(){
 }
 
 function updateClubInfo(clubSorted) {
-    const club = dClubs.find(club => club.name === clubSorted.name);
+    const club = dClubs.find(club => club.name === clubSorted.name) || clPool.find(club => club.name === clubSorted.name) || elPool.find(club => club.name === clubSorted.name) || colPool.find(club => club.name === clubSorted.name) || realChampionsLeagueClubs.find(club => club.name === clubSorted.name) || realEuropaLeagueClubs.find(club => club.name === clubSorted.name) || realConferenceLeagueClubs.find(club => club.name === clubSorted.name);
 
     resetClubInfo();
     const infoContainer = document.getElementById("ClubInfoContainer");
     
     // Club name header
+    if(debug_log_everything)console.log("opened menu for "+club.name);
     const clubHeader = document.createElement("h1");
     clubHeader.textContent = club.name;
     infoContainer.appendChild(clubHeader);
@@ -1465,12 +1488,435 @@ function showCupMatches(cup) {
     inputContainer.appendChild(submitButton);
 }
 
-function saveToStorage(){
-    localStorage.clear();
+function saveToStorage() {
+    // Serialize complex objects
+    const serializedClubs = dClubs.map(club => ({
+        name: club.name,
+        leagueStats: club.leagueStats,
+        matches: club.matches.map(match => ({
+            homeClub: match.homeClub.name,
+            awayClub: match.awayClub.name,
+            homeGoals: match.homeGoals,
+            awayGoals: match.awayGoals,
+            leagueName: match.league.name,
+            played: match.played
+        })),
+        hardcodedRating: club.hardcodedRating
+    }));
+
+    const serialized_clPool = clPool.map(club => ({
+        name: club.name,
+        leagueStats: club.leagueStats,
+        matches: club.matches.map(match => ({
+            homeClub: match.homeClub.name,
+            awayClub: match.awayClub.name,
+            homeGoals: match.homeGoals,
+            awayGoals: match.awayGoals,
+            leagueName: match.league.name,
+            played: match.played
+        })),
+        hardcodedRating: club.hardcodedRating
+    }));
+
+    const serialized_elPool = elPool.map(club => ({
+        name: club.name,
+        leagueStats: club.leagueStats,
+        matches: club.matches.map(match => ({
+            homeClub: match.homeClub.name,
+            awayClub: match.awayClub.name,
+            homeGoals: match.homeGoals,
+            awayGoals: match.awayGoals,
+            leagueName: match.league.name,
+            played: match.played
+        })),
+        hardcodedRating: club.hardcodedRating
+    }));
+
+    const serialized_colPool = colPool.map(club => ({
+        name: club.name,
+        leagueStats: club.leagueStats,
+        matches: club.matches.map(match => ({
+            homeClub: match.homeClub.name,
+            awayClub: match.awayClub.name,
+            homeGoals: match.homeGoals,
+            awayGoals: match.awayGoals,
+            leagueName: match.league.name,
+            played: match.played
+        })),
+        hardcodedRating: club.hardcodedRating
+    }));
+
+    const serializedLeagues = dLeagues.map(league => ({
+        name: league.name,
+        clubs: league.clubs.map(c => c.name),
+        sortedClubs: league.sortedClubs,
+        promotePositions: league.promotePositions,
+        promotePlayoffs: league.promotePlayoffs,
+        relegatePositions: league.relegatePositions,
+        relegatePlayoffs: league.relegatePlayoffs,
+        CLPositions: league.CLPositions,
+        ELPositions: league.ELPositions,
+        CoLPositions: league.CoLPositions,
+        association: league.association,
+        level: league.level,
+        hasChampion: league.hasChampion,
+        terms: league.terms,
+        crntweek: league.crntweek,
+        lastShownMatchIndex: league.lastShownMatchIndex - league.clubs.length/2,
+        knockoutTeams: league.knockoutTeams,
+        knockoutTeamsList: league.knockoutTeamsList.map(c => c.name),
+        isInKnockoutPhase: league.isInKnockoutPhase,
+        matchLimit: league.matchLimit,
+        matchdaysPlayed: league.matchdaysPlayed,
+        playable: league.playable,
+        matchplan: league.matchplan.map(match => [
+            match[0]?.name || null, 
+            match[1]?.name || null
+        ]),
+    }));
+
+    const serializedTournaments = dTournaments.map(tournament => ({
+        name: tournament.name,
+        clubs: tournament.clubs.map(c => c.name),
+        remainingClubs: tournament.remainingClubs.map(c => c.name),
+        HasThirdPlace: tournament.HasThirdPlace,
+        country: tournament.country,
+        totalRounds: tournament.totalRounds,
+        matchplan: tournament.matchplan.map(m => [m[0]?.name, m[1]?.name]),
+        crntweek: tournament.crntweek
+    }));
+
+    // Save state
+    localStorage.setItem("FBC_dClubs", JSON.stringify(serializedClubs));
+    localStorage.setItem("FBC_clPool", JSON.stringify(serialized_clPool));
+    localStorage.setItem("FBC_elPool", JSON.stringify(serialized_elPool));
+    localStorage.setItem("FBC_colPool", JSON.stringify(serialized_colPool));
+    localStorage.setItem("FBC_dLeagues", JSON.stringify(serializedLeagues));
+    localStorage.setItem("FBC_dTournaments", JSON.stringify(serializedTournaments));
+    localStorage.setItem("FBC_loadedLeagues", JSON.stringify(loadedLeagues.map(l => l.name)));
+    localStorage.setItem("FBC_loadedCups", JSON.stringify(loadedCups.map(c => c.name)));
+    localStorage.setItem("FBC_activeLeague", activeLeague?.name || "");
+    localStorage.setItem("FBC_finshedLeagues", JSON.stringify(finshedLeagues.map(l => l.name)));
+    
+    // Calendar state
+    localStorage.setItem("FBC_seasonCalendar", JSON.stringify({
+        partakingLeagues: seasonCalendar?.partakingLeagues.map(l => l.name) || [],
+        calendar: seasonCalendar?.Calendar || [],
+        calendarIndex: seasonCalendar?.calendarIndex || 0
+    }));
+    
+    // Settings and game state
+    localStorage.setItem("FBC_isSeasonOver", isSeasonOver);
+    localStorage.setItem("FBC_userRandomness", userRandomness);
+    localStorage.setItem("FBC_show_color_in_match_list", show_color_in_match_list);
+    localStorage.setItem("FBC_debug_flags", JSON.stringify({
+        fast_skip: debug_fast_skip,
+        console_tables: debug_console_tables,
+        log_everything: debug_log_everything
+    }));
 }
 
-function loadFromStorage(){
+function loadFromStorage() {
+    // Load clubs first
+    const loadedClubs = JSON.parse(localStorage.getItem("FBC_dClubs") || []);
+    dClubs = loadedClubs.map(c => {
+        const club = new Club(c.name, c.hardcodedRating);
+        club.leagueStats = c.leagueStats;
+        club.matches = c.matches; 
+        return club;
+    });
 
+    const loaded_clPool = JSON.parse(localStorage.getItem("FBC_clPool") || []);
+    clPool = loaded_clPool.map(c => {
+        const club = new Club(c.name, c.hardcodedRating);
+        club.leagueStats = c.leagueStats;
+        club.matches = c.matches; 
+        return club;
+    });
+
+    const loaded_elPool = JSON.parse(localStorage.getItem("FBC_elPool") || []);
+    elPool = loaded_elPool.map(c => {
+        const club = new Club(c.name, c.hardcodedRating);
+        club.leagueStats = c.leagueStats;
+        club.matches = c.matches; 
+        return club;
+    });
+
+    const loaded_colPool = JSON.parse(localStorage.getItem("FBC_colPool") || []);
+    colPool = loaded_colPool.map(c => {
+        const club = new Club(c.name, c.hardcodedRating);
+        club.leagueStats = c.leagueStats;
+        club.matches = c.matches; 
+        return club;
+    });
+
+    // Rebuild leagues
+    const leagueData = JSON.parse(localStorage.getItem("FBC_dLeagues") || []);
+    dLeagues = leagueData.map(ld => {
+        const league = new League(
+            ld.name,
+            [], // clubs will be populated later
+            ld.matchLimit,
+            ld.promotePositions,
+            ld.promotePlayoffs,
+            ld.relegatePositions,
+            ld.relegatePlayoffs,
+            ld.CLPositions,
+            ld.ELPositions,
+            ld.CoLPositions,
+            ld.association,
+            ld.level,
+            ld.hasChampion,
+            ld.terms,
+            ld.playable,
+            ld.knockoutTeams
+        );
+        
+        // Restore league-specific state
+        Object.assign(league, {
+            sortedClubs: ld.sortedClubs,
+            crntweek: ld.crntweek,
+            lastShownMatchIndex: ld.lastShownMatchIndex,
+            knockoutTeamsList: ld.knockoutTeamsList,
+            isInKnockoutPhase: ld.isInKnockoutPhase,
+            matchdaysPlayed: ld.matchdaysPlayed
+        });
+
+        // Restore matchplan with actual club references
+        league.matchplan = ld.matchplan.map(matchPair => [
+            findClub(matchPair[0]), // Home club
+            findClub(matchPair[1])  // Away club
+        ]);
+        
+        return league;
+    });
+
+    // Rebuild tournaments
+    const tournamentData = JSON.parse(localStorage.getItem("FBC_dTournaments") || []);
+    dTournaments = tournamentData.map(td => {
+        // Map club names to actual club objects before creating the Cup instance
+        const clubs = td.clubs.map(cName => findClub(cName)).filter(c => c);
+        
+        // Create the Cup instance with the populated clubs array
+        const cup = new Cup(
+            td.name,
+            clubs, // Pass the clubs here instead of an empty array
+            td.HasThirdPlace,
+            td.country
+        );
+        
+        // Restore additional properties
+        Object.assign(cup, {
+            remainingClubs: td.remainingClubs.map(cName => findClub(cName)).filter(c => c),
+            totalRounds: td.totalRounds,
+            matchplan: td.matchplan.map(m => [
+                findClub(m[0]),
+                findClub(m[1])
+            ]),
+            crntweek: td.crntweek
+        });
+        
+        return cup;
+    });
+
+    // Rebuild references
+    function findClub(name) {
+        return dClubs.find(c => c.name === name) ||
+               clPool.find(c => c.name === name) ||
+               elPool.find(c => c.name === name) ||
+               colPool.find(c => c.name === name) ||
+               realChampionsLeagueClubs.find(c => c.name === name) ||
+               realEuropaLeagueClubs.find(c => c.name === name) ||
+               realConferenceLeagueClubs.find(c => c.name === name);
+    }
+
+    // Reconnect league clubs
+    dLeagues.forEach(league => {
+        league.clubs = leagueData.find(ld => ld.name === league.name).clubs
+            .map(cName => findClub(cName))
+            .filter(c => c);
+    });
+
+    // Reconnect tournament clubs
+    dTournaments.forEach(tournament => {
+        const td = tournamentData.find(t => t.name === tournament.name);
+        tournament.clubs = td.clubs.map(cName => findClub(cName)).filter(c => c);
+        tournament.remainingClubs = td.remainingClubs.map(cName => findClub(cName)).filter(c => c);
+        tournament.matchplan = td.matchplan.map(m => [
+            findClub(m[0]),
+            findClub(m[1])
+        ]);
+    });
+
+    // Before your forEach loop
+    const uniqueClubNames = new Set();
+    dClubs.forEach(club => {
+        if (uniqueClubNames.has(club.name)) {
+            console.warn(`Duplicate club found: ${club.name}`);
+        }
+        uniqueClubNames.add(club.name);
+    });
+
+    //OKAY STOP CTRL Z ING HERE PLS PLS PLS PLS STOP
+    dClubs2 = [...dClubs, ...clPool, ...elPool, ...colPool];
+    // I SAID STOP
+
+    //RESTORING MATCEHS (try 37) try number 11 might be the one fr || nevermind 💀 but 18 is actually the one i believe || idk maybe its gonna be try 26 well see but i wouldt have my hopes up || YEAAAHHHHH TRY 37 SEEMS TO HAVE WORKED OMG YESYESYSESYES (surely i will never encounter another bug that shows me this was wrong again right)
+    // Add this at the very start of loadFromStorage to see raw data
+    console.log("Initial raw clubs data:", JSON.parse(localStorage.getItem("FBC_dClubs") || "[]"));
+
+    // Modified restoration with extra debugging
+    dClubs2.forEach((club) => {
+        if(club.matches>0)console.log(`Before processing ${club.name} - current matches:`, club.matches);
+
+        const matchSignatures = new Set();
+        const restoredMatches = [];
+
+        club.matches.forEach((match, index) => {
+            // Log each match we're trying to process
+            console.log(`Processing match ${index} for ${club.name}:`, match);
+
+            if (!match || typeof match.homeClub !== 'string' || typeof match.awayClub !== 'string') {
+                console.warn(`Invalid match data at index ${index} for ${club.name}:`, match);
+                return;
+            }
+
+            const matchSignature = `${match.homeClub}-${match.awayClub}-${match.leagueName}-${match.homeGoals}-${match.awayGoals}`;
+            
+            if (matchSignatures.has(matchSignature)) {
+                console.warn(`Found duplicate match for ${club.name}: ${matchSignature}`);
+                return;
+            }
+
+            const homeClub = dClubs.find(c => c.name === match.homeClub) || clPool.find(c => c.name === match.homeClub) || elPool.find(c => c.name === match.homeClub) || colPool.find(c => c.name === match.homeClub) || realChampionsLeagueClubs.find(c => c.name === match.homeClub) || realEuropaLeagueClubs.find(c => c.name === match.homeClub) || realConferenceLeagueClubs.find(c => c.name === match.homeClub);
+            const awayClub = dClubs.find(c => c.name === match.awayClub) || clPool.find(c => c.name === match.awayClub) || elPool.find(c => c.name === match.awayClub) || colPool.find(c => c.name === match.awayClub) || realChampionsLeagueClubs.find(c => c.name === match.awayClub) || realEuropaLeagueClubs.find(c => c.name === match.awayClub) || realConferenceLeagueClubs.find(c => c.name === match.awayClub);
+
+            if (!homeClub || !awayClub) {
+                console.warn(`Could not find clubs for ${match.homeClub} vs ${match.awayClub}`);
+                return;
+            }
+
+            const newMatch = new Match(
+                homeClub,
+                awayClub,
+                match.homeGoals,
+                match.awayGoals,
+                match.leagueName,
+                match.played
+            );
+
+            matchSignatures.add(matchSignature);
+            restoredMatches.push(newMatch);
+        });
+
+        // Explicitly clear and replace matches
+        club.matches = []; // Clear existing matches
+        club.matches = restoredMatches;
+        if(club.matches.length>0)console.log(`After restoration ${club.name} has ${club.matches.length} matches`);
+    });
+
+    
+    // Final verification with duplicate removal
+    dClubs2.forEach(club => {
+        if(club.matches.length>0)console.log(`Final verification for ${club.name} - starting with ${club.matches.length} matches`);
+        
+        const uniqueMatches = [];
+        const seenSignatures = new Set();
+        
+        club.matches.forEach((match, index) => {
+            const signature = `${match.homeClub.name}-${match.awayClub.name}-${match.leagueName}-${match.homeGoals}-${match.awayGoals}`;
+            if (!seenSignatures.has(signature)) {
+                seenSignatures.add(signature);
+                uniqueMatches.push(match);
+            } else {
+                console.warn(`Removed duplicate in final check for ${club.name}: ${signature}`);
+            }
+        });
+
+        club.matches = uniqueMatches;
+        if(club.matches.length>0)console.log(`Final count for ${club.name}: ${club.matches.length} unique matches:`);
+        club.matches.forEach((m, i) => {
+            console.log(`${i + 1}: ${m.homeClub.name} ${m.homeGoals} - ${m.awayGoals} ${m.awayClub.name}`);
+        });
+    });
+
+    // Restore loaded leagues/cups
+    loadedLeagues = JSON.parse(localStorage.getItem("FBC_loadedLeagues") || [])
+        .map(name => dLeagues.find(l => l.name === name))
+        .filter(l => l);
+
+    loadedCups = JSON.parse(localStorage.getItem("FBC_loadedCups") || [])
+        .map(name => dTournaments.find(t => t.name === name))
+        .filter(t => t);
+
+    // Restore active league
+    activeLeague = dLeagues.find(l => l.name === localStorage.getItem("FBC_activeLeague")) ||
+                  dTournaments.find(t => t.name === localStorage.getItem("FBC_activeLeague"));
+
+    // Restore finished leagues
+    finshedLeagues = JSON.parse(localStorage.getItem("FBC_finshedLeagues") || [])
+        .map(name => dLeagues.find(l => l.name === name))
+        .filter(l => l);
+
+    // Restore calendar
+    const rawCalendarData = localStorage.getItem("FBC_seasonCalendar");
+    console.log("Raw Calendar Data:", rawCalendarData);
+
+    const calendarData = JSON.parse(rawCalendarData || "{}");
+    console.log("Parsed Calendar Data:", calendarData);
+
+    const partakingLeagues = calendarData.partakingLeagues?.map(name => {
+        const league = dLeagues.find(l => l.name === name);
+        const tournament = dTournaments.find(t => t.name === name);
+        console.log("Matching League or Tournament for", name, ":", league || tournament);
+        return league || tournament;
+    }) || [];
+
+    console.log("Final League/Tournament Array:", partakingLeagues);
+
+    seasonCalendar = new Calendar();
+
+    if (partakingLeagues){
+        console.log("Restoring partaking leagues...");
+        seasonCalendar.partakingLeagues = partakingLeagues;
+    }
+
+    if (calendarData.calendar) {
+        console.log("Restoring calendar data...");
+        seasonCalendar.Calendar = calendarData.calendar;
+    }
+
+    if (calendarData.calendarIndex !== undefined) {
+        console.log("Setting calendarIndex:", calendarData.calendarIndex);
+        seasonCalendar.calendarIndex = calendarData.calendarIndex;
+    }
+
+    // Restore settings
+    isSeasonOver = localStorage.getItem("FBC_isSeasonOver") === "true";
+    userRandomness = parseFloat(localStorage.getItem("FBC_userRandomness") || 13.5);
+    show_color_in_match_list = localStorage.getItem("FBC_show_color_in_match_list") === "true";
+    
+    // Restore debug flags
+    const debugFlags = JSON.parse(localStorage.getItem("FBC_debug_flags") || "{}");
+    debug_fast_skip = debugFlags.fast_skip || false;
+    debug_console_tables = debugFlags.console_tables || false;
+    debug_log_everything = debugFlags.log_everything || false;
+
+    // Initialize UI
+    updateDropdownOptions();
+    document.getElementById('checkboxContainer').style.display = "none";
+    document.getElementById('FlagGrid').style.display = "none";
+    document.getElementById('editButton').style.display = "none";
+    if (activeLeague) {
+        if (activeLeague instanceof League) {
+            showMatches(activeLeague.name);
+            updateTabel(activeLeague.getSortedClubs(), activeLeague);
+        } else {
+            switchToCup(activeLeague);
+        }
+    }
+
+    console.log("Game state loaded successfully!");
 }
 
 function showInfo(flag, country) {

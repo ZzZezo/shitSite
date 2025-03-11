@@ -353,7 +353,7 @@ dClubs = [
     new Club("Vicenza", 440),
     new Club("Feralpisalo", 430),
     new Club("AlbinoLeffe", 420),
-    new Club("Verona", 410),
+    new Club("Verona II", 410),
     new Club("Trento", 400),
     new Club("Novara", 390),
     new Club("Atalanta U-23", 380),
@@ -503,7 +503,7 @@ dTournaments = [
     new Cup("Coupe de France", [...dLeagues[15].clubs, ...dLeagues[16].clubs, ...dLeagues[17].clubs].slice(0, 32), false, "France"),
 ];
 
-const clPool = [
+clPool = [
     new Club("Porto", 900), new Club("Benfica", 920), new Club("Sporting CP", 880), // Portugal
     new Club("Zenit", 870), new Club("Spartak Moscow", 850), new Club("CSKA Moscow", 860), // Russia
     new Club("Salzburg", 880), new Club("Rapid Wien", 820), // Austria
@@ -524,7 +524,7 @@ const clPool = [
     new Club("Malmo FF", 840) // Sweden
 ];
 
-const elPool = [
+elPool = [
     new Club("Braga", 800), new Club("Vitória Guimarães", 780), // Portugal
     new Club("Lokomotiv Moscow", 790), new Club("Krasnodar", 780), // Russia
     new Club("LASK", 760), new Club("Sturm Graz", 750), // Austria
@@ -545,7 +545,7 @@ const elPool = [
     new Club("Djurgårdens IF", 750), new Club("Hammarby", 740) // Sweden
 ];
 
-const colPool = [
+colPool = [
     new Club("Famalicão", 700), new Club("Arouca", 690), // Portugal
     new Club("Rostov", 710), new Club("Rubin Kazan", 700), // Russia
     new Club("Austria Wien", 720), new Club("Wolfsberger AC", 710), // Austria
