@@ -780,19 +780,30 @@ async function calculateInput() { //called when the calculate button is pressed,
         } else if (league.isInKnockoutPhase) {
             console.log("okay so we just played a knockout round for " + league.name);
             const advancingTeams = todaysWinnerNames;
+            if(debug_log_everything)console.log("Advancing Teams: " + advancingTeams); //DEBUG
             league.knockoutTeamsList = [...advancingTeams];
+            if(debug_log_everything)console.log("Teams Left: " +league.knockoutTeamsList); //DEBUG
             advancingTeams.sort(() => Math.random() - 0.5);
+            if(debug_log_everything)console.log("Shuffled List of Advancing Teams: " + advancingTeams); //DEBUG
+            if(debug_log_everything)console.log("Length of Advancing Teams List: " + advancingTeams.length); //DEBUG
             if (advancingTeams.length === 1) {
                 let LeagueChampion = advancingTeams[0];
                 console.log(LeagueChampion + " has won " + league.name);
             }
-            const index = league.matchplan.findIndex(item => item[0] === null && item[1] === null);
+            let index = league.matchplan.findIndex(item => item[0] === null && item[1] === null);
+            if(index<0) index = league.matchplan.findIndex(item => item[0] === undefined && item[1] === undefined);
+            if(debug_log_everything)console.log("Index: " + index); //DEBUG
+            if(debug_log_everything)console.log("Matchplan: "); //DEBUG
+            if(debug_log_everything)console.log(league.matchplan); //DEBUG
             for (let i = 0; i < advancingTeams.length / 2; i++) {
+                if(debug_log_everything)console.log("Next up: " + advancingTeams[i] + " vs " + advancingTeams[advancingTeams.length - i - 1]); //DEBUG
                 league.matchplan[index + i] = [
                     { name: advancingTeams[i] }, 
                     { name: advancingTeams[advancingTeams.length - i - 1] }
                 ];
             }
+            if(debug_log_everything)console.log("The Matchplan now: "); //DEBUG
+            if(debug_log_everything)console.log(league.matchplan); //DEBUG
         }
     }
     
@@ -1562,7 +1573,9 @@ function saveToStorage() {
         hasChampion: league.hasChampion,
         terms: league.terms,
         crntweek: league.crntweek,
-        lastShownMatchIndex: league.lastShownMatchIndex - league.clubs.length/2,
+        lastShownMatchIndex: league.isInKnockoutPhase 
+        ? league.lastShownMatchIndex - league.knockoutTeamsList.length/2
+        : league.lastShownMatchIndex - league.clubs.length / 2,
         knockoutTeams: league.knockoutTeams,
         knockoutTeamsList: league.knockoutTeamsList.map(c => c.name),
         isInKnockoutPhase: league.isInKnockoutPhase,
@@ -1677,7 +1690,7 @@ function loadFromStorage() {
             sortedClubs: ld.sortedClubs,
             crntweek: ld.crntweek,
             lastShownMatchIndex: ld.lastShownMatchIndex,
-            knockoutTeamsList: ld.knockoutTeamsList,
+            knockoutTeamsList: ld.knockoutTeamsList.map(findClub),
             isInKnockoutPhase: ld.isInKnockoutPhase,
             matchdaysPlayed: ld.matchdaysPlayed
         });
