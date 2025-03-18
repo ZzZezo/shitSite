@@ -1141,6 +1141,7 @@ function switchToNextInput(first) {
     else {
         //if there is no next input element, focus on the calcButton
         if(document.getElementById("calcButton"))document.getElementById("calcButton").focus();
+        if(document.getElementById("submitButton"))document.getElementById("submitButton").focus();
     }
 }
 
