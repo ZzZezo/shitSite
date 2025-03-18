@@ -230,8 +230,18 @@ label{
   border-style: inset;
 }
 
-#editButton{
+
+#sidebar {
   position: fixed;
+  right: 10px;
+  top: 10px; /* Adjust starting position */
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  gap: 10px; /* Space between buttons */
+}
+
+
+.sidebarButton{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -244,11 +254,11 @@ label{
   cursor: pointer;
 }
 
-#editButton:hover{
+.sidebarButton:hover{
   background-color: #ADADAD;
 }
 
-#editButton:active{
+.sidebarButton:active{
   border-style: inset;
 }
 

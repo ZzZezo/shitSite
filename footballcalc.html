@@ -13,7 +13,11 @@
 </head>
 <body>
 
-    <button id="editButton" onclick="openEditMode()"><img src="assets/images/edit_icon.png" alt="Edit" style="width:40px; height:40px;"></button>
+    <div id="sidebar">
+        <button class="sidebarButton" id="editButton" onclick="openEditMode()"><img src="assets/images/edit_icon.png" alt="Edit" style="width:40px; height:40px;"></button>
+        <button class="sidebarButton" id ="savingIndicator" onclick="toggleSaving()"><img  src="assets/images/saving_disabled.png" alt="Edit" style="width:40px; height:40px;"></button>
+        <button class="sidebarButton" id ="loadButton" onclick="loadSaveFile()"><img  src="assets/images/load_button_2.png" alt="Edit" style="width:40px; height:40px;"></button>
+    </div>
 
     <div id="FlagGrid">
         <img src="assets/images/flags/germany.png" alt="de" class="Flag" onclick="showInfo(this, 'Germany')">

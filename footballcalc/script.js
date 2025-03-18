@@ -19,6 +19,9 @@ let isSeasonOver = false; //set to true when season is over, but maybe won't be 
 
 let userRandomness = 13.5;
 
+//IS SAVING ENABLED?
+let savingEnabled = false;
+
 //settings or idk
 let show_color_in_match_list = true;
 
@@ -458,9 +461,6 @@ class Calendar{
                 break;
             }
         }
-        
-        console.log("CCCCCCC");
-
 
         //update the calendar to only return league names not objects
         for (let i = 0; i < calendar.length; i++) {
@@ -848,6 +848,10 @@ function matchesCalculated(lastLeague,leagueDone=false) {
     }
 
     switchToNextInput(false);
+
+
+    // every time the button was pressed, save it to local storage
+    if(savingEnabled) saveToStorage();
 }
 
 function showMatches(leagueName) {
@@ -1499,6 +1503,33 @@ function showCupMatches(cup) {
     inputContainer.appendChild(submitButton);
 }
 
+function toggleSaving(){
+    if(savingEnabled){
+        savingEnabled = false;
+        document.getElementById("savingIndicator").querySelector("img").src = "assets/images/saving_disabled.png"
+    }
+    else{
+        savingEnabled = true;
+        document.getElementById("savingIndicator").querySelector("img").src = "assets/images/saving_enabled.png"
+    }
+}
+
+function loadSaveFile(){
+    createPopup("Load Save File","Want to load back to where you left off?",2,["Yes","No"],[function(){loadFromStorage();closePopup();},closePopup])
+}
+
+function checkForSavefile(){
+    //loop through all items in local storage
+    for (let i = 0; i < localStorage.length; i++) {
+        if (localStorage.key(i).startsWith("FBC_")) {
+            //if there is any element that starts with FBC_ the player has already a save file
+            return true;
+        }
+    } 
+    //else
+    return false;
+}
+
 function saveToStorage() {
     // Serialize complex objects
     const serializedClubs = dClubs.map(club => ({
@@ -1996,6 +2027,7 @@ function loadFromStorage() {
     document.getElementById('checkboxContainer').style.display = "none";
     document.getElementById('FlagGrid').style.display = "none";
     document.getElementById('editButton').style.display = "none";
+    document.getElementById('savingIndicator').style.display = "none";
     if (activeLeague) {
         if (activeLeague instanceof League) {
             showMatches(activeLeague.name);
@@ -2250,6 +2282,23 @@ function showClubRename(club) {
     
 }
 
+function startGame_saveMode(){
+    if(savingEnabled){
+        //if the user has saving enabled check if user already has something in local storage:
+        if (checkForSavefile()) {
+            //if the user already has a save file, warn him that he is overwriting his data
+            createPopup("⚠️ Warning","If you do this, your Save File will be overwritten!",2,["I know","Cancel"],[function(){startGame();closePopup();},closePopup]);
+        }
+        else{
+            //else its no problem to save, so dont warn user
+            startGame();
+        }
+    }
+    else{
+        startGame();
+    }
+}
+
 function startGame() {
     if (loadedLeagues.length < 1 && loadedCups.length < 1) return;
 
@@ -2260,6 +2309,7 @@ function startGame() {
     document.getElementById('checkboxContainer').style.display = "none";
     document.getElementById('FlagGrid').style.display = "none";
     document.getElementById('editButton').style.display = "none";
+    document.getElementById('savingIndicator').style.display = "none";
     updateDropdownOptions();
 
     // Initialize the calendar with the loaded leagues and cups
@@ -2341,7 +2391,20 @@ window.onload = function exampleFunction() {
     const startButton = document.createElement('button');
     startButton.id="startbutton";
     startButton.textContent = 'Start Game';
-    startButton.addEventListener('click', startGame);
+    startButton.addEventListener('click', startGame_saveMode);
     startButton.style.display = "none";
     checkboxContainer.appendChild(startButton);
+
+
+    let saveFileFound = checkForSavefile();
+    if (saveFileFound) {
+        //if the user already has a save file, don't enable saving
+        savingEnabled = false;
+        document.getElementById("savingIndicator").querySelector("img").src = "assets/images/saving_disabled.png"
+    }
+    else{
+        //else its no problem to save, cuz nothing can be overwritten
+        savingEnabled = true;
+        document.getElementById("savingIndicator").querySelector("img").src = "assets/images/saving_enabled.png"
+    }
 };
