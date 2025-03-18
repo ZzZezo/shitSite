@@ -771,7 +771,7 @@ async function calculateInput() { //called when the calculate button is pressed,
             league.isInKnockoutPhase = true;
 
             const top16Teams = sortedClubs.slice(0, league.knockoutTeams);
-            league.knockoutTeamsList = [...top16Teams];
+            league.knockoutTeamsList = top16Teams.map(team => team.name);
             top16Teams.sort(() => Math.random() - 0.5);
             const matchplanIndex = (league.crntweek + 1) * league.clubs.length / 2;
             for (let i = 0; i < league.knockoutTeams / 2; i++) {
@@ -781,7 +781,7 @@ async function calculateInput() { //called when the calculate button is pressed,
             console.log("okay so we just played a knockout round for " + league.name);
             const advancingTeams = todaysWinnerNames;
             if(debug_log_everything)console.log("Advancing Teams: " + advancingTeams); //DEBUG
-            league.knockoutTeamsList = [...advancingTeams];
+            league.knockoutTeamsList = advancingTeams.map(team => team.name);
             if(debug_log_everything)console.log("Teams Left: " +league.knockoutTeamsList); //DEBUG
             advancingTeams.sort(() => Math.random() - 0.5);
             if(debug_log_everything)console.log("Shuffled List of Advancing Teams: " + advancingTeams); //DEBUG
@@ -1573,13 +1573,16 @@ function saveToStorage() {
         hasChampion: league.hasChampion,
         terms: league.terms,
         crntweek: league.crntweek,
-        lastShownMatchIndex: league.isInKnockoutPhase 
-        ? league.lastShownMatchIndex - league.knockoutTeamsList.length/2
-        : league.lastShownMatchIndex - league.clubs.length / 2,
+        lastShownMatchIndex: league.name === activeLeague.name 
+        ? (league.isInKnockoutPhase 
+            ? league.lastShownMatchIndex - league.knockoutTeamsList.length / 2 
+            : league.lastShownMatchIndex - league.clubs.length / 2) 
+        : league.lastShownMatchIndex,
         knockoutTeams: league.knockoutTeams,
-        knockoutTeamsList: league.knockoutTeamsList.map(c => c.name),
+        knockoutTeamsList: league.knockoutTeamsList,
         isInKnockoutPhase: league.isInKnockoutPhase,
         matchLimit: league.matchLimit,
+        matchdaysThisSeason: league.matchdaysThisSeason,
         matchdaysPlayed: league.matchdaysPlayed,
         playable: league.playable,
         matchplan: league.matchplan.map(match => [
@@ -1690,9 +1693,10 @@ function loadFromStorage() {
             sortedClubs: ld.sortedClubs,
             crntweek: ld.crntweek,
             lastShownMatchIndex: ld.lastShownMatchIndex,
-            knockoutTeamsList: ld.knockoutTeamsList.map(findClub),
+            knockoutTeamsList: ld.knockoutTeamsList,
             isInKnockoutPhase: ld.isInKnockoutPhase,
-            matchdaysPlayed: ld.matchdaysPlayed
+            matchdaysPlayed: ld.matchdaysPlayed,
+            matchdaysThisSeason: ld.matchdaysThisSeason
         });
 
         // Restore matchplan with actual club references
@@ -1903,6 +1907,9 @@ function loadFromStorage() {
         console.log("Setting calendarIndex:", calendarData.calendarIndex);
         seasonCalendar.calendarIndex = calendarData.calendarIndex;
     }
+
+    //restore season manager
+    seasonManager = new SeasonManager();
 
     // Restore settings
     isSeasonOver = localStorage.getItem("FBC_isSeasonOver") === "true";
