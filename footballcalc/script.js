@@ -1557,6 +1557,48 @@ function saveToStorage() {
         hardcodedRating: club.hardcodedRating
     }));
 
+    const serialized_realChampionsLeagueClubs = realChampionsLeagueClubs.map(club => ({
+        name: club.name,
+        leagueStats: club.leagueStats,
+        matches: club.matches.map(match => ({
+            homeClub: match.homeClub.name,
+            awayClub: match.awayClub.name,
+            homeGoals: match.homeGoals,
+            awayGoals: match.awayGoals,
+            leagueName: match.league.name,
+            played: match.played
+        })),
+        hardcodedRating: club.hardcodedRating
+    }));
+
+    const serialized_realEuropaLeagueClubs = realEuropaLeagueClubs.map(club => ({
+        name: club.name,
+        leagueStats: club.leagueStats,
+        matches: club.matches.map(match => ({
+            homeClub: match.homeClub.name,
+            awayClub: match.awayClub.name,
+            homeGoals: match.homeGoals,
+            awayGoals: match.awayGoals,
+            leagueName: match.league.name,
+            played: match.played
+        })),
+        hardcodedRating: club.hardcodedRating
+    }));
+
+    const serialized_realConferenceLeagueClubs = realConferenceLeagueClubs.map(club => ({
+        name: club.name,
+        leagueStats: club.leagueStats,
+        matches: club.matches.map(match => ({
+            homeClub: match.homeClub.name,
+            awayClub: match.awayClub.name,
+            homeGoals: match.homeGoals,
+            awayGoals: match.awayGoals,
+            leagueName: match.league.name,
+            played: match.played
+        })),
+        hardcodedRating: club.hardcodedRating
+    }));
+
     const serializedLeagues = dLeagues.map(league => ({
         name: league.name,
         clubs: league.clubs.map(c => c.name),
@@ -1607,6 +1649,9 @@ function saveToStorage() {
     localStorage.setItem("FBC_clPool", JSON.stringify(serialized_clPool));
     localStorage.setItem("FBC_elPool", JSON.stringify(serialized_elPool));
     localStorage.setItem("FBC_colPool", JSON.stringify(serialized_colPool));
+    localStorage.setItem("FBC_realChampionsLeagueClubs", JSON.stringify(serialized_realChampionsLeagueClubs));
+    localStorage.setItem("FBC_realEuropaLeagueClubs", JSON.stringify(serialized_realEuropaLeagueClubs));
+    localStorage.setItem("FBC_realConferenceLeagueClubs", JSON.stringify(serialized_realConferenceLeagueClubs));
     localStorage.setItem("FBC_dLeagues", JSON.stringify(serializedLeagues));
     localStorage.setItem("FBC_dTournaments", JSON.stringify(serializedTournaments));
     localStorage.setItem("FBC_loadedLeagues", JSON.stringify(loadedLeagues.map(l => l.name)));
@@ -1660,6 +1705,30 @@ function loadFromStorage() {
 
     const loaded_colPool = JSON.parse(localStorage.getItem("FBC_colPool") || []);
     colPool = loaded_colPool.map(c => {
+        const club = new Club(c.name, c.hardcodedRating);
+        club.leagueStats = c.leagueStats;
+        club.matches = c.matches; 
+        return club;
+    });
+
+    const loaded_realChampionsLeagueClubs = JSON.parse(localStorage.getItem("FBC_realChampionsLeagueClubs") || []);
+    realChampionsLeagueClubs = loaded_realChampionsLeagueClubs.map(c => {
+        const club = new Club(c.name, c.hardcodedRating);
+        club.leagueStats = c.leagueStats;
+        club.matches = c.matches; 
+        return club;
+    });
+
+    const loaded_realEuropaLeagueClubs = JSON.parse(localStorage.getItem("FBC_realEuropaLeagueClubs") || []);
+    realEuropaLeagueClubs = loaded_realEuropaLeagueClubs.map(c => {
+        const club = new Club(c.name, c.hardcodedRating);
+        club.leagueStats = c.leagueStats;
+        club.matches = c.matches; 
+        return club;
+    });
+
+    const loaded_realConferenceLeagueClubs = JSON.parse(localStorage.getItem("FBC_realConferenceLeagueClubs") || []);
+    realConferenceLeagueClubs = loaded_realConferenceLeagueClubs.map(c => {
         const club = new Club(c.name, c.hardcodedRating);
         club.leagueStats = c.leagueStats;
         club.matches = c.matches; 
@@ -1775,7 +1844,7 @@ function loadFromStorage() {
     });
 
     //OKAY STOP CTRL Z ING HERE PLS PLS PLS PLS STOP
-    dClubs2 = [...dClubs, ...clPool, ...elPool, ...colPool];
+    dClubs2 = [...dClubs, ...clPool, ...elPool, ...colPool, ...realChampionsLeagueClubs, ...realEuropaLeagueClubs, ...realConferenceLeagueClubs];
     // I SAID STOP
 
     //RESTORING MATCEHS (try 37) try number 11 might be the one fr || nevermind 💀 but 18 is actually the one i believe || idk maybe its gonna be try 26 well see but i wouldt have my hopes up || YEAAAHHHHH TRY 37 SEEMS TO HAVE WORKED OMG YESYESYSESYES (surely i will never encounter another bug that shows me this was wrong again right)

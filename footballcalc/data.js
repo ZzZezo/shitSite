@@ -568,7 +568,7 @@ colPool = [
 
 
 // Champions League Participants (36 clubs)
-const realChampionsLeagueClubs = [
+realChampionsLeagueClubs = [
     dClubs.find(c => c.name === "Milan"), // AC Milan
     dClubs.find(c => c.name === "Arsenal"), // Arsenal
     dClubs.find(c => c.name === "Monaco"), // AS Monaco
@@ -608,7 +608,7 @@ const realChampionsLeagueClubs = [
 ].filter(Boolean); // Remove any undefined entries
 
 // Europa League Participants (36 clubs)
-const realEuropaLeagueClubs = [
+realEuropaLeagueClubs = [
     dClubs.find(c => c.name === "Ajax"), // Ajax
     clPool.find(c => c.name === "Anderlecht"), // Anderlecht
     dClubs.find(c => c.name === "Atl. Bilbao"), // Athletic Club
@@ -648,7 +648,7 @@ const realEuropaLeagueClubs = [
 ].filter(Boolean);
 
 // Conference League Participants (36 clubs)
-const realConferenceLeagueClubs = [
+realConferenceLeagueClubs = [
     dClubs.find(c => c.name === "Heidenheim"), // 1. FC Heidenheim
     new Club("APOEL", 740), // Not in dClubs or colPool
     new Club("Astana", 700), // Not in dClubs or colPool
