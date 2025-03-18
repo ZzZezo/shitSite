@@ -89,35 +89,24 @@ body,html {
   flex-shrink: 0;
 }
 
-#submitButton{
-  width: 100%;
+.gameButton{
+  width: 90%;
   height: 50px;
   background-color: #C0C0C0;
   border: 2px outset #808080;
   color: #000;
   font-family: 'Old Sans Serif';
   font-size: 20px;
-  padding: 5px 25px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   cursor: pointer;
 }
 
-#calcButton{
-  width: 100%;
-  height: 50px;
-  background-color: #C0C0C0;
-  border: 2px outset #808080;
-  color: #000;
-  font-family: 'Old Sans Serif';
-  font-size: 20px;
-  padding: 5px 25px;
-  cursor: pointer;
-}
-
-#calcButton:hover{
+.gameButton:hover{
   background-color: #ADADAD;
 }
 
-#calcButton:active{
+.gameButton:active{
   border-style: inset;
 }
 

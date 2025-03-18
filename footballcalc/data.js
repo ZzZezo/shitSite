@@ -2,7 +2,7 @@ dClubs = [
     new Club("Bayern", 1000),
     new Club("Leipzig", 880),
     new Club("Frankfurt", 850),
-    new Club("Leverkusen", 870),
+    new Club("Leverkusen", 950),
     new Club("Dortmund", 960),
     new Club("Freiburg", 740),
     new Club("Berlin", 770),
@@ -504,24 +504,24 @@ dTournaments = [
 ];
 
 clPool = [
-    new Club("Porto", 900), new Club("Benfica", 920), new Club("Sporting CP", 880), // Portugal
-    new Club("Zenit", 870), new Club("Spartak Moscow", 850), new Club("CSKA Moscow", 860), // Russia
-    new Club("Salzburg", 880), new Club("Rapid Wien", 820), // Austria
-    new Club("Shakhtar Donetsk", 890), new Club("Dynamo Kyiv", 870), // Ukraine
-    new Club("Club Brugge", 840), new Club("Anderlecht", 830), // Belgium
-    new Club("Celtic", 860), new Club("Rangers", 850), // Scotland
-    new Club("Olympiacos", 830), new Club("PAOK", 820), // Greece
-    new Club("Crvena Zvezda", 870), new Club("Partizan", 860), // Serbia
-    new Club("Ludogorets", 840), new Club("Levski Sofia", 810), // Bulgaria
-    new Club("Slovan Bratislava", 830), // Slovakia
-    new Club("Ferencváros", 820), // Hungary
-    new Club("Maribor", 810), // Slovenia
-    new Club("Dinamo Minsk", 800), // Belarus
-    new Club("Sheriff Tiraspol", 790), // Moldova
-    new Club("HJK Helsinki", 780), // Finland
-    new Club("Rosenborg", 800), // Norway
-    new Club("Copenhagen", 850), // Denmark
-    new Club("Malmo FF", 840) // Sweden
+    new Club("Porto", 800), new Club("Benfica", 920), new Club("Sporting CP", 880), // Portugal
+    new Club("Zenit", 770), new Club("Spartak Moscow", 850), new Club("CSKA Moscow", 860), // Russia
+    new Club("Salzburg", 780), new Club("Rapid Wien", 820), // Austria
+    new Club("Shakhtar Donetsk", 790), new Club("Dynamo Kyiv", 870), // Ukraine
+    new Club("Club Brugge", 740), new Club("Anderlecht", 830), // Belgium
+    new Club("Celtic", 760), new Club("Rangers", 850), // Scotland
+    new Club("Olympiacos", 730), new Club("PAOK", 820), // Greece
+    new Club("Crvena Zvezda", 770), new Club("Partizan", 860), // Serbia
+    new Club("Ludogorets", 740), new Club("Levski Sofia", 810), // Bulgaria
+    new Club("Slovan Bratislava", 730), // Slovakia
+    new Club("Ferencváros", 720), // Hungary
+    new Club("Maribor",710), // Slovenia
+    new Club("Dinamo Minsk", 700), // Belarus
+    new Club("Sheriff Tiraspol", 690), // Moldova
+    new Club("HJK Helsinki", 680), // Finland
+    new Club("Rosenborg", 700), // Norway
+    new Club("Copenhagen", 750), // Denmark
+    new Club("Malmo FF", 740) // Sweden
 ];
 
 elPool = [

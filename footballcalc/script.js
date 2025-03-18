@@ -966,13 +966,22 @@ function showMatches(leagueName) {
     }
     league.matchdaysPlayed+=1;
     container.appendChild(document.createElement("br"));
-    // add following button: <button id="calcButton" onclick="calculateInput()" disabled>Calculate</button>
+
     const calcButton = document.createElement("button");
     calcButton.id = "calcButton";
+    calcButton.classList.add("gameButton");
     calcButton.innerText = "Continue";
     calcButton.onclick = calculateInput;
     calcButton.disabled = false;
     container.appendChild(calcButton);
+
+    const simulationButton = document.createElement("button");
+    simulationButton.id = "simButton";
+    simulationButton.classList.add("gameButton");
+    simulationButton.innerText = "Simulate All";
+    simulationButton.onclick = simulateAll;
+    simulationButton.disabled = false;
+    container.appendChild(simulationButton);
 }
 
 function updateDropdownOptions(){
@@ -1499,9 +1508,17 @@ function showCupMatches(cup) {
 
     const submitButton = document.createElement("button");
     submitButton.id = "submitButton";
+    submitButton.classList.add("gameButton")
     submitButton.innerText = "Next Round";
     submitButton.onclick = function(){cup.roundFinished()};
     inputContainer.appendChild(submitButton);
+
+    const simulationButton = document.createElement("button");
+    simulationButton.id = "simButton";
+    simulationButton.classList.add("gameButton");
+    simulationButton.innerText = "Simulate All";
+    simulationButton.onclick = simulateAll;
+    inputContainer.appendChild(simulationButton);
 }
 
 function toggleSaving(){
@@ -2029,6 +2046,7 @@ function loadFromStorage() {
     document.getElementById('FlagGrid').style.display = "none";
     document.getElementById('editButton').style.display = "none";
     document.getElementById('savingIndicator').style.display = "none";
+    document.getElementById('loadButton').style.display = "none";
     if (activeLeague) {
         if (activeLeague instanceof League) {
             showMatches(activeLeague.name);
@@ -2039,6 +2057,16 @@ function loadFromStorage() {
     }
 
     console.log("Game state loaded successfully!");
+}
+
+function findClubObjByName(name) {
+    return dClubs.find(c => c.name === name) ||
+           clPool.find(c => c.name === name) ||
+           elPool.find(c => c.name === name) ||
+           colPool.find(c => c.name === name) ||
+           realChampionsLeagueClubs.find(c => c.name === name) ||
+           realEuropaLeagueClubs.find(c => c.name === name) ||
+           realConferenceLeagueClubs.find(c => c.name === name);
 }
 
 function showInfo(flag, country) {
@@ -2283,6 +2311,130 @@ function showClubRename(club) {
     
 }
 
+function simulateMatch(homeTeamName, awayTeamName) {
+    // Constants for simulation tuning
+    const HOME_ADVANTAGE_MULTIPLIER = 1.25; // 25% boost for home team
+    const BASE_GOAL_RATE = 1.15; // Base goals per team (before ratings)
+    const RED_CARD_CHANCE = 0.03; // 3% chance per team
+    const PENALTY_CHANCE = 0.15; // 15% chance per match
+    const CRAZY_MATCH_CHANCE = 0.03; // 3% chance for wild result
+    const GOAL_CAP = 9; // Maximum goals per team
+
+    // Find team objects
+    const homeTeam = findClubObjByName(homeTeamName);
+    const awayTeam = findClubObjByName(awayTeamName);
+    if (!homeTeam || !awayTeam) {
+        console.error("Team not found");
+        return null;
+    }
+
+    // Calculate effective ratings with home advantage
+    const homeAttack = Math.sqrt(homeTeam.hardcodedRating) * HOME_ADVANTAGE_MULTIPLIER;
+    const homeDefense = Math.sqrt(homeTeam.hardcodedRating) * 0.9;
+    const awayAttack = Math.sqrt(awayTeam.hardcodedRating);
+    const awayDefense = Math.sqrt(awayTeam.hardcodedRating) * 1.1;
+
+    // Calculate goal expectations using attack/defense balance
+    let homeLambda = (homeAttack / awayDefense) * BASE_GOAL_RATE;
+    let awayLambda = (awayAttack / homeDefense) * BASE_GOAL_RATE;
+
+    // Add competitive balance variance
+    homeLambda *= 0.9 + Math.random() * 0.3;
+    awayLambda *= 0.9 + Math.random() * 0.3;
+
+    // Generate base goals using Poisson distribution
+    let homeGoals = poisson(homeLambda);
+    let awayGoals = poisson(awayLambda);
+
+    // Apply match context effects
+    const goalDifference = homeGoals - awayGoals;
+    
+    // Momentum effect (team behind gets small boost)
+    if (goalDifference > 1) {
+        awayLambda *= 1.2; // Away team pushes harder
+        awayGoals += poisson(awayLambda * 0.3);
+    } else if (goalDifference < -1) {
+        homeLambda *= 1.2; // Home team pushes harder
+        homeGoals += poisson(homeLambda * 0.3);
+    }
+
+    // Special match events
+    // Crazy match scenario
+    if (Math.random() < CRAZY_MATCH_CHANCE) {
+        homeGoals += poisson(2.5);
+        awayGoals += poisson(2.5);
+    }
+
+    // Red cards
+    if (Math.random() < RED_CARD_CHANCE) {
+        if (Math.random() < 0.5) {
+            homeGoals = Math.max(0, homeGoals - 1 - Math.floor(Math.random() * 2));
+        } else {
+            awayGoals = Math.max(0, awayGoals - 1 - Math.floor(Math.random() * 2));
+        }
+    }
+
+    // Penalties
+    if (Math.random() < PENALTY_CHANCE) {
+        const strongerTeam = homeTeam.hardcodedRating > awayTeam.hardcodedRating ? 'home' : 'away';
+        const successChance = strongerTeam === 'home' ? 0.75 : 0.65;
+        
+        if (Math.random() < successChance) {
+            strongerTeam === 'home' ? homeGoals++ : awayGoals++;
+        }
+    }
+
+    // Final adjustments
+    homeGoals = Math.min(homeGoals, GOAL_CAP);
+    awayGoals = Math.min(awayGoals, GOAL_CAP);
+
+    // Goalkeeper error chance
+    if (homeGoals === 0 && Math.random() < 0.1) homeGoals += Math.random() < 0.3 ? 1 : 0;
+    if (awayGoals === 0 && Math.random() < 0.1) awayGoals += Math.random() < 0.3 ? 1 : 0;
+
+    // Ensure non-negative goals
+    homeGoals = Math.max(0, homeGoals);
+    awayGoals = Math.max(0, awayGoals);
+
+    if(debug_log_everything)console.log("Simulation Result: "+homeTeamName + " " + homeGoals + " - " + awayGoals + " " + awayTeamName);
+
+    // Return match result
+    return {
+        homeTeam: homeTeamName,
+        awayTeam: awayTeamName,
+        homeGoals: homeGoals,
+        awayGoals: awayGoals
+    };
+}
+
+// Poisson distribution implementation
+function poisson(lambda) {
+    const L = Math.exp(-lambda);
+    let k = 0;
+    let p = 1;
+    while (p > L) {
+        k++;
+        p *= Math.random();
+    }
+    return k - 1;
+}
+
+function simulateAll(){
+    //from all the elements on screen get all teamInput elements and create matches (first and second, third and fourth etc.)
+    const teamInputs = document.querySelectorAll('.teamInput');
+    const matches = [];
+    for (let i = 0; i < teamInputs.length; i += 2) {
+        matches.push(simulateMatch(teamInputs[i].value, teamInputs[i + 1].value));
+    }
+    
+    //now put the match results back into the goalInput fields
+    const goalInputs = document.querySelectorAll('.goalInput');
+    for (let i = 0; i < goalInputs.length; i += 2) {
+        goalInputs[i].value = matches[i / 2].homeGoals;
+        goalInputs[i + 1].value = matches[i / 2].awayGoals;
+    }
+}
+
 function startGame_saveMode(){
     if(savingEnabled){
         //if the user has saving enabled check if user already has something in local storage:
@@ -2311,6 +2463,7 @@ function startGame() {
     document.getElementById('FlagGrid').style.display = "none";
     document.getElementById('editButton').style.display = "none";
     document.getElementById('savingIndicator').style.display = "none";
+    document.getElementById('loadButton').style.display = "none";
     updateDropdownOptions();
 
     // Initialize the calendar with the loaded leagues and cups
