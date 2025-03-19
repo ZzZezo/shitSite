@@ -35,7 +35,15 @@ class Club { //all clubs
         this.name = name;
         this.leagueStats = {};  //a list of all leagues it takes part and the points it has in that league
         this.matches=[]; //lists every match the club plays in (or should, i'm not sure if it also tracks cup games etc.)
-        this.hardcodedRating = HardcodedRating; //used for simulation
+        this.hardcodedRating = HardcodedRating; //used for simulation^
+
+        this.highestVictorySpan = 0;
+        this.highestVictoryGoals = 0;
+        this.highestVictoryMatch = null;
+
+        this.highestLossSpan = 0;
+        this.highestLossGoals = 0;
+        this.highestLossMatch = null;
     }
 
     //init league stats on league creation --> is called when a league is created, for any club in the league
@@ -51,6 +59,68 @@ class Club { //all clubs
 
     getLeagues() {
         return Object.keys(this.leagueStats);
+    }
+
+    checkHighestVictory(match){
+        if(match.homeClub ==this){
+            //CLUB IS HOME
+            if(match.homeGoals-match.awayGoals > this.highestVictorySpan){
+                this.highestVictorySpan = match.homeGoals-match.awayGoals;
+                this.highestVictoryGoals = match.homeGoals;
+                this.highestVictoryMatch = match;
+            }
+            else if(match.homeGoals-match.awayGoals == this.highestVictorySpan){
+                if(match.homeGoals > this.highestVictoryGoals){
+                    this.highestVictoryMatch = this;
+                    this.highestVictoryGoals = match.homeGoals;
+                }
+            }
+        }
+        else if(match.awayClub == this){
+            //CLUB IS AWAY
+            if(match.awayGoals-match.homeGoals > this.highestVictorySpan){
+                this.highestVictorySpan = match.awayGoals-match.homeGoals;
+                this.highestVictoryGoals = match.awayGoals;
+                this.highestVictoryMatch = match;
+            }
+            else if(match.awayGoals-match.homeGoals == this.highestVictorySpan){
+                if(match.awayGoals > this.highestVictoryGoals){
+                    this.highestVictoryMatch = this;
+                    this.highestVictoryGoals = match.awayGoals;
+                }
+            }   
+        }
+    }
+
+    checkHighestLoss(match){
+        if(match.homeClub ==this){
+            //CLUB IS HOME
+            if(match.awayGoals-match.homeGoals > this.highestLossSpan){
+                this.highestLossSpan = match.awayGoals-match.homeGoals;
+                this.highestLossGoals = match.awayGoals;
+                this.highestLossMatch = match;
+            }
+            else if(match.awayGoals-match.homeGoals == this.highestLossSpan){
+                if(match.awayGoals > this.highestLossGoals){
+                    this.highestLossMatch = this;
+                    this.highestLossGoals = match.awayGoals;
+                }
+            }
+        }
+        else if(match.awayClub == this){
+            //CLUB IS AWAY
+            if(match.homeGoals-match.awayGoals > this.highestLossSpan){
+                this.highestLossSpan = match.homeGoals-match.awayGoals;
+                this.highestLossGoals = match.homeGoals;
+                this.highestLossMatch = match;
+            }
+            else if(match.homeGoals-match.awayGoals == this.highestLossSpan){
+                if(match.homeGoals > this.highestLossGoals){
+                    this.highestLossMatch = this;
+                    this.highestLossGoals = match.homeGoals;
+                }
+            }
+        }
     }
 }
 
@@ -387,10 +457,18 @@ class Match {
             this.homeClub.leagueStats[this.league.name][0] += 3;// Home club wins
             this.homeClub.leagueStats[this.league.name][3] += 1;
             this.awayClub.leagueStats[this.league.name][5] += 1;
+            
+            this.homeClub.checkHighestVictory(this);
+            this.awayClub.checkHighestLoss(this);
+
         } else if (this.homeGoals < this.awayGoals) {
             this.awayClub.leagueStats[this.league.name][0] += 3;//Away club wins
             this.awayClub.leagueStats[this.league.name][3] += 1;
             this.homeClub.leagueStats[this.league.name][5] += 1;
+
+            this.homeClub.checkHighestLoss(this);
+            this.awayClub.checkHighestVictory(this);
+
         } else {
             this.homeClub.leagueStats[this.league.name][0] += 1;//Draw
             this.awayClub.leagueStats[this.league.name][0] += 1;
