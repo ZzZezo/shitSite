@@ -231,7 +231,7 @@ class Cup{
         this.name = name;
         this.clubs = clubs;
         if(!isPowerOfTwo(this.clubs.length) || this.clubs.length < 2) console.warn(`Cup ${this.name} has ${this.clubs.length} participants.`);
-        this.remainingClubs = this.clubs;
+        this.remainingClubs = [...this.clubs];
         this.HasThirdPlace = HasThirdPlace; //yep, this does absolutely nothing but nice to store it anyways :D
         this.country = country;
         this.matches = [];
@@ -264,6 +264,16 @@ class Cup{
             }
         }
         else throw new Error(`Cup ${this.name} has an invalid number of remaining participants.`);
+    }
+
+    resetCup(){//this currently does not pull new clubs (so lets say Offenburg gets promoted to Bundesliga, it would still only rarely show up, cuz the cups use the same set of clubs every year --> NEEDS TO BE FIXED)
+        this.remainingClubs = [...this.clubs];
+        this.matches = [];
+        this.totalRounds = this.calculateRounds();
+        this.matchplan = [];
+        this.crntweek = 0;
+
+        this.drawNewRound();
     }
 
     async roundFinished(){
@@ -547,6 +557,12 @@ class SeasonManager {
 
         // Reset league statistics for the new season after all promotions/relegations are done
         this.resetLeagueStats();
+        
+        //reset cups as well
+        dTournaments.forEach(cup => {
+            cup.resetCup();
+        });
+        
         return 1;
     }
 
@@ -1408,10 +1424,16 @@ function startNewSeasonWithInternationalLeagues() {
     loadedCups.forEach(cup => {
         seasonCalendar.spreadIntoCalendar(cup.name, cup.totalRounds);
     });
-
+    console.log("ft");
     // Start with first league
     activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
+    console.log("ftt "+activeLeagueName)
     activeLeague = dLeagues.find(league => league.name === activeLeagueName);
+    if(!activeLeague){
+        switchToCup(dTournaments.find(cup => cup.name === activeLeagueName));
+        return;
+    }
+    console.log("ftt")
     showMatches(activeLeague.name);
     updateTabel(activeLeague.getSortedClubs(), activeLeague);
     dropdown.style.display = "none";
