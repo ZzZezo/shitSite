@@ -2560,5 +2560,6 @@ window.onload = function exampleFunction() {
         //else its no problem to save, cuz nothing can be overwritten
         savingEnabled = true;
         document.getElementById("savingIndicator").querySelector("img").src = "assets/images/saving_enabled.png"
+        document.getElementById("loadButton").style.display = "none";
     }
 };
