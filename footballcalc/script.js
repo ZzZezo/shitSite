@@ -1452,11 +1452,11 @@ function updateClubInfo(clubSorted) {
     const statsData = [
         { 
             title: "Highest Victory",
-            value: club.highestVictoryMatch ? formatMatch(club.highestVictoryMatch, club.name) : "No matches played"
+            value: club.highestVictoryMatch ? formatMatch(club.highestVictoryMatch, club.name) : "No matches won"
         },
         { 
             title: "Worst Defeat", 
-            value: club.highestLossMatch ? formatMatch(club.highestLossMatch, club.name) : "No matches played"
+            value: club.highestLossMatch ? formatMatch(club.highestLossMatch, club.name) : "No matches lost"
         },
         { 
             title: "Total Matches (Season)", 
@@ -1486,7 +1486,7 @@ function updateClubInfo(clubSorted) {
 }
 
 function formatMatch(match, clubName) {
-    if(!match || !match.homeClub || !match.awayClub) return "🔴 Unexpected Error. 🔴";
+    if(!match || !match.homeClub || !match.awayClub) return "🔴 Unexpected Error 🔴";
     const isHomeMatch = match.homeClub.name === clubName;
     const opponent = isHomeMatch ? match.awayClub.name : match.homeClub.name;
     const score = `${match.homeGoals} - ${match.awayGoals}`;
@@ -1762,7 +1762,7 @@ function toggleSaving(){
 }
 
 function loadSaveFile(){
-    createPopup("Load Save File","Want to load back to where you left off?",2,["Yes","No"],[function(){loadFromStorage();closePopup();},closePopup])
+    createPopup("Load Save File","Want to load back to where you left off?",2,["Yes","No"],[function(){loadFromStorage();savingEnabled=true;closePopup();},closePopup])
 }
 
 function checkForSavefile(){
