@@ -43,7 +43,7 @@ class Club { //all clubs
 
         this.highestLossSpan = 0;
         this.highestLossGoals = 0;
-        this.highestLossMatch = null;
+        this.highestLossMatch = null;//
     }
 
     //init league stats on league creation --> is called when a league is created, for any club in the league
@@ -90,6 +90,11 @@ class Club { //all clubs
                 }
             }   
         }
+
+        if(this.highestVictoryMatch == {}){
+            console.log("JESUS!");
+            console.log(this);
+        }
     }
 
     checkHighestLoss(match){
@@ -120,6 +125,11 @@ class Club { //all clubs
                     this.highestLossGoals = match.homeGoals;
                 }
             }
+        }
+
+        if(this.highestLossMatch == {}){
+            console.log("JESUS!");
+            console.log(this);
         }
     }
 }
@@ -438,7 +448,7 @@ class Match {
             this.homeClub.addMatch(this);
             this.awayClub.addMatch(this);
         } else {
-            throw new Error(`League ${leagueName} not found.`);
+            console.warn("League not found for match: ", this);
         }
     }
 
@@ -1262,8 +1272,65 @@ function updateClubInfo(clubSorted) {
     if(debug_log_everything)console.log("opened menu for "+club.name);
     const clubHeader = document.createElement("h1");
     clubHeader.textContent = club.name;
+    clubHeader.classList.add("win95-window-title");
+
+    // Close button
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "X";
+    closeButton.classList.add("win95-close");
+    closeButton.onclick = () => {
+        resetClubInfo();
+    };
+    clubHeader.appendChild(closeButton);
+
     infoContainer.appendChild(clubHeader);
 
+    // Create tab container
+    const tabContainer = document.createElement("div");
+    tabContainer.classList.add("win95-tab-container");
+    infoContainer.appendChild(tabContainer);
+    
+    // Create tabs
+    const tabs = [
+        { id: "matchHistory", label: "Match History" },
+        { id: "clubStats", label: "Club Stats" }
+    ];
+    
+    // Content containers
+    const contentContainers = {};
+    
+    tabs.forEach((tab, index) => {
+        // Create tab button
+        const tabButton = document.createElement("button");
+        tabButton.textContent = tab.label;
+        tabButton.id = `tab-${tab.id}`;
+        tabButton.classList.add("win95-tab");
+        if (index === 0) tabButton.classList.add("win95-tab-active");
+        tabContainer.appendChild(tabButton);
+        
+        // Create content container
+        const contentContainer = document.createElement("div");
+        contentContainer.id = `content-${tab.id}`;
+        contentContainer.classList.add("win95-content");
+        if (index !== 0) contentContainer.classList.add("win95-content-hidden");
+        infoContainer.appendChild(contentContainer);
+        contentContainers[tab.id] = contentContainer;
+        
+        // Add click event
+        tabButton.addEventListener("click", () => {
+            // Update active tab
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t.id}`).classList.remove("win95-tab-active");
+                document.getElementById(`content-${t.id}`).classList.add("win95-content-hidden");
+            });
+            tabButton.classList.add("win95-tab-active");
+            contentContainer.classList.remove("win95-content-hidden");
+        });
+    });
+    
+    // Setup Match History tab content
+    const matchContent = contentContainers.matchHistory;
+    
     // League selection header
     const leagues = ["All", ...club.getLeagues()];
     let currentLeagueIndex = 0;
@@ -1276,45 +1343,44 @@ function updateClubInfo(clubSorted) {
 
     // Create league navigation container
     const leagueNav = document.createElement("div");
-    leagueNav.style.justifyContent = "center";
-    leagueNav.style.display = "flex";
-    leagueNav.style.alignItems = "center";
-    leagueNav.style.gap = "8px";
+    leagueNav.classList.add("win95-nav-container");
 
     // Navigation arrows
-    const leftArrow = document.createElement("span");
+    const leftArrow = document.createElement("button");
     leftArrow.innerHTML = "&larr;";
-    leftArrow.style.cursor = "pointer";
+    leftArrow.classList.add("win95-button", "win95-arrow");
 
-    const leagueTitle = document.createElement("h4");
+    const leagueTitle = document.createElement("div");
     leagueTitle.textContent = leagues[currentLeagueIndex];
+    leagueTitle.classList.add("win95-title-box");
 
-    const rightArrow = document.createElement("span");
+    const rightArrow = document.createElement("button");
     rightArrow.innerHTML = "&rarr;";
-    rightArrow.style.cursor = "pointer";
+    rightArrow.classList.add("win95-button", "win95-arrow");
 
     // Assemble navigation
     if(leagues.length > 2) leagueNav.appendChild(leftArrow);
     leagueNav.appendChild(leagueTitle);
     if(leagues.length > 2) leagueNav.appendChild(rightArrow);
-    infoContainer.appendChild(leagueNav);
+    matchContent.appendChild(leagueNav);
 
     // Match table setup
     const matchContainer = document.createElement("div");
-    matchContainer.classList.add("matchContainer");
+    matchContainer.classList.add("win95-table-container");
     const matchTable = document.createElement("table");
-    matchTable.classList.add("matchHeader");
+    matchTable.classList.add("win95-table");
 
     // Table header
     const headerRow = document.createElement("tr");
     ["Home Team", "Home Goals", "Away Goals", "Away Team"].forEach(text => {
         const th = document.createElement("th");
         th.textContent = text;
+        th.classList.add("win95-table-header");
         headerRow.appendChild(th);
     });
     matchTable.appendChild(headerRow);
     matchContainer.appendChild(matchTable);
-    infoContainer.appendChild(matchContainer);
+    matchContent.appendChild(matchContainer);
 
     // Match rendering function
     const updateMatches = (leagueFilter) => {
@@ -1327,22 +1393,30 @@ function updateClubInfo(clubSorted) {
                 
                 const homeCell = document.createElement("td");
                 homeCell.textContent = match.homeClub.name;
+                if(match.homeClub.name == club.name) homeCell.style.fontWeight = "bold";
+                homeCell.classList.add("win95-table-cell");
                 
                 const homeGoals = document.createElement("td");
                 homeGoals.textContent = match.homeGoals;
+                homeGoals.classList.add("win95-table-cell");
                 
                 const awayGoals = document.createElement("td");
                 awayGoals.textContent = match.awayGoals;
+                awayGoals.classList.add("win95-table-cell");
                 
                 const awayCell = document.createElement("td");
                 awayCell.textContent = match.awayClub.name;
+                if(match.awayClub.name == club.name) awayCell.style.fontWeight = "bold";
+                awayCell.classList.add("win95-table-cell");
 
+                row.classList.add("win95-table-row");
+                
                 if(show_color_in_match_list){
-                    if(match.homeGoals > match.awayGoals && club.name == match.homeClub.name) row.style.backgroundColor = "#8fffa2"; //green
-                    else if(match.homeGoals > match.awayGoals && club.name == match.awayClub.name) row.style.backgroundColor = "#ff7369"; //red
-                    else if(match.homeGoals < match.awayGoals && club.name == match.homeClub.name) row.style.backgroundColor = "#ff7369"; //red
-                    else if(match.homeGoals < match.awayGoals && club.name == match.awayClub.name) row.style.backgroundColor = "#8fffa2"; //green
-                    else row.style.backgroundColor = "#f7ffb0"; //yellowish
+                    if(match.homeGoals > match.awayGoals && club.name == match.homeClub.name) row.classList.add("win95-result-win");
+                    else if(match.homeGoals > match.awayGoals && club.name == match.awayClub.name) row.classList.add("win95-result-loss");
+                    else if(match.homeGoals < match.awayGoals && club.name == match.homeClub.name) row.classList.add("win95-result-loss");
+                    else if(match.homeGoals < match.awayGoals && club.name == match.awayClub.name) row.classList.add("win95-result-win");
+                    else row.classList.add("win95-result-draw");
                 }
 
                 row.append(homeCell, homeGoals, awayGoals, awayCell);
@@ -1366,6 +1440,61 @@ function updateClubInfo(clubSorted) {
         leagueTitle.textContent = leagues[currentLeagueIndex];
         updateMatches(leagues[currentLeagueIndex]);
     });
+    
+    // Setup Club Stats tab content
+    const statsContent = contentContainers.clubStats;
+    
+    // Placeholder stats content
+    const statsContainer = document.createElement("div");
+    statsContainer.classList.add("win95-stats-container");
+    
+    // Create stats cards
+    const statsData = [
+        { 
+            title: "Highest Victory",
+            value: club.highestVictoryMatch ? formatMatch(club.highestVictoryMatch, club.name) : "No matches played"
+        },
+        { 
+            title: "Worst Defeat", 
+            value: club.highestLossMatch ? formatMatch(club.highestLossMatch, club.name) : "No matches played"
+        },
+        { 
+            title: "Total Matches (Season)", 
+            value: club.matches?.length ? `${club.matches.length} matches played` : "No matches played"
+        }
+    ];
+    
+    
+    statsData.forEach(stat => {
+        const statCard = document.createElement("div");
+        statCard.classList.add("win95-stat-card");
+        
+        const statTitle = document.createElement("div");
+        statTitle.textContent = stat.title;
+        statTitle.classList.add("win95-stat-title");
+        
+        const statValue = document.createElement("div");
+        statValue.textContent = stat.value;
+        statValue.classList.add("win95-stat-value");
+        
+        statCard.appendChild(statTitle);
+        statCard.appendChild(statValue);
+        statsContainer.appendChild(statCard);
+    });
+    
+    statsContent.appendChild(statsContainer);
+}
+
+function formatMatch(match, clubName) {
+    if(!match || !match.homeClub || !match.awayClub) return "🔴 Unexpected Error. 🔴";
+    const isHomeMatch = match.homeClub.name === clubName;
+    const opponent = isHomeMatch ? match.awayClub.name : match.homeClub.name;
+    const score = `${match.homeGoals} - ${match.awayGoals}`;
+    const result = isHomeMatch 
+        ? (match.homeGoals > match.awayGoals ? "Win" : (match.homeGoals < match.awayGoals ? "Loss" : "Draw"))
+        : (match.awayGoals > match.homeGoals ? "Win" : (match.awayGoals < match.homeGoals ? "Loss" : "Draw"));
+    
+    return `${score} ${isHomeMatch ? "vs." : "at"} ${opponent}`;
 }
 
 function populateInternationalLeagues() {
@@ -1648,105 +1777,68 @@ function checkForSavefile(){
     return false;
 }
 
+function serialize_club_array(array) {
+    return array.map((club, index) => {
+        try {
+            return {
+                name: club.name,
+                leagueStats: club.leagueStats,
+                matches: club.matches.map(match => ({
+                    homeClub: match.homeClub.name,
+                    awayClub: match.awayClub.name,
+                    homeGoals: match.homeGoals,
+                    awayGoals: match.awayGoals,
+                    leagueName: match.league.name,
+                    played: match.played
+                })),
+                hardcodedRating: club.hardcodedRating,
+
+                highestVictorySpan: club.highestVictorySpan,
+                highestVictoryGoals: club.highestVictoryGoals,
+                highestVictoryMatch: club.highestVictoryMatch ? {
+                    homeClub: club.highestVictoryMatch.homeClub?.name,
+                    awayClub: club.highestVictoryMatch.awayClub?.name,
+                    homeGoals: club.highestVictoryMatch.homeGoals,
+                    awayGoals: club.highestVictoryMatch.awayGoals,
+                    leagueName: club.highestVictoryMatch.league?.name,
+                    played: club.highestVictoryMatch.played
+                } : null,
+
+                highestLossSpan: club.highestLossSpan,
+                highestLossGoals: club.highestLossGoals,
+                highestLossMatch: club.highestLossMatch ? {
+                    homeClub: club.highestLossMatch.homeClub?.name,
+                    awayClub: club.highestLossMatch.awayClub?.name,
+                    homeGoals: club.highestLossMatch.homeGoals,
+                    awayGoals: club.highestLossMatch.awayGoals,
+                    leagueName: club.highestLossMatch.league?.name,
+                    played: club.highestLossMatch.played
+                } : null
+            };
+        } catch (error) {
+            console.error(`Error in club at index ${index}:`, club);
+            console.error(error);
+            return null; // Return null or handle it gracefully
+        }
+    });
+}
+
+
 function saveToStorage() {
     // Serialize complex objects
-    const serializedClubs = dClubs.map(club => ({
-        name: club.name,
-        leagueStats: club.leagueStats,
-        matches: club.matches.map(match => ({
-            homeClub: match.homeClub.name,
-            awayClub: match.awayClub.name,
-            homeGoals: match.homeGoals,
-            awayGoals: match.awayGoals,
-            leagueName: match.league.name,
-            played: match.played
-        })),
-        hardcodedRating: club.hardcodedRating
-    }));
+    const serializedClubs = serialize_club_array(dClubs);
 
-    const serialized_clPool = clPool.map(club => ({
-        name: club.name,
-        leagueStats: club.leagueStats,
-        matches: club.matches.map(match => ({
-            homeClub: match.homeClub.name,
-            awayClub: match.awayClub.name,
-            homeGoals: match.homeGoals,
-            awayGoals: match.awayGoals,
-            leagueName: match.league.name,
-            played: match.played
-        })),
-        hardcodedRating: club.hardcodedRating
-    }));
+    const serialized_clPool = serialize_club_array(clPool);
 
-    const serialized_elPool = elPool.map(club => ({
-        name: club.name,
-        leagueStats: club.leagueStats,
-        matches: club.matches.map(match => ({
-            homeClub: match.homeClub.name,
-            awayClub: match.awayClub.name,
-            homeGoals: match.homeGoals,
-            awayGoals: match.awayGoals,
-            leagueName: match.league.name,
-            played: match.played
-        })),
-        hardcodedRating: club.hardcodedRating
-    }));
+    const serialized_elPool = serialize_club_array(elPool);
 
-    const serialized_colPool = colPool.map(club => ({
-        name: club.name,
-        leagueStats: club.leagueStats,
-        matches: club.matches.map(match => ({
-            homeClub: match.homeClub.name,
-            awayClub: match.awayClub.name,
-            homeGoals: match.homeGoals,
-            awayGoals: match.awayGoals,
-            leagueName: match.league.name,
-            played: match.played
-        })),
-        hardcodedRating: club.hardcodedRating
-    }));
+    const serialized_colPool = serialize_club_array(colPool);
 
-    const serialized_realChampionsLeagueClubs = realChampionsLeagueClubs.map(club => ({
-        name: club.name,
-        leagueStats: club.leagueStats,
-        matches: club.matches.map(match => ({
-            homeClub: match.homeClub.name,
-            awayClub: match.awayClub.name,
-            homeGoals: match.homeGoals,
-            awayGoals: match.awayGoals,
-            leagueName: match.league.name,
-            played: match.played
-        })),
-        hardcodedRating: club.hardcodedRating
-    }));
+    const serialized_realChampionsLeagueClubs = serialize_club_array(realChampionsLeagueClubs);
 
-    const serialized_realEuropaLeagueClubs = realEuropaLeagueClubs.map(club => ({
-        name: club.name,
-        leagueStats: club.leagueStats,
-        matches: club.matches.map(match => ({
-            homeClub: match.homeClub.name,
-            awayClub: match.awayClub.name,
-            homeGoals: match.homeGoals,
-            awayGoals: match.awayGoals,
-            leagueName: match.league.name,
-            played: match.played
-        })),
-        hardcodedRating: club.hardcodedRating
-    }));
+    const serialized_realEuropaLeagueClubs = serialize_club_array(realEuropaLeagueClubs);
 
-    const serialized_realConferenceLeagueClubs = realConferenceLeagueClubs.map(club => ({
-        name: club.name,
-        leagueStats: club.leagueStats,
-        matches: club.matches.map(match => ({
-            homeClub: match.homeClub.name,
-            awayClub: match.awayClub.name,
-            homeGoals: match.homeGoals,
-            awayGoals: match.awayGoals,
-            leagueName: match.league.name,
-            played: match.played
-        })),
-        hardcodedRating: club.hardcodedRating
-    }));
+    const serialized_realConferenceLeagueClubs = serialize_club_array(realConferenceLeagueClubs);
 
     const serializedLeagues = dLeagues.map(league => ({
         name: league.name,
@@ -1833,6 +1925,14 @@ function loadFromStorage() {
         const club = new Club(c.name, c.hardcodedRating);
         club.leagueStats = c.leagueStats;
         club.matches = c.matches; 
+
+        club.highestVictoryGoals = c.highestVictoryGoals;
+        club.highestVictorySpan = c.highestVictorySpan;
+        club.highestVictoryMatch = c.highestVictoryMatch;
+
+        club.highestLossSpan = c.highestLossSpan;
+        club.highestLossGoals = c.highestLossGoals;
+        club.highestLossMatch = c.highestLossMatch;
         return club;
     });
 
@@ -1841,6 +1941,14 @@ function loadFromStorage() {
         const club = new Club(c.name, c.hardcodedRating);
         club.leagueStats = c.leagueStats;
         club.matches = c.matches; 
+
+        club.highestVictoryGoals = c.highestVictoryGoals;
+        club.highestVictorySpan = c.highestVictorySpan;
+        club.highestVictoryMatch = c.highestVictoryMatch;
+
+        club.highestLossSpan = c.highestLossSpan;
+        club.highestLossGoals = c.highestLossGoals;
+        club.highestLossMatch = c.highestLossMatch;
         return club;
     });
 
@@ -1849,6 +1957,14 @@ function loadFromStorage() {
         const club = new Club(c.name, c.hardcodedRating);
         club.leagueStats = c.leagueStats;
         club.matches = c.matches; 
+
+        club.highestVictoryGoals = c.highestVictoryGoals;
+        club.highestVictorySpan = c.highestVictorySpan;
+        club.highestVictoryMatch = c.highestVictoryMatch;
+
+        club.highestLossSpan = c.highestLossSpan;
+        club.highestLossGoals = c.highestLossGoals;
+        club.highestLossMatch = c.highestLossMatch;
         return club;
     });
 
@@ -1857,6 +1973,14 @@ function loadFromStorage() {
         const club = new Club(c.name, c.hardcodedRating);
         club.leagueStats = c.leagueStats;
         club.matches = c.matches; 
+
+        club.highestVictoryGoals = c.highestVictoryGoals;
+        club.highestVictorySpan = c.highestVictorySpan;
+        club.highestVictoryMatch = c.highestVictoryMatch;
+
+        club.highestLossSpan = c.highestLossSpan;
+        club.highestLossGoals = c.highestLossGoals;
+        club.highestLossMatch = c.highestLossMatch;
         return club;
     });
 
@@ -1865,6 +1989,14 @@ function loadFromStorage() {
         const club = new Club(c.name, c.hardcodedRating);
         club.leagueStats = c.leagueStats;
         club.matches = c.matches; 
+
+        club.highestVictoryGoals = c.highestVictoryGoals;
+        club.highestVictorySpan = c.highestVictorySpan;
+        club.highestVictoryMatch = c.highestVictoryMatch;
+
+        club.highestLossSpan = c.highestLossSpan;
+        club.highestLossGoals = c.highestLossGoals;
+        club.highestLossMatch = c.highestLossMatch;
         return club;
     });
 
@@ -1873,6 +2005,14 @@ function loadFromStorage() {
         const club = new Club(c.name, c.hardcodedRating);
         club.leagueStats = c.leagueStats;
         club.matches = c.matches; 
+
+        club.highestVictoryGoals = c.highestVictoryGoals;
+        club.highestVictorySpan = c.highestVictorySpan;
+        club.highestVictoryMatch = c.highestVictoryMatch;
+
+        club.highestLossSpan = c.highestLossSpan;
+        club.highestLossGoals = c.highestLossGoals;
+        club.highestLossMatch = c.highestLossMatch;
         return club;
     });
 
@@ -1881,6 +2021,14 @@ function loadFromStorage() {
         const club = new Club(c.name, c.hardcodedRating);
         club.leagueStats = c.leagueStats;
         club.matches = c.matches; 
+
+        club.highestVictoryGoals = c.highestVictoryGoals;
+        club.highestVictorySpan = c.highestVictorySpan;
+        club.highestVictoryMatch = c.highestVictoryMatch;
+
+        club.highestLossSpan = c.highestLossSpan;
+        club.highestLossGoals = c.highestLossGoals;
+        club.highestLossMatch = c.highestLossMatch;
         return club;
     });
 
@@ -1996,7 +2144,7 @@ function loadFromStorage() {
     dClubs2 = [...dClubs, ...clPool, ...elPool, ...colPool, ...realChampionsLeagueClubs, ...realEuropaLeagueClubs, ...realConferenceLeagueClubs];
     // I SAID STOP
 
-    //RESTORING MATCEHS (try 37) try number 11 might be the one fr || nevermind 💀 but 18 is actually the one i believe || idk maybe its gonna be try 26 well see but i wouldt have my hopes up || YEAAAHHHHH TRY 37 SEEMS TO HAVE WORKED OMG YESYESYSESYES (surely i will never encounter another bug that shows me this was wrong again right)
+    //RESTORING MATCEHS (try 37) try number 11 might be the one fr || nevermind 💀 but 18 is actually the one i believe || idk maybe its gonna be try 26 well see but i wouldt have my hopes up || YEAAAHHHHH TRY 37 SEEMS TO HAVE WORKED OMG YESYESYSESYES (surely i will never encounter another bug that shows me this was wrong again right) || well well well... guess what? I'm back here || 2 days later and i am still here btw || i lost count ig we are at try 400 or something
     // Add this at the very start of loadFromStorage to see raw data
     console.log("Initial raw clubs data:", JSON.parse(localStorage.getItem("FBC_dClubs") || "[]"));
 
@@ -2043,6 +2191,24 @@ function loadFromStorage() {
             matchSignatures.add(matchSignature);
             restoredMatches.push(newMatch);
         });
+
+        if(club.highestVictoryMatch) club.highestVictoryMatch = new Match(
+            findClub(club.highestVictoryMatch.homeClub),
+            findClub(club.highestVictoryMatch.awayClub),
+            club.highestVictoryMatch.homeGoals,
+            club.highestVictoryMatch.awayGoals,
+            club.highestVictoryMatch.leagueName,
+            club.highestVictoryMatch.played
+        );
+
+        if(club.highestLossMatch) club.highestLossMatch = new Match(
+            findClub(club.highestLossMatch.homeClub),
+            findClub(club.highestLossMatch.awayClub),
+            club.highestLossMatch.homeGoals,
+            club.highestLossMatch.awayGoals,
+            club.highestLossMatch.leagueName,
+            club.highestLossMatch.played
+        )
 
         // Explicitly clear and replace matches
         club.matches = []; // Clear existing matches

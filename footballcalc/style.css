@@ -262,6 +262,196 @@ label{
   border-style: inset;
 }
 
+/* CLUB INFO PAGE */
+/* Windows 95 Theme CSS */
+
+.win95-window-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000080;
+  color: white;
+  padding: 5px 5px;
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.win95-tab-container {
+  display: flex;
+  background-color: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #5a5a5a;
+  border-bottom: 1px solid #5a5a5a;
+  padding: 5px 5px 3px;
+}
+
+.win95-tab {
+  font-size: 12px;
+  margin-right: 3px;
+  padding: 3px 8px;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #5a5a5a;
+  border-bottom: 1px solid #5a5a5a;
+  background-color: #c0c0c0;
+  cursor: pointer;
+}
+
+.win95-tab-active {
+  background-color: #c0c0c0;
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+  padding: 5px 10px;
+  border: 1px solid #808080;
+  border-bottom: none; /* Remove bottom border */
+  margin-bottom: -1px; /* Extend out of parent div */
+}
+
+.win95-content {
+  display: block;
+  background-color: #c0c0c0;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #5a5a5a;
+  border-bottom: 1px solid #5a5a5a;
+  padding: 10px;
+}
+
+.win95-content-hidden {
+  display: none;
+}
+
+.win95-nav-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.win95-button {
+  background-color: #c0c0c0;
+  border-top: 1px solid #ffffff;
+  border-left: 1px solid #ffffff;
+  border-right: 1px solid #5a5a5a;
+  border-bottom: 1px solid #5a5a5a;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.win95-button:active {
+  border-top: 1px solid #5a5a5a;
+  border-left: 1px solid #5a5a5a;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+}
+
+.win95-arrow {
+  width: 25px;
+  height: 25px;
+  font-weight: bold;
+  padding: 0px 5px;
+}
+
+.win95-title-box {
+  background-color: #ffffff;
+  border-top: 1px solid #5a5a5a;
+  border-left: 1px solid #5a5a5a;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 2px 10px;
+  min-width: 100px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.win95-table-container {
+  margin-top: 10px;
+  border: 2px inset #ffffff;
+  background-color: #ffffff;
+}
+
+.win95-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.win95-table-header {
+  background-color: #c0c0c0;
+  border: 1px solid #5a5a5a;
+  padding: 4px;
+  text-align: center;
+}
+
+.win95-table-row {
+  border-bottom: 1px solid #d1d1d1;
+}
+
+.win95-table-cell {
+  padding: 3px 5px;
+  border-right: 1px solid #d1d1d1;
+}
+
+.win95-result-win {
+  background-color: #8fffa2;
+}
+
+.win95-result-loss {
+  background-color: #ff7369;
+}
+
+.win95-result-draw {
+  background-color: #f7ffb0;
+}
+
+.win95-stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.win95-stat-card {
+  background-color: #ffffff;
+  border-top: 1px solid #5a5a5a;
+  border-left: 1px solid #5a5a5a;
+  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 8px;
+}
+
+.win95-stat-title {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.win95-stat-value {
+  font-size: 16px;
+  padding-left: 10px;
+}
+
+.win95-close {
+  padding: 5px 12px;
+  background-color: #c0c0c0;
+  border: 1px outset #e0dbdb;
+  color: #000;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.win95-close:hover {
+  background-color: #d3d3d3;
+}
+
+.win95-close:active {
+  border-style: inset;
+}
+
 
 
 
