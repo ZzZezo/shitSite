@@ -44,6 +44,12 @@ class Club { //all clubs
         this.highestLossSpan = 0;
         this.highestLossGoals = 0;
         this.highestLossMatch = null;//
+
+        this.totalGoals = 0;
+        this.totalMatches = 0;
+        this.totalVictories = 0;
+        this.totalDefeats = 0;
+        this.totalDraws = 0;
     }
 
     //init league stats on league creation --> is called when a league is created, for any club in the league
@@ -471,6 +477,9 @@ class Match {
             this.homeClub.checkHighestVictory(this);
             this.awayClub.checkHighestLoss(this);
 
+            this.homeClub.totalVictories +=1;
+            this.awayClub.totalDefeats +=1;
+
         } else if (this.homeGoals < this.awayGoals) {
             this.awayClub.leagueStats[this.league.name][0] += 3;//Away club wins
             this.awayClub.leagueStats[this.league.name][3] += 1;
@@ -479,17 +488,29 @@ class Match {
             this.homeClub.checkHighestLoss(this);
             this.awayClub.checkHighestVictory(this);
 
+            this.homeClub.totalDefeats +=1;
+            this.awayClub.totalVictories +=1;
+
         } else {
             this.homeClub.leagueStats[this.league.name][0] += 1;//Draw
             this.awayClub.leagueStats[this.league.name][0] += 1;
             this.homeClub.leagueStats[this.league.name][4] += 1;
             this.awayClub.leagueStats[this.league.name][4] += 1;
+
+            this.homeClub.totalDraws+=1;
+            this.awayClub.totalDraws+=1;
         }
         //add the goals
         this.homeClub.leagueStats[this.league.name][1] += this.homeGoals;
         this.homeClub.leagueStats[this.league.name][2] += this.awayGoals;
         this.awayClub.leagueStats[this.league.name][1] += this.awayGoals;
         this.awayClub.leagueStats[this.league.name][2] += this.homeGoals;
+
+        //add stats
+        this.homeClub.totalGoals += this.homeGoals;
+        this.awayClub.totalGoals += this.awayGoals;
+        this.homeClub.totalMatches += 1;
+        this.awayClub.totalMatches += 1;
 
         this.played = true;
     }
@@ -1148,17 +1169,19 @@ function updateTabel(sortedClubs,league){
     tableBody.innerHTML = "";
     const theadrow = document.createElement("tr");
     const positionHeader = document.createElement("th");
-    positionHeader.textContent = "Position";
+    positionHeader.textContent = "Pos.";
     const nameHeader = document.createElement("th");
     nameHeader.textContent = "Name";
+    const playedHeader = document.createElement("th");
+    playedHeader.textContent = "M";
     const pointsHeader = document.createElement("th");
-    pointsHeader.textContent = "Points";
+    pointsHeader.textContent = "Pts.";
     const goalDiffHeader = document.createElement("th");
-    goalDiffHeader.textContent = "+/- Goals";
+    goalDiffHeader.textContent = "+/-";
     const goalsHeader = document.createElement("th");
     goalsHeader.textContent = "Goals";
     const concededHeader = document.createElement("th");
-    concededHeader.textContent = "Conceded";
+    concededHeader.textContent = "Rcvd.";
     const winsHeader = document.createElement("th");
     winsHeader.textContent = "W";
     const drawsHeader = document.createElement("th");
@@ -1167,6 +1190,7 @@ function updateTabel(sortedClubs,league){
     lossesHeader.textContent = "L";
     theadrow.appendChild(positionHeader);
     theadrow.appendChild(nameHeader);
+    theadrow.appendChild(playedHeader);
     theadrow.appendChild(pointsHeader);
     theadrow.appendChild(goalDiffHeader);
     theadrow.appendChild(goalsHeader);
@@ -1181,6 +1205,8 @@ function updateTabel(sortedClubs,league){
         positionCell.textContent = sortedClubs.indexOf(club)+1;
         const nameCell = document.createElement("td");
         nameCell.innerHTML = "<b>"+club.name;
+        const playedCell = document.createElement("td");
+        playedCell.innerHTML = +league.crntweek;
         const pointsCell = document.createElement("td");
         pointsCell.innerHTML = "<b>"+club.points;
         const goalDiffCell = document.createElement("td");
@@ -1200,6 +1226,7 @@ function updateTabel(sortedClubs,league){
 
         row.appendChild(positionCell);
         row.appendChild(nameCell);
+        row.appendChild(playedCell);
         row.appendChild(pointsCell);
         row.appendChild(goalDiffCell);
         row.appendChild(goalsCell);
@@ -1459,9 +1486,17 @@ function updateClubInfo(clubSorted) {
             value: club.highestLossMatch ? formatMatch(club.highestLossMatch, club.name) : "No matches lost"
         },
         { 
-            title: "Total Matches (Season)", 
-            value: club.matches?.length ? `${club.matches.length} matches played` : "No matches played"
-        }
+            title: "Total Matches", 
+            value: `${club.totalMatches} matches played`
+        },
+        { 
+            title: "Total Goals", 
+            value: `${club.totalGoals} goals shot \n avg. ${(club.totalGoals / club.totalMatches).toFixed(1)} per match`
+        },
+        {
+            title: "Wins/Draws/Losses",
+            value: `${club.totalVictories} / ${club.totalDraws} / ${club.totalDefeats} \n  ${((club.totalVictories / club.totalMatches) * 100).toFixed(0)}% / ${((club.totalDraws / club.totalMatches) * 100).toFixed(0)}% / ${((club.totalDefeats / club.totalMatches) * 100).toFixed(0)}%`
+        }        
     ];
     
     
@@ -1474,7 +1509,7 @@ function updateClubInfo(clubSorted) {
         statTitle.classList.add("win95-stat-title");
         
         const statValue = document.createElement("div");
-        statValue.textContent = stat.value;
+        statValue.innerHTML = stat.value.replace(/\n/g, "<br>");
         statValue.classList.add("win95-stat-value");
         
         statCard.appendChild(statTitle);
@@ -1813,7 +1848,13 @@ function serialize_club_array(array) {
                     awayGoals: club.highestLossMatch.awayGoals,
                     leagueName: club.highestLossMatch.league?.name,
                     played: club.highestLossMatch.played
-                } : null
+                } : null,
+
+                totalGoals: club.totalGoals,
+                totalMatches: club.totalMatches,
+                totalVictories: club.totalVictories,
+                totalDefeats: club.totalDefeats,
+                totalDraws: club.totalDraws
             };
         } catch (error) {
             console.error(`Error in club at index ${index}:`, club);
@@ -1933,6 +1974,12 @@ function loadFromStorage() {
         club.highestLossSpan = c.highestLossSpan;
         club.highestLossGoals = c.highestLossGoals;
         club.highestLossMatch = c.highestLossMatch;
+
+        club.totalGoals = c.totalGoals;
+        club.totalMatches = c.totalMatches;
+        club.totalVictories = c.totalVictories;
+        club.totalDefeats = c.totalDefeats;
+        club.totalDraws = c.totalDraws;
         return club;
     });
 
@@ -1949,6 +1996,12 @@ function loadFromStorage() {
         club.highestLossSpan = c.highestLossSpan;
         club.highestLossGoals = c.highestLossGoals;
         club.highestLossMatch = c.highestLossMatch;
+
+        club.totalGoals = c.totalGoals;
+        club.totalMatches = c.totalMatches;
+        club.totalVictories = c.totalVictories;
+        club.totalDefeats = c.totalDefeats;
+        club.totalDraws = c.totalDraws;
         return club;
     });
 
@@ -1965,6 +2018,12 @@ function loadFromStorage() {
         club.highestLossSpan = c.highestLossSpan;
         club.highestLossGoals = c.highestLossGoals;
         club.highestLossMatch = c.highestLossMatch;
+
+        club.totalGoals = c.totalGoals;
+        club.totalMatches = c.totalMatches;
+        club.totalVictories = c.totalVictories;
+        club.totalDefeats = c.totalDefeats;
+        club.totalDraws = c.totalDraws;
         return club;
     });
 
@@ -1981,6 +2040,12 @@ function loadFromStorage() {
         club.highestLossSpan = c.highestLossSpan;
         club.highestLossGoals = c.highestLossGoals;
         club.highestLossMatch = c.highestLossMatch;
+
+        club.totalGoals = c.totalGoals;
+        club.totalMatches = c.totalMatches;
+        club.totalVictories = c.totalVictories;
+        club.totalDefeats = c.totalDefeats;
+        club.totalDraws = c.totalDraws;
         return club;
     });
 
@@ -1997,6 +2062,12 @@ function loadFromStorage() {
         club.highestLossSpan = c.highestLossSpan;
         club.highestLossGoals = c.highestLossGoals;
         club.highestLossMatch = c.highestLossMatch;
+
+        club.totalGoals = c.totalGoals;
+        club.totalMatches = c.totalMatches;
+        club.totalVictories = c.totalVictories;
+        club.totalDefeats = c.totalDefeats;
+        club.totalDraws = c.totalDraws;
         return club;
     });
 
@@ -2013,6 +2084,12 @@ function loadFromStorage() {
         club.highestLossSpan = c.highestLossSpan;
         club.highestLossGoals = c.highestLossGoals;
         club.highestLossMatch = c.highestLossMatch;
+
+        club.totalGoals = c.totalGoals;
+        club.totalMatches = c.totalMatches;
+        club.totalVictories = c.totalVictories;
+        club.totalDefeats = c.totalDefeats;
+        club.totalDraws = c.totalDraws;
         return club;
     });
 
@@ -2029,6 +2106,12 @@ function loadFromStorage() {
         club.highestLossSpan = c.highestLossSpan;
         club.highestLossGoals = c.highestLossGoals;
         club.highestLossMatch = c.highestLossMatch;
+
+        club.totalGoals = c.totalGoals;
+        club.totalMatches = c.totalMatches;
+        club.totalVictories = c.totalVictories;
+        club.totalDefeats = c.totalDefeats;
+        club.totalDraws = c.totalDraws;
         return club;
     });
 
