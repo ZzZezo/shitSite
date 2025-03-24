@@ -276,7 +276,6 @@ label{
   font-size: 22px;
   font-weight: bold;
   text-align: center;
-  margin-top: 20px;
 }
 
 .win95-tab-container {
@@ -452,6 +451,36 @@ label{
   border-style: inset;
 }
 
+/* Grid Styling */
+.diagram-grid {
+  display: grid;
+  gap: 1px;                               /* Small gap between cells */
+  background-color: #c0c0c0;              /* Win95 gray background */
+}
+
+/* Grid Cells */
+.grid-cell {
+  background-color: #ffffff;              /* White for empty cells */
+}
+
+/* Filled Cells */
+.grid-cell.filled {
+  background-color: #000080;              /* Navy blue (Win95 title bar color) for filled cells */
+}
+
+/* Popup Window Container */
+.win95-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #c0c0c0;
+  border: 2px solid #808080;
+  border-bottom-color: #404040;
+  border-right-color: #404040;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+  z-index: 1000;
+}
 
 
 

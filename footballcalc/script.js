@@ -1300,6 +1300,7 @@ function updateClubInfo(clubSorted) {
     const clubHeader = document.createElement("h1");
     clubHeader.textContent = club.name;
     clubHeader.classList.add("win95-window-title");
+    clubHeader.style.marginTop = "20px";
 
     // Close button
     const closeButton = document.createElement("button");
@@ -2783,6 +2784,81 @@ function simulateAll(){
         goalInputs[i + 1].value = matches[i / 2].awayGoals;
     }
 }
+
+
+function showDiagram(list, leagueName, clubname = "Diagram") {
+    // Create the popup window
+    const windowDiv = document.createElement('div');
+    windowDiv.className = 'win95-window';
+
+    // Find league object
+    const leagueObj = dLeagues.find(league => league.name === leagueName);
+    if (!leagueObj) throw new Error(`League ${leagueName} not found in dLeagues.`);
+
+    // Calculate dynamic height and width
+    const height = leagueObj.clubs.length;
+    const width = Math.min((leagueObj.clubs.length - 1) * leagueObj.terms, leagueObj.matchLimit);
+
+    // Title bar with club name
+    const clubHeader = document.createElement("h1");
+    clubHeader.textContent = clubname;
+    clubHeader.classList.add("win95-window-title");
+
+    // Close button
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "X";
+    closeButton.classList.add("win95-close");
+    closeButton.onclick = () => {
+        document.body.removeChild(windowDiv);
+    };
+    clubHeader.appendChild(closeButton);
+
+    // Content area
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'win95-content';
+
+    // Grid
+    const gridDiv = document.createElement('div');
+    gridDiv.className = 'diagram-grid';
+
+    // Dynamically set grid template properties
+    gridDiv.style.gridTemplateColumns = `repeat(${width}, 20px)`; // Dynamic columns
+    gridDiv.style.gridTemplateRows = `repeat(${height}, 20px)`;   // Dynamic rows
+
+    gridDiv.style.maxWidth = '800px'; // Example max width
+    gridDiv.style.maxHeight = '500px';
+    gridDiv.style.overflow = 'auto';
+
+    // Populate the grid
+    for (let row = 0; row < height; row++) {
+      for (let col = 0; col < width; col++) {
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        // Check if this column has a list entry
+        if (col < list.length) {
+          const n = list[col]; // Value between 1 and height
+          // Fill if row index (0-based) is >= n-1
+          if (row == n-1) {
+              cell.style.color = 'white';
+              cell.style.alignContent = 'center';
+              cell.style.textAlign = 'center';
+              cell.innerHTML = n;
+          }
+          if (row >= n - 1) {
+            cell.classList.add('filled');
+          }
+        }
+        gridDiv.appendChild(cell);
+      }
+    }
+
+    // Assemble the popup
+    windowDiv.appendChild(clubHeader);
+    contentDiv.appendChild(gridDiv);
+    windowDiv.appendChild(contentDiv);
+    document.body.appendChild(windowDiv);
+}
+
 
 function startGame_saveMode(){
     if(savingEnabled){
