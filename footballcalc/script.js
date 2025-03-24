@@ -1486,7 +1486,7 @@ function updateClubInfo(clubSorted) {
     statsContainer.classList.add("win95-stats-container");
 
     const developmentButton = document.createElement("button");
-    developmentButton.textContent = "Development";
+    developmentButton.textContent = "📈 Development 📉";
     developmentButton.classList.add("win95-button");
     developmentButton.style.backgroundColor = "#DDDDDD";
     developmentButton.style.padding = "12px";
@@ -2718,6 +2718,8 @@ function showDiagram(list, leagueName, clubname = "Diagram") {
     closeButton.classList.add("win95-close");
     closeButton.onclick = () => {
         document.body.removeChild(windowDiv);
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', stopDragging);
     };
     clubHeader.appendChild(closeButton);
 
@@ -2765,6 +2767,62 @@ function showDiagram(list, leagueName, clubname = "Diagram") {
     contentDiv.appendChild(gridDiv);
     windowDiv.appendChild(contentDiv);
     document.body.appendChild(windowDiv);
+
+    
+    // Dragging functionality
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+
+    clubHeader.addEventListener('mousedown', startDragging);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
+
+    function startDragging(e) {
+        // Prevent dragging if clicking the close button
+        if (e.target === closeButton) return;
+
+        initialX = e.clientX - currentX;
+        initialY = e.clientY - currentY;
+
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+        windowDiv.style.left = `${currentX}px`;
+        windowDiv.style.top = `${currentY}px`;
+
+        isDragging = true;
+        windowDiv.style.transform = 'none'; // Remove centering transform during drag
+
+        //set all windowDivs at zIndex 1000
+        const windowDivs = document.querySelectorAll('.win95-window');
+        for (let i = 0; i < windowDivs.length; i++) {
+            windowDivs[i].style.zIndex = '1000';
+        }
+
+        //Set only the current one at z 9999, so its always in foreground
+        windowDiv.style.zIndex = '9999';
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault(); // Prevent text selection
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+            windowDiv.style.left = `${currentX}px`;
+            windowDiv.style.top = `${currentY}px`;
+        }
+    }
+
+    function stopDragging() {
+        isDragging = false;
+    }
+
+    // Initialize position
+    const rect = windowDiv.getBoundingClientRect();
+    currentX = rect.left;
+    currentY = rect.top;
 }
 
 

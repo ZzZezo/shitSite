@@ -266,6 +266,7 @@ label{
 /* Windows 95 Theme CSS */
 
 .win95-window-title {
+  user-select: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
