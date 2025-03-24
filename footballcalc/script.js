@@ -951,8 +951,11 @@ async function calculateInput() { //called when the calculate button is pressed,
 function matchesCalculated(lastLeague,leagueDone=false) {
     if(debug_log_everything)console.log("huh")
     seasonCalendar.calendarIndex+=1;
-    // console.log("Remaining:" + seasonCalendar.getRemaining());
     resetClubInfo();
+    const windowDivs = document.querySelectorAll('.win95-window');
+        for (let i = 0; i < windowDivs.length; i++) {
+            document.body.removeChild(windowDivs[i]);
+        }
     if (leagueDone) {
         //remove from loaded leagues if done
         finshedLeagues.push(lastLeague);
