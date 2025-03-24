@@ -51,7 +51,7 @@ class Club { //all clubs
         this.totalDefeats = 0;
         this.totalDraws = 0;
 
-        this.seasonalPositions = [];
+        this.seasonalPositions = {};
     }
 
     //init league stats on league creation --> is called when a league is created, for any club in the league
@@ -199,7 +199,12 @@ class League {
         let currentPos = 1;
         sortedClubs.forEach(club => {
             let clubObj = findClubObjByName(club.name);
-            clubObj.seasonalPositions.push(currentPos);
+
+            if (!clubObj.seasonalPositions[this.name]) {
+                clubObj.seasonalPositions[this.name] = [];
+            }
+
+            clubObj.seasonalPositions[this.name].push(currentPos);
             currentPos+=1;
         })
     }
@@ -1372,7 +1377,9 @@ function updateClubInfo(clubSorted) {
     const matchContent = contentContainers.matchHistory;
     
     // League selection header
-    const leagues = ["All", ...club.getLeagues()];
+    let leagues = ["All", ...club.getLeagues()];
+    leagues = leagues.filter(name => loadedLeagues.some(league => league.name === name));
+    leagues.push("All");
     let currentLeagueIndex = 0;
 
     // Initialize with active league if available
@@ -1401,6 +1408,7 @@ function updateClubInfo(clubSorted) {
     // Assemble navigation
     if(leagues.length > 2) leagueNav.appendChild(leftArrow);
     leagueNav.appendChild(leagueTitle);
+
     if(leagues.length > 2) leagueNav.appendChild(rightArrow);
     matchContent.appendChild(leagueNav);
 
@@ -1494,7 +1502,8 @@ function updateClubInfo(clubSorted) {
     developmentButton.style.backgroundColor = "#DDDDDD";
     developmentButton.style.padding = "12px";
     developmentButton.addEventListener("click", () => {
-        showDiagram(club.seasonalPositions, activeLeague.name, club.name);
+        let leagueData = club.seasonalPositions[activeLeague.name];
+        showDiagram(leagueData, activeLeague.name, club.name);
     });
 
     statsContainer.appendChild(developmentButton);
