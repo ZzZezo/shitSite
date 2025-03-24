@@ -50,6 +50,8 @@ class Club { //all clubs
         this.totalVictories = 0;
         this.totalDefeats = 0;
         this.totalDraws = 0;
+
+        this.seasonalPositions = [];
     }
 
     //init league stats on league creation --> is called when a league is created, for any club in the league
@@ -193,6 +195,13 @@ class League {
 
     updateStats(sortedClubs){
         this.sortedClubs = sortedClubs;
+
+        let currentPos = 1;
+        sortedClubs.forEach(club => {
+            let clubObj = findClubObjByName(club.name);
+            clubObj.seasonalPositions.push(currentPos);
+            currentPos+=1;
+        })
     }
 
     getSortedClubs(){
@@ -1475,6 +1484,17 @@ function updateClubInfo(clubSorted) {
     // Placeholder stats content
     const statsContainer = document.createElement("div");
     statsContainer.classList.add("win95-stats-container");
+
+    const developmentButton = document.createElement("button");
+    developmentButton.textContent = "Development";
+    developmentButton.classList.add("win95-button");
+    developmentButton.style.backgroundColor = "#DDDDDD";
+    developmentButton.style.padding = "12px";
+    developmentButton.addEventListener("click", () => {
+        showDiagram(club.seasonalPositions, activeLeague.name, club.name);
+    });
+
+    statsContainer.appendChild(developmentButton);
     
     // Create stats cards
     const statsData = [
@@ -1855,12 +1875,47 @@ function serialize_club_array(array) {
                 totalMatches: club.totalMatches,
                 totalVictories: club.totalVictories,
                 totalDefeats: club.totalDefeats,
-                totalDraws: club.totalDraws
+                totalDraws: club.totalDraws,
+
+                seasonalPositions: club.seasonalPositions
             };
         } catch (error) {
             console.error(`Error in club at index ${index}:`, club);
             console.error(error);
             return null; // Return null or handle it gracefully
+        }
+    });
+}
+
+function unserialize_club_array(array) {
+    console.log(array);
+    return array.map(c=> {
+        try{
+            const club = new Club(c.name, c.hardcodedRating);
+            club.leagueStats = c.leagueStats;
+            club.matches = c.matches; 
+    
+            club.highestVictoryGoals = c.highestVictoryGoals;
+            club.highestVictorySpan = c.highestVictorySpan;
+            club.highestVictoryMatch = c.highestVictoryMatch;
+    
+            club.highestLossSpan = c.highestLossSpan;
+            club.highestLossGoals = c.highestLossGoals;
+            club.highestLossMatch = c.highestLossMatch;
+    
+            club.totalGoals = c.totalGoals;
+            club.totalMatches = c.totalMatches;
+            club.totalVictories = c.totalVictories;
+            club.totalDefeats = c.totalDefeats;
+            club.totalDraws = c.totalDraws;
+
+            club.seasonalPositions = c.seasonalPositions;
+            return club;
+
+        }catch (error){
+            console.error(`Error in club:`, c);
+            console.error(error);
+            return null;
         }
     });
 }
@@ -1961,160 +2016,13 @@ function saveToStorage() {
 }
 
 function loadFromStorage() {
-    // Load clubs first
-    const loadedClubs = JSON.parse(localStorage.getItem("FBC_dClubs") || []);
-    dClubs = loadedClubs.map(c => {
-        const club = new Club(c.name, c.hardcodedRating);
-        club.leagueStats = c.leagueStats;
-        club.matches = c.matches; 
-
-        club.highestVictoryGoals = c.highestVictoryGoals;
-        club.highestVictorySpan = c.highestVictorySpan;
-        club.highestVictoryMatch = c.highestVictoryMatch;
-
-        club.highestLossSpan = c.highestLossSpan;
-        club.highestLossGoals = c.highestLossGoals;
-        club.highestLossMatch = c.highestLossMatch;
-
-        club.totalGoals = c.totalGoals;
-        club.totalMatches = c.totalMatches;
-        club.totalVictories = c.totalVictories;
-        club.totalDefeats = c.totalDefeats;
-        club.totalDraws = c.totalDraws;
-        return club;
-    });
-
-    const loaded_clPool = JSON.parse(localStorage.getItem("FBC_clPool") || []);
-    clPool = loaded_clPool.map(c => {
-        const club = new Club(c.name, c.hardcodedRating);
-        club.leagueStats = c.leagueStats;
-        club.matches = c.matches; 
-
-        club.highestVictoryGoals = c.highestVictoryGoals;
-        club.highestVictorySpan = c.highestVictorySpan;
-        club.highestVictoryMatch = c.highestVictoryMatch;
-
-        club.highestLossSpan = c.highestLossSpan;
-        club.highestLossGoals = c.highestLossGoals;
-        club.highestLossMatch = c.highestLossMatch;
-
-        club.totalGoals = c.totalGoals;
-        club.totalMatches = c.totalMatches;
-        club.totalVictories = c.totalVictories;
-        club.totalDefeats = c.totalDefeats;
-        club.totalDraws = c.totalDraws;
-        return club;
-    });
-
-    const loaded_elPool = JSON.parse(localStorage.getItem("FBC_elPool") || []);
-    elPool = loaded_elPool.map(c => {
-        const club = new Club(c.name, c.hardcodedRating);
-        club.leagueStats = c.leagueStats;
-        club.matches = c.matches; 
-
-        club.highestVictoryGoals = c.highestVictoryGoals;
-        club.highestVictorySpan = c.highestVictorySpan;
-        club.highestVictoryMatch = c.highestVictoryMatch;
-
-        club.highestLossSpan = c.highestLossSpan;
-        club.highestLossGoals = c.highestLossGoals;
-        club.highestLossMatch = c.highestLossMatch;
-
-        club.totalGoals = c.totalGoals;
-        club.totalMatches = c.totalMatches;
-        club.totalVictories = c.totalVictories;
-        club.totalDefeats = c.totalDefeats;
-        club.totalDraws = c.totalDraws;
-        return club;
-    });
-
-    const loaded_colPool = JSON.parse(localStorage.getItem("FBC_colPool") || []);
-    colPool = loaded_colPool.map(c => {
-        const club = new Club(c.name, c.hardcodedRating);
-        club.leagueStats = c.leagueStats;
-        club.matches = c.matches; 
-
-        club.highestVictoryGoals = c.highestVictoryGoals;
-        club.highestVictorySpan = c.highestVictorySpan;
-        club.highestVictoryMatch = c.highestVictoryMatch;
-
-        club.highestLossSpan = c.highestLossSpan;
-        club.highestLossGoals = c.highestLossGoals;
-        club.highestLossMatch = c.highestLossMatch;
-
-        club.totalGoals = c.totalGoals;
-        club.totalMatches = c.totalMatches;
-        club.totalVictories = c.totalVictories;
-        club.totalDefeats = c.totalDefeats;
-        club.totalDraws = c.totalDraws;
-        return club;
-    });
-
-    const loaded_realChampionsLeagueClubs = JSON.parse(localStorage.getItem("FBC_realChampionsLeagueClubs") || []);
-    realChampionsLeagueClubs = loaded_realChampionsLeagueClubs.map(c => {
-        const club = new Club(c.name, c.hardcodedRating);
-        club.leagueStats = c.leagueStats;
-        club.matches = c.matches; 
-
-        club.highestVictoryGoals = c.highestVictoryGoals;
-        club.highestVictorySpan = c.highestVictorySpan;
-        club.highestVictoryMatch = c.highestVictoryMatch;
-
-        club.highestLossSpan = c.highestLossSpan;
-        club.highestLossGoals = c.highestLossGoals;
-        club.highestLossMatch = c.highestLossMatch;
-
-        club.totalGoals = c.totalGoals;
-        club.totalMatches = c.totalMatches;
-        club.totalVictories = c.totalVictories;
-        club.totalDefeats = c.totalDefeats;
-        club.totalDraws = c.totalDraws;
-        return club;
-    });
-
-    const loaded_realEuropaLeagueClubs = JSON.parse(localStorage.getItem("FBC_realEuropaLeagueClubs") || []);
-    realEuropaLeagueClubs = loaded_realEuropaLeagueClubs.map(c => {
-        const club = new Club(c.name, c.hardcodedRating);
-        club.leagueStats = c.leagueStats;
-        club.matches = c.matches; 
-
-        club.highestVictoryGoals = c.highestVictoryGoals;
-        club.highestVictorySpan = c.highestVictorySpan;
-        club.highestVictoryMatch = c.highestVictoryMatch;
-
-        club.highestLossSpan = c.highestLossSpan;
-        club.highestLossGoals = c.highestLossGoals;
-        club.highestLossMatch = c.highestLossMatch;
-
-        club.totalGoals = c.totalGoals;
-        club.totalMatches = c.totalMatches;
-        club.totalVictories = c.totalVictories;
-        club.totalDefeats = c.totalDefeats;
-        club.totalDraws = c.totalDraws;
-        return club;
-    });
-
-    const loaded_realConferenceLeagueClubs = JSON.parse(localStorage.getItem("FBC_realConferenceLeagueClubs") || []);
-    realConferenceLeagueClubs = loaded_realConferenceLeagueClubs.map(c => {
-        const club = new Club(c.name, c.hardcodedRating);
-        club.leagueStats = c.leagueStats;
-        club.matches = c.matches; 
-
-        club.highestVictoryGoals = c.highestVictoryGoals;
-        club.highestVictorySpan = c.highestVictorySpan;
-        club.highestVictoryMatch = c.highestVictoryMatch;
-
-        club.highestLossSpan = c.highestLossSpan;
-        club.highestLossGoals = c.highestLossGoals;
-        club.highestLossMatch = c.highestLossMatch;
-
-        club.totalGoals = c.totalGoals;
-        club.totalMatches = c.totalMatches;
-        club.totalVictories = c.totalVictories;
-        club.totalDefeats = c.totalDefeats;
-        club.totalDraws = c.totalDraws;
-        return club;
-    });
+    dClubs = unserialize_club_array(JSON.parse(localStorage.getItem("FBC_dClubs")));
+    clPool = unserialize_club_array(JSON.parse(localStorage.getItem("FBC_clPool")));
+    elPool = unserialize_club_array(JSON.parse(localStorage.getItem("FBC_elPool")));
+    colPool = unserialize_club_array(JSON.parse(localStorage.getItem("FBC_colPool")));
+    realChampionsLeagueClubs = unserialize_club_array(JSON.parse(localStorage.getItem("FBC_realChampionsLeagueClubs")));
+    realEuropaLeagueClubs = unserialize_club_array(JSON.parse(localStorage.getItem("FBC_realEuropaLeagueClubs")));
+    realConferenceLeagueClubs = unserialize_club_array(JSON.parse(localStorage.getItem("FBC_realConferenceLeagueClubs")));
 
     // Rebuild leagues
     const leagueData = JSON.parse(localStorage.getItem("FBC_dLeagues") || []);
@@ -2865,7 +2773,7 @@ function startGame_saveMode(){
         //if the user has saving enabled check if user already has something in local storage:
         if (checkForSavefile()) {
             //if the user already has a save file, warn him that he is overwriting his data
-            createPopup("⚠️ Warning","If you do this, your Save File will be overwritten!",2,["I know","Cancel"],[function(){startGame();closePopup();},closePopup]);
+            createPopup("⚠️ Warning - Autosaving activated","If you do this, your current Save File will be overwritten!",2,["I know","Cancel"],[function(){startGame();closePopup();},closePopup]);
         }
         else{
             //else its no problem to save, so dont warn user

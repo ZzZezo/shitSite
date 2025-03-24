@@ -338,6 +338,7 @@ label{
   border-left: 1px solid #ffffff;
   border-right: 1px solid #5a5a5a;
   border-bottom: 1px solid #5a5a5a;
+  font-family: 'Old Sans Serif';
   padding: 2px 8px;
   cursor: pointer;
 }
