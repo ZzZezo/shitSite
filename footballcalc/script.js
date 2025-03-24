@@ -775,6 +775,7 @@ class SeasonManager {
 
             league.clubs.forEach(club => {
                 club.matches = [];
+                club.seasonalPositions = {};
                 club.leagueStats = {};
                 club.initializeLeagueStats(league.name);
             });
