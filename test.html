@@ -1,34 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEST</title>
+    <title>AI-Crafted Cosmic Dance</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+        #info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-family: Arial;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        }
+    </style>
 </head>
-<style>
-    html, body {
-    background-color: #008080;
-    height: 99%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    }
-
-    button{
-        padding: 15px 75px;
-        font-size: 50px;
-        border-radius: 10px;
-        font-family: 'Times New Roman', Times, serif;
-    }
-
-</style>
 <body>
-    <button id="increment-button">0</button>
-</body>
+    <div id="info">Cosmic Dance - Mouse/Touch to Interact</div>
+    <canvas id="c"></canvas>
 
 <script>
-    if(Intl.DateTimeFormat().resolvedOptions().timeZone.split("/")[1] == "Zagreb")alert("tmm")
-  </script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let width, height;
+let particles = [];
+const particleCount = 1500;
+let hue = 0;
 
+class Particle {
+    constructor() {
+        this.reset(true);
+    }
+    
+    reset(init) {
+        this.x = init ? Math.random() * width : width * 1.1;
+        this.y = Math.random() * height;
+        this.vx = -2 - Math.random() * 2;
+        this.vy = Math.random() * 4 - 2;
+        this.size = Math.random() * 2 + 1;
+        this.hue = (hue + Math.random() * 60) % 360;
+        this.lightness = 50 + Math.random() * 30;
+        this.alpha = Math.random() * 0.5 + 0.5;
+    }
+
+    update() {
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const force = -mouse.radius / dist;
+
+        if (dist < mouse.radius) {
+            const angle = Math.atan2(dy, dx);
+            this.vx += Math.cos(angle) * force;
+            this.vy += Math.sin(angle) * force;
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        if (this.x < -this.size) this.reset();
+        if (this.y < -this.size || this.y > height + this.size) this.vy *= -1;
+        
+        this.vx *= 0.99;
+        this.vy *= 0.99;
+    }
+
+    draw() {
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${this.hue}, 100%, ${this.lightness}%, ${this.alpha})`;
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+const mouse = { x: 0, y: 0, radius: 150 };
+canvas.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+});
+
+canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+}, { passive: false });
+
+function init() {
+    canvas.width = width = window.innerWidth;
+    canvas.height = height = window.innerHeight;
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+}
+
+function animate() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, width, height);
+    
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+    
+    hue = (hue + 0.5) % 360;
+    requestAnimationFrame(animate);
+}
+
+init();
+window.addEventListener('resize', init);
+animate();
+
+// Add cosmic rays
+function createRay() {
+    ctx.beginPath();
+    ctx.strokeStyle = `hsla(${Math.random() * 360}, 100%, 80%, 0.2)`;
+    ctx.lineWidth = Math.random() * 3;
+    ctx.moveTo(Math.random() * width, Math.random() * height);
+    ctx.lineTo(Math.random() * width, Math.random() * height);
+    ctx.stroke();
+    setTimeout(createRay, Math.random() * 500);
+}
+createRay();
+
+// Add glowing effect
+ctx.shadowColor = 'white';
+ctx.shadowBlur = 15;
+ctx.globalCompositeOperation = 'lighter';
+</script>
+</body>
 </html>

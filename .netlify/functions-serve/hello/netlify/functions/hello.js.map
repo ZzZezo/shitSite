@@ -1,0 +1,8 @@
+{
+  "version": 3,
+  "sources": ["../../../../OneDrive/Dev/html/shitSite/netlify/functions/hello.ts"],
+  "sourceRoot": "C:/Users/eriko/AppData/Local/Temp/tmp-22328-s9H6Jvbr2PR5",
+  "sourcesContent": ["\r\n\r\nexports.handler = async () => {\r\n    console.log(\"TEST: Function has been triggered!\"); // This logs to Netlify's function logs\r\n    return {\r\n        statusCode: 200,\r\n        body: JSON.stringify({ message: \"Hello, Netlify Functions!\" }),\r\n    };\r\n};"],
+  "mappings": ";AAEA,QAAQ,UAAU,YAAY;AAC1B,UAAQ,IAAI,oCAAoC;AAChD,SAAO;AAAA,IACH,YAAY;AAAA,IACZ,MAAM,KAAK,UAAU,EAAE,SAAS,4BAA4B,CAAC;AAAA,EACjE;AACJ;",
+  "names": []
+}

@@ -484,6 +484,64 @@ label{
   z-index: 1000;
 }
 
+#LeagueDropdown2, #nextSeasonButton {
+  /* Reset all properties to ensure consistency */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  
+  /* Apply identical styling */
+  display: inline-block;
+  appearance: none;
+  background-color: #c0c0c0;
+  color: black;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  border-left: 2px solid #808080;
+  border-top: 2px solid #808080;
+  
+  /* Exact same dimensions */
+  width: 200px;
+  height: 48px;
+  
+  /* Text formatting */
+  font-family: 'Old Sans Serif', sans-serif;
+  font-size: 14px;
+  text-align: left;
+  padding: 2px 24px 2px 4px;
+  
+  /* Box model */
+  box-sizing: border-box;
+  vertical-align: top;
+  
+  /* Positioning */
+  margin-top: 10px;
+  margin-left: 21px;
+  position: relative;
+}
+
+#LeagueDropdown2:hover, #nextSeasonButton:hover {
+  background-color: #ababab;
+}
+
+#nextSeasonButton:active {
+  border-style: inset;
+}
+
+#LeagueDropdown2::after{
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  pointer-events: none;
+}
+
 
 
 /* MOBILE ADJUSTMENTS */

@@ -1176,7 +1176,7 @@ function updateDropdownOptionsByList(list){
         updateTabel(league.getSortedClubs(),league);
     });
     
-    dropdown.style.display = "block";
+    dropdown.style.display = "inline";
 }
 
 function updateTabel(sortedClubs,league){
@@ -1689,6 +1689,11 @@ function populateInternationalLeagues() {
 
 // Call this function at the start of a new season, after standings are finalized
 function startNewSeasonWithInternationalLeagues() {
+    //blend in/out the elements like they normally are
+    document.getElementById("LeagueDropdown2").style.display="none";
+    document.getElementById("nextSeasonButton").style.display="none";
+    document.getElementById("inputContainer").style.display="block";
+
     // Then populate international leagues
     populateInternationalLeagues();
 
@@ -1734,14 +1739,17 @@ function isPowerOfTwo(n) {
 function seasonOver() {
     simulateUnloadedLeagues();
 
-    const startNewSeason = confirm("Season is over! Would you like to promote clubs and start a new season?");
-    
-    if (startNewSeason) {
-        startNewSeasonWithInternationalLeagues();
-    } else {
-        updateDropdownOptionsByList(loadedLeagues);
-    }
+    updateDropdownOptionsByList(loadedLeagues);
+
+    document.querySelectorAll(".gameButton").forEach(button => button.style.display = "none");
+    document.getElementById("inputContainer").style.display = "none";
+    document.getElementById("nextSeasonButton").style.display = "inline";
 }
+
+function newSeasonConfirm(){
+    createPopup("New Season","Promote clubs and start a new season?",2,["Yes","No"],[function(){startNewSeasonWithInternationalLeagues();closePopup();},closePopup]);
+}
+
 function simulateUnloadedLeagues(){
     const notLoadedLeagues = dLeagues.filter(league => !loadedLeagues.includes(league));
 
