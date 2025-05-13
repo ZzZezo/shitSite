@@ -622,7 +622,7 @@ class SeasonManager {
     constructor() {
     }
 
-    handleSeasonTransition() {
+    async handleSeasonTransition() {
         // Store the current standings before resetting
         const leagueStandings = {};
         dLeagues.forEach(league => {
@@ -652,9 +652,12 @@ class SeasonManager {
                 // Use stored standings for relegation/promotion decisions
                 currentLeague.sortedClubs = leagueStandings[currentLeague.name];
                 
-                // Get the clubs to be relegated/promoted
+                // Get the clubs to be relegated/promoted directly
                 const clubsToRelegate = this.getClubsToRelegate(currentLeague);
                 const clubsToPromote = this.getClubsToPromote(currentLeague);
+                
+                // Handle playoff promotions/relegations
+                await this.handlePlayoffs(currentLeague, lowerLeague, higherLeague);
 
                 // Handle promotion
                 if (clubsToPromote.length > 0 && higherLeague) {
@@ -689,6 +692,91 @@ class SeasonManager {
         return 1;
     }
 
+    async handlePlayoffs(currentLeague, lowerLeague, higherLeague) {
+        // Relegation playoffs (current league vs lower league)
+        if (currentLeague.relegatePlayoffs?.length > 0 && lowerLeague) {
+            for (const position of currentLeague.relegatePlayoffs) {
+                const clubA = this.getClubFromPosition(currentLeague, position);
+                const clubB = this.getClubFromPosition(lowerLeague, lowerLeague.promotePlayoffs[0]);
+
+                let winner;
+                
+                if (clubA && clubB) {
+                    console.log("PLAYOFFS BETWEEN " + clubA.name + "("+currentLeague.name+") AND " + clubB.name + "("+lowerLeague.name+")");
+                    //if either current or lower league is in loadedLeagues, run decidePlayoffWinner else choose random winner
+                    if( loadedLeagues.includes(currentLeague) || loadedLeagues.includes(lowerLeague) ) {
+                        winner = await this.decidePlayoffWinner(
+                            `${clubA.name}`,
+                            `${clubB.name}`,
+                            "Relegation Playoff"
+                        ); 
+                    } else {
+                        console.log("random");
+                        const randomWinner = Math.random() < 0.5 ? clubA.name : clubB.name;
+                        winner = randomWinner;
+                    }
+                    
+                    if (winner === clubA.name) {
+                        console.log("%c"+clubA.name + " won the playoffs.","color:cyan");
+                        closePopup();
+                    } else {
+                        currentLeague.removeClub(clubA);
+                        lowerLeague.addClub(clubA);
+                        currentLeague.addClub(clubB);
+                        lowerLeague.removeClub(clubB);
+                        console.log("%c"+clubB.name + " won the playoffs. " + clubA.name + " was relegated.","color:cyan")
+                        closePopup();
+                    }
+                }
+            }
+        }
+
+        // // Promotion playoffs (current league vs higher league)
+        // if (currentLeague.promotePlayoffs?.length > 0 && higherLeague) {
+        //     for (const position of currentLeague.promotePlayoffs) {
+        //         const clubA = this.getClubFromPosition(currentLeague, position);
+        //         const clubB = this.getClubFromPosition(higherLeague, higherLeague.relegatePlayoffs[0]);
+                
+        //         if (clubA && clubB) {
+        //             const winner = await this.decidePlayoffWinner(
+        //                 `${clubA.name}`,
+        //                 `${clubB.name}`,
+        //                 "Promotion Playoff"
+        //             );
+
+        //             if (winner === clubA) {
+        //                 higherLeague.removeClub(clubB);
+        //                 higherLeague.addClub(clubA);
+        //                 currentLeague.removeClub(clubA);
+        //             } else {
+        //                 currentLeague.removeClub(clubA);
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+    async decidePlayoffWinner(clubAName, clubBName) {
+        return new Promise((resolve) => {
+            createPopup(
+                "Relegation Playoffs: " + clubAName + " vs " + clubBName,
+                "Who wins the playoff?",
+                2,
+                [clubAName, clubBName],
+                [
+                    () => resolve(clubAName),
+                    () => resolve(clubBName)
+                ]
+            );
+        });
+    }
+
+    getClubFromPosition(league, position) {
+        if (!league || position < 1 || position > league.sortedClubs.length) return null;
+        const clubName = league.sortedClubs[position - 1]?.name;
+        return league.clubs.find(c => c.name === clubName);
+    }
+
     // Rest of the SeasonManager class methods remain unchanged
     getClubsToRelegate(league) {
         const sortedClubs = [...league.sortedClubs];
@@ -714,28 +802,6 @@ class SeasonManager {
             clubsToRelegate.push(club);
         });
     
-        if (league.relegatePlayoffs.length > 0) {
-            league.relegatePlayoffs.forEach(position => {
-                const clubName = sortedClubs[position - 1]?.name;
-    
-                // Only log when clubName is undefined or invalid
-                if (!clubName) {
-                    console.error('Error: Club name is undefined at position in relegatePlayoffs:', position);
-                    return;  // Skip processing for this position if clubName is invalid
-                }
-    
-                const club = league.clubs.find(c => c.name === clubName);
-                
-                // Only log if the club is not found
-                if (!club) {
-                    console.error('Error: Club not found in league.clubs for name:', clubName);
-                    return;  // Skip processing for this position if club is not found
-                }
-    
-                clubsToRelegate.push(club);
-            });
-        }
-    
         return clubsToRelegate;
     }
     
@@ -749,14 +815,6 @@ class SeasonManager {
             const club = league.clubs.find(c => c.name === clubName);
             if (club) clubsToPromote.push(club);
         });
-
-        if(league.promotePlayoffs.length > 0) {
-            league.promotePlayoffs.forEach(position => {
-                const clubName = sortedClubs[position - 1].name;
-                const club = league.clubs.find(c => c.name === clubName);
-                if (club) clubsToPromote.push(club);
-            });
-        }
 
         return clubsToPromote;
     }
@@ -1688,37 +1746,52 @@ function populateInternationalLeagues() {
 }
 
 // Call this function at the start of a new season, after standings are finalized
-function startNewSeasonWithInternationalLeagues() {
-    //blend in/out the elements like they normally are
-    document.getElementById("LeagueDropdown2").style.display="none";
-    document.getElementById("nextSeasonButton").style.display="none";
-    document.getElementById("inputContainer").style.display="block";
+// 1. Make the function async
+async function startNewSeasonWithInternationalLeagues() {
+    // Blend in/out elements
+    document.getElementById("LeagueDropdown2").style.display = "none";
+    document.getElementById("nextSeasonButton").style.display = "none";
 
-    // Then populate international leagues
-    populateInternationalLeagues();
+    // 2. Add error handling
+    try {
+        // Handle domestic transitions first
+        await seasonManager.handleSeasonTransition(); // 3. Add await here
 
-    // First handle domestic league transitions
-    seasonManager.handleSeasonTransition();
+        document.getElementById("inputContainer").style.display = "block";
 
-    // Reset calendar with all leagues (including international ones)
-    seasonCalendar = new Calendar(loadedLeagues);
-    loadedCups.forEach(cup => {
-        seasonCalendar.spreadIntoCalendar(cup.name, cup.totalRounds);
-    });
-    console.log("ft");
-    // Start with first league
-    activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
-    console.log("ftt "+activeLeagueName)
-    activeLeague = dLeagues.find(league => league.name === activeLeagueName);
-    if(!activeLeague){
-        switchToCup(dTournaments.find(cup => cup.name === activeLeagueName));
-        return;
+        // Then populate international leagues
+        populateInternationalLeagues();
+
+        // Reset calendar with all leagues
+        seasonCalendar = new Calendar(loadedLeagues);
+        loadedCups.forEach(cup => {
+            seasonCalendar.spreadIntoCalendar(cup.name, cup.totalRounds);
+        });
+
+        // Get first league in calendar
+        activeLeagueName = seasonCalendar.Calendar[seasonCalendar.calendarIndex];
+        activeLeague = dLeagues.find(league => league.name === activeLeagueName) ||
+                      dTournaments.find(cup => cup.name === activeLeagueName);
+
+        if (!activeLeague) {
+            throw new Error(`Could not find league/cup: ${activeLeagueName}`);
+        }
+
+        // Show appropriate matches
+        if (activeLeague instanceof League) {
+            showMatches(activeLeague.name);
+            updateTabel(activeLeague.getSortedClubs(), activeLeague);
+        } else {
+            switchToCup(activeLeague);
+        }
+
+        dropdown.style.display = "none";
+        switchToNextInput(true);
+
+    } catch (error) {
+        console.error("Season transition failed:", error);
+        // Handle error (show message to user, reset state, etc.)
     }
-    console.log("ftt")
-    showMatches(activeLeague.name);
-    updateTabel(activeLeague.getSortedClubs(), activeLeague);
-    dropdown.style.display = "none";
-    switchToNextInput(true);
 }
 
 
