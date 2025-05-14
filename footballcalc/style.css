@@ -542,6 +542,27 @@ label{
   pointer-events: none;
 }
 
+/* TROPHY HALL */
+.win95-trophy-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    padding: 15px;
+}
+
+.win95-trophy {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+.win95-trophy:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
 
 
 /* MOBILE ADJUSTMENTS */

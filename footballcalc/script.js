@@ -7,6 +7,14 @@ let ELColor = "#EB8F5A";
 let CoLColor = "#5FC385";
 let championColor = "#FFD700";
 
+const trophyTypes = {
+    "Champions League": {priority:1},
+    "Europa League": {priority:2},
+    "Conference League": {priority:3},
+    "League Champion": {priority:4},
+    "Cup Winner": {priority:5}
+}
+
 let loadedLeagues; //initialized at bottom (later dynamically), stores the leagues the game will cycle through
 let loadedCups; //initialized at bottom (later dynamically), stores the leagues the game will cycle through
 let activeLeague; //the league thats currently selected, used to dropdown.value
@@ -18,6 +26,10 @@ let seasonManager;
 let isSeasonOver = false; //set to true when season is over, but maybe won't be needed ?
 
 let userRandomness = 13.5;
+
+let currentSeason = 1; // Start with season 1, count +1 every season
+let currentYear = 24; // the year the season started in, so season 24/25 would be currentYear=24
+let firstYear = currentYear; // what year the player is starting the game in
 
 //IS SAVING ENABLED?
 let savingEnabled = false;
@@ -52,6 +64,8 @@ class Club { //all clubs
         this.totalDraws = 0;
 
         this.seasonalPositions = {};
+
+        this.trophies = {};
     }
 
     //init league stats on league creation --> is called when a league is created, for any club in the league
@@ -139,6 +153,31 @@ class Club { //all clubs
             console.log("JESUS!");
             console.log(this);
         }
+    }
+
+    //award a club a trophy
+    addTrophy(trophyName,season){
+        if (!this.trophies[trophyName]) {
+            this.trophies[trophyName] = [];
+        }
+        this.trophies[trophyName].push((season-1)+"/"+season);
+    }
+
+    //get trophy count
+    getTrophyCount(trophyName) {
+        return this.trophies[trophyName] ? this.trophies[trophyName].length : 0;
+    }
+
+    //get all trophies, sorted by importance
+    getAllTrophies() {
+        return Object.entries(this.trophies)
+            .map(([name, seasons]) => ({
+                name,
+                count: seasons.length,
+                seasons,
+                ...trophyTypes[name] // Merge with trophy type info
+            }))
+            .sort((a, b) => a.priority - b.priority);
     }
 }
 
@@ -442,6 +481,8 @@ class Cup{
             matchesCalculated(this,false);
         }
         else if(this.remainingClubs.length=1){
+            const winner = this.remainingClubs[0];
+            winner.addTrophy(`${this.name} Winner`, currentYear);
             console.log(this.remainingClubs[0].name + " wins the cup!");
             document.getElementById("LeagueTable").style.display = "block";
             if(debug_log_everything)console.log("CALL B");
@@ -643,14 +684,25 @@ class SeasonManager {
             // Sort leagues inside association
             const sortedLeagues = leaguesByAssociation[association].sort((a, b) => a.level - b.level);
             
-            // Handle promotion+relegation
             for (let i = 0; i < sortedLeagues.length; i++) {
                 const currentLeague = sortedLeagues[i];
                 const lowerLeague = sortedLeagues[i + 1];
                 const higherLeague = sortedLeagues[i - 1];
 
-                // Use stored standings for relegation/promotion decisions
+                // Use stored standings for league
                 currentLeague.sortedClubs = leagueStandings[currentLeague.name];
+
+                // Handle trophies
+                if(currentLeague.hasChampion && currentLeague.sortedClubs.length>0){
+                    const champion = this.getClubFromPosition(currentLeague, 1);
+                    console.log(currentLeague.sortedClubs[0]);
+                    if(champion){
+                        console.log("%c"+currentLeague.name + " Champion: "+champion.name,"color:green")
+                        champion.addTrophy(`${currentLeague.name} Champion`, currentYear);
+                    }
+                }
+
+                // Handle promotion+relegation
                 
                 // Get the clubs to be relegated/promoted directly
                 const clubsToRelegate = this.getClubsToRelegate(currentLeague);
@@ -985,7 +1037,8 @@ async function calculateInput() { //called when the calculate button is pressed,
             if(debug_log_everything)console.log("Shuffled List of Advancing Teams: " + advancingTeams); //DEBUG
             if(debug_log_everything)console.log("Length of Advancing Teams List: " + advancingTeams.length); //DEBUG
             if (advancingTeams.length === 1) {
-                let LeagueChampion = advancingTeams[0];
+                const LeagueChampion = findClubObjByName(advancingTeams[0]);
+                LeagueChampion.addTrophy(`${league.name} Winner`, currentYear+1);
                 console.log(LeagueChampion + " has won " + league.name);
             }
             let index = league.matchplan.findIndex(item => item[0] === null && item[1] === null);
@@ -1396,8 +1449,9 @@ function updateClubInfo(clubSorted) {
     
     // Create tabs
     const tabs = [
-        { id: "matchHistory", label: "Match History" },
-        { id: "clubStats", label: "Club Stats" }
+        { id: "matchHistory", label: "📆 Match History" },
+        { id: "clubStats", label: "📊 Club Stats" },
+        { id: "trophyHall", label: "🏆 Trophy Hall"}
     ];
     
     // Content containers
@@ -1551,7 +1605,7 @@ function updateClubInfo(clubSorted) {
     // Setup Club Stats tab content
     const statsContent = contentContainers.clubStats;
     
-    // Placeholder stats content
+    // stats content
     const statsContainer = document.createElement("div");
     statsContainer.classList.add("win95-stats-container");
 
@@ -1610,6 +1664,46 @@ function updateClubInfo(clubSorted) {
     });
     
     statsContent.appendChild(statsContainer);
+
+    //setup trophy hall tab content
+    const trophyContent = contentContainers.trophyHall;
+    const trophyContainer = document.createElement("div");
+    trophyContainer.classList.add("win95-trophy-container");
+
+    const trophies = club.getAllTrophies();
+
+    if (trophies.length === 0) {
+        const noTrophies = document.createElement("div");
+        noTrophies.textContent = "No trophies won yet";
+        noTrophies.style.textAlign = "center";
+        noTrophies.style.padding = "20px";
+        trophyContainer.appendChild(noTrophies);
+    } else {
+        trophies.forEach(trophy => {
+            const trophyElement = document.createElement("div");
+            trophyElement.classList.add("win95-trophy");
+            
+            const trophyName = document.createElement("div");
+            trophyName.textContent = trophy.name;
+            trophyName.style.fontWeight = "bold";
+            trophyName.style.color = trophy.color;
+            
+            const trophyCount = document.createElement("div");
+            trophyCount.textContent = `${trophy.count}x`;
+            
+            const trophySeasons = document.createElement("div");
+            trophySeasons.textContent = `Seasons: ${trophy.seasons.join(", ")}`;
+            trophySeasons.style.fontSize = "0.8em";
+            trophySeasons.style.color = "#666";
+            
+            trophyElement.appendChild(trophyName);
+            trophyElement.appendChild(trophyCount);
+            trophyElement.appendChild(trophySeasons);
+            trophyContainer.appendChild(trophyElement);
+        });
+    }
+
+    trophyContent.appendChild(trophyContainer);
 }
 
 function formatMatch(match, clubName) {
@@ -1748,6 +1842,10 @@ function populateInternationalLeagues() {
 // Call this function at the start of a new season, after standings are finalized
 // 1. Make the function async
 async function startNewSeasonWithInternationalLeagues() {
+    //update season variables
+    currentSeason++;
+    currentYear++;
+
     // Blend in/out elements
     document.getElementById("LeagueDropdown2").style.display = "none";
     document.getElementById("nextSeasonButton").style.display = "none";
@@ -1943,6 +2041,8 @@ function serialize_club_array(array) {
                 })),
                 hardcodedRating: club.hardcodedRating,
 
+                trophies: club.trophies,
+
                 highestVictorySpan: club.highestVictorySpan,
                 highestVictoryGoals: club.highestVictoryGoals,
                 highestVictoryMatch: club.highestVictoryMatch ? {
@@ -1988,6 +2088,8 @@ function unserialize_club_array(array) {
             const club = new Club(c.name, c.hardcodedRating);
             club.leagueStats = c.leagueStats;
             club.matches = c.matches; 
+
+            club.trophies = c.trophies || {};
     
             club.highestVictoryGoals = c.highestVictoryGoals;
             club.highestVictorySpan = c.highestVictorySpan;
@@ -2097,6 +2199,11 @@ function saveToStorage() {
         calendar: seasonCalendar?.Calendar || [],
         calendarIndex: seasonCalendar?.calendarIndex || 0
     }));
+
+    //season state
+    localStorage.setItem("FBC_currentSeason", currentSeason.toString());
+    localStorage.setItem("FBC_currentYear", currentYear.toString());
+    localStorage.setItem("FCB_firstYear", firstYear.toString());
     
     // Settings and game state
     localStorage.setItem("FBC_isSeasonOver", isSeasonOver);
@@ -2377,6 +2484,11 @@ function loadFromStorage() {
         console.log("Setting calendarIndex:", calendarData.calendarIndex);
         seasonCalendar.calendarIndex = calendarData.calendarIndex;
     }
+
+    //restore season tracking
+    currentSeason = localStorage.getItem("FBC_currentSeason");
+    currentYear = localStorage.getItem("FBC_currentYear");
+    firstYear = localStorage.getItem("FBC_firstYear");
 
     //restore season manager
     seasonManager = new SeasonManager();
