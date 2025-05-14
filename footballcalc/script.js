@@ -1754,13 +1754,13 @@ async function startNewSeasonWithInternationalLeagues() {
 
     // 2. Add error handling
     try {
-        // Handle domestic transitions first
+        // first populate international leagues
+        populateInternationalLeagues();
+
+        // then handle domestic transition
         await seasonManager.handleSeasonTransition(); // 3. Add await here
 
         document.getElementById("inputContainer").style.display = "block";
-
-        // Then populate international leagues
-        populateInternationalLeagues();
 
         // Reset calendar with all leagues
         seasonCalendar = new Calendar(loadedLeagues);
