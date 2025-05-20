@@ -5,7 +5,7 @@ dClubs = [
     new Club("Leverkusen", 950),
     new Club("Dortmund", 960),
     new Club("Freiburg", 740),
-    new Club("Berlin", 770),
+    new Club("U. Berlin", 770),
     new Club("Stuttgart", 640),
     new Club("Mönchengladbach", 720),
     new Club("Bremen", 670),
@@ -117,7 +117,7 @@ dClubs = [
     new Club("Regensburg", 200),
     //above is 2. Buli (18 Teams, 88-105)
     //below is Ligue 1 (18 Teams, 106-123)
-    new Club("Paris", 950),
+    new Club("Paris SG", 950),
     new Club("Monaco", 920),
     new Club("Marseille", 900),
     new Club("Lille", 780),
@@ -459,7 +459,7 @@ dLeagues=[
     new League("1.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i]),0,[],[],[17,18],[16],[1,2,3,4],[5],[6],"DFB",1),
     new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),0,[1,2],[3],[17,18],[16],[],[],[],"DFB",2),
     new League("3.Bundesliga", Array.from({ length: 20 }, (_, i) => dClubs[i + 124]),0,[1,2],[3],[17,18,19,20],[],[],[],[],"DFB",3),
-    new League("Regionalligen", Array.from({ length: 18 }, (_, i) => dClubs[i + 180]),0,[1,2,3,4],[],[17,18],[],[],[],[],"DFB",4,true,2,false), //unplayable
+    new League("Regionalligen", Array.from({ length: 18 }, (_, i) => dClubs[i + 180]),0,[1,2,3,4],[],[17,18],[],[],[],[],"DFB",4,false,2,false), //unplayable
     new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),0,[],[],[10],[],[1],[2],[3,4],"HNS",1,true,4),
     new League("2.HNL", Array.from({ length: 12 }, (_, i) => dClubs[i + 198]),0,[1],[],[12],[],[],[],[],"HNS",2,true,4),
     new League("3.HNL", Array.from({ length: 16 }, (_, i) => dClubs[i + 210]),0,[1],[],[16],[],[],[],[],"HNS",3,true,2,false), //unplayable
@@ -593,7 +593,7 @@ realChampionsLeagueClubs = [
     dClubs.find(c => c.name === "Lille"), // Lille
     dClubs.find(c => c.name === "Liverpool"), // Liverpool
     dClubs.find(c => c.name === "Manchester C."), // Manchester City
-    dClubs.find(c => c.name === "Paris"), // Paris Saint-Germain
+    dClubs.find(c => c.name === "Paris SG"), // Paris Saint-Germain
     clPool.find(c => c.name === "Porto"), // Porto
     dClubs.find(c => c.name === "PSV"), // PSV Eindhoven
     dClubs.find(c => c.name === "Leipzig"), // RB Leipzig

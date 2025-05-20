@@ -8,11 +8,23 @@ let CoLColor = "#5FC385";
 let championColor = "#FFD700";
 
 const trophyTypes = {
-    "Champions League": {priority:1},
-    "Europa League": {priority:2},
-    "Conference League": {priority:3},
-    "League Champion": {priority:4},
-    "Cup Winner": {priority:5}
+    "Champions League Winner": {priority:1, imageURL:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCgMo-awFVXlfYBMEUuhA9MvKEUWK4cYA3lw&s"},
+    "Europa League": {priority:2, imageURL:"https://amballcom.de/wp-content/uploads/2016/05/UEFA-EL-150-AP_FRONT_1_1000px.png"},
+    "Conference League": {priority:3, imageURL:"https://amballcom.de/wp-content/uploads/2022/05/UEFA_UECL-100_-FRONT_1000px-1.png"},
+    "1.Bundesliga Champion": {priority:4, imageURL:"https://kochundbergfeld.de/wp-content/uploads/2020/11/dfb-meisterschale-sterlingsilber.png"},
+    "DFB Pokal Winner": {priority:5, imageURL:"https://kochundbergfeld.de/wp-content/uploads/2020/11/dfb-pokal-trophaee.png"},
+    "2.Bundesliga Champion": {priority:6, imageURL:"https://lh4.googleusercontent.com/proxy/7jPhvch2QEkL_Eo2TRI1uNNVx2NFB9s16aaAvioBvMzSKBU91w4BOhkI16xVa6QVFmpbX_S6GymoOJg_WaS3pRnqetWv1k9GH4yQ5CURzwU"},
+    "3.Bundesliga Champion": {priority:7, imageURL:"https://fifa-town.s3.eu-central-1.amazonaws.com/images/trophies/3._deutschland_meister.png"},
+    "Primera Division Champion": {priority:4, imageURL:"https://tmssl.akamaized.net//images/erfolge/verybigquad/11.png?lm=1520606997"},
+    "Copa del Rey Winner": {priority:5, imageURL:"https://tmssl.akamaized.net//images/erfolge/verybigquad/94.png?lm=1520606999"},
+    "1.HNL Champion": {priority:4, imageURL:"https://tmssl.akamaized.net//images/erfolge/verybigquad/26.png?lm=1461847499"},
+    "Hrvatski Nogometni Kup Winner": {priority:5, imageURL:"https://upload.wikimedia.org/wikipedia/hr/2/29/Kup_HNS.jpg"},
+    "Premier League Champion": {priority:4, imageURL:"https://tmssl.akamaized.net//images/erfolge/header/12.png?lm=1520606997"},
+    "FA Cup Winner": {priority:5, imageURL:"https://tmssl.akamaized.net//images/erfolge/verybigquad/29.png?lm=1520606999"},
+    "Serie A Champion": {priority:4, imageURL:"https://i.pinimg.com/originals/0e/f9/50/0ef95050b935cd5b75e5f2448b2c833a.png"},
+    "Ligue 1 Champion": {priority:4, imageURL:"https://i.redd.it/rank-the-top-5-leagues-trophies-from-best-to-worst-v0-pkd7jp2si8zd1.png?width=800&format=png&auto=webp&s=bd1a775adfe89ae1a8f3d43e8023e216e6853abc"},
+    "Eredivisie Champion": {priority:4, imageURL:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdJpd_LC5e95CZI7rU4f3xuA5ArF-Q32KGdw&s"},
+    "Süper Lig Champion": {priority:4, imageURL:"https://tmssl.akamaized.net//images/erfolge/verybigquad/20.png?lm=1714987496"},
 }
 
 let loadedLeagues; //initialized at bottom (later dynamically), stores the leagues the game will cycle through
@@ -482,7 +494,7 @@ class Cup{
         }
         else if(this.remainingClubs.length=1){
             const winner = this.remainingClubs[0];
-            winner.addTrophy(`${this.name} Winner`, currentYear);
+            winner.addTrophy(`${this.name} Winner`, currentYear+1);
             console.log(this.remainingClubs[0].name + " wins the cup!");
             document.getElementById("LeagueTable").style.display = "block";
             if(debug_log_everything)console.log("CALL B");
@@ -1678,28 +1690,33 @@ function updateClubInfo(clubSorted) {
         noTrophies.style.textAlign = "center";
         noTrophies.style.padding = "20px";
         trophyContainer.appendChild(noTrophies);
+
     } else {
         trophies.forEach(trophy => {
-            const trophyElement = document.createElement("div");
-            trophyElement.classList.add("win95-trophy");
-            
-            const trophyName = document.createElement("div");
-            trophyName.textContent = trophy.name;
-            trophyName.style.fontWeight = "bold";
-            trophyName.style.color = trophy.color;
-            
-            const trophyCount = document.createElement("div");
-            trophyCount.textContent = `${trophy.count}x`;
-            
-            const trophySeasons = document.createElement("div");
-            trophySeasons.textContent = `Seasons: ${trophy.seasons.join(", ")}`;
-            trophySeasons.style.fontSize = "0.8em";
-            trophySeasons.style.color = "#666";
-            
-            trophyElement.appendChild(trophyName);
-            trophyElement.appendChild(trophyCount);
-            trophyElement.appendChild(trophySeasons);
-            trophyContainer.appendChild(trophyElement);
+            for (let i = 0; i < trophy.count; i++) {
+                const trophyElement = document.createElement("div");
+                trophyElement.classList.add("win95-trophy");
+
+                const trophyImage = document.createElement("img");
+                trophyImage.src = trophy.imageURL || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTE9R0VEDbO1_UjIHy3--KDBsO-iQjMub4KtQ&s";;
+                trophyImage.alt = trophy.name;
+                trophyImage.classList.add("trophy-image");
+
+                const trophyName = document.createElement("div");
+                const nameWords = trophy.name.split(" ");
+                trophyName.textContent = nameWords.length > 1 ? nameWords.slice(0, -1).join(" ") : trophy.name;
+                trophyName.classList.add("trophy-name");
+
+                const trophySeason = document.createElement("div");
+                const seasonIndex = i % trophy.seasons.length; // Cycle through seasons
+                trophySeason.textContent = `Season: ${trophy.seasons[seasonIndex]}`;
+                trophySeason.classList.add("trophy-seasons");
+
+                trophyElement.appendChild(trophyImage);
+                trophyElement.appendChild(trophyName);
+                trophyElement.appendChild(trophySeason);
+                trophyContainer.appendChild(trophyElement);
+            }
         });
     }
 
