@@ -218,7 +218,7 @@ function updateDayBadges() {
     }
 
     //420
-    if(now.getHours()===4 && now.getMinutes()===20 && now.getSeconds()===0){
+    if(now.getHours()===4 && now.getMinutes()===20){
         const badgeElement = document.getElementById("420");
         if (badgeElement && badgeElement.style.display !== "block") {
             badgeElement.style.display = "block";
