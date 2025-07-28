@@ -40,7 +40,7 @@ let isSeasonOver = false; //set to true when season is over, but maybe won't be 
 let userRandomness = 13.5;
 
 let currentSeason = 1; // Start with season 1, count +1 every season
-let currentYear = 24; // the year the season started in, so season 24/25 would be currentYear=24
+let currentYear = 25; // the year the season started in, so season 24/25 would be currentYear=24
 let firstYear = currentYear; // what year the player is starting the game in
 
 //IS SAVING ENABLED?
@@ -3155,6 +3155,9 @@ window.onload = function exampleFunction() {
         console.log("EL Initial Clubs:", elLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
         console.log("CoL Initial Clubs:", colLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
     }
+
+    //updating the leagues depending on what year it is currently.
+    onStartYearUpdated(currentYear);
 
     const startButton = document.createElement('button');
     startButton.id="startbutton";
