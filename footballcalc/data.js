@@ -60,7 +60,7 @@ dClubs = [
     new Club("Southampton", 520),
     new Club("Wolves", 600),
     new Club("Ipswich", 280),
-    new Club("Crystal Menace", 490),
+    new Club("Crystal Palace", 490),
     //above is Premier League (20 Teams, 38-57)
     //below is Serie A (20 Teams, 58-77)
     new Club("Neapel", 950),
@@ -697,11 +697,24 @@ function onStartYearUpdated(year){
     if(year > 24){
         //this will happen for when player starts in 2025 or later, so i will update everything that happened in 2025
         //this way it will go through all the years and always end up with the correct data
+        //uefa
+        dClubs.find(c => c.name === "Paris SG").addTrophy(dLeagues[22].name+" Winner", 25); //championsleague
+        dClubs.find(c => c.name === "Tottenham").addTrophy(dLeagues[23].name+" Winner", 25); //europaleague
+        dClubs.find(c => c.name === "Chelsea").addTrophy(dLeagues[24].name+" Winner", 25); //conferenceleague
+        //cups
+        dClubs.find(c => c.name === "Stuttgart").addTrophy(dTournaments[0].name+" Winner", 25); //dfb pokal
+        dClubs.find(c => c.name === "Rijeka").addTrophy(dTournaments[1].name+" Winner", 25); //hrvatski Nogometni Kup
+        dClubs.find(c => c.name === "Barcelona").addTrophy(dTournaments[2].name+" Winner", 25); //copa del rey
+        dClubs.find(c => c.name === "Crystal Palace").addTrophy(dTournaments[3].name+" Winner", 25); //fa cup
+        dClubs.find(c => c.name === "Bologna").addTrophy(dTournaments[4].name+" Winner", 25); //coppa italia
+        dClubs.find(c => c.name === "Paris SG").addTrophy(dTournaments[5].name+" Winner", 25); //coupe de france
         //1. BUNDESLIGA
+        dClubs.find(c => c.name === "Bayern").addTrophy(dLeagues[0].name+" Champion", 25);
             //relegations
             dLeagues[0].replaceClub(dClubs.find(c => c.name === "Kiel"), dClubs.find(c => c.name === "Köln"));
             dLeagues[0].replaceClub(dClubs.find(c => c.name === "Bochum"), dClubs.find(c => c.name === "Hamburg"));
         //2. BUNDESLIGA
+        dClubs.find(c => c.name === "Köln").addTrophy(dLeagues[1].name+" Champion", 25);
             //promotions
             dLeagues[1].replaceClub(dClubs.find(c => c.name === "Köln"), dClubs.find(c => c.name === "Kiel"));
             dLeagues[1].replaceClub(dClubs.find(c => c.name === "Hamburg"), dClubs.find(c => c.name === "Bochum"));
@@ -709,6 +722,7 @@ function onStartYearUpdated(year){
             dLeagues[1].replaceClub(dClubs.find(c => c.name === "Ulm"), dClubs.find(c => c.name === "Bielefeld"));
             dLeagues[1].replaceClub(dClubs.find(c => c.name === "Regensburg"), dClubs.find(c => c.name === "Dresden"));
         //3. BUNDESLIGA
+        dClubs.find(c => c.name === "Bielefeld").addTrophy(dLeagues[2].name+" Champion", 25);
             //promotions
             dLeagues[2].replaceClub(dClubs.find(c => c.name === "Bielefeld"), dClubs.find(c => c.name === "Ulm"));
             dLeagues[2].replaceClub(dClubs.find(c => c.name === "Dresden"), dClubs.find(c => c.name === "Regensburg"));
@@ -724,51 +738,61 @@ function onStartYearUpdated(year){
             dLeagues[3].replaceClub(dClubs.find(c => c.name === "Schweinfurt"), dClubs.find(c => c.name === "Sandhausen"));
             dLeagues[3].replaceClub(dClubs.find(c => c.name === "Havelse"), dClubs.find(c => c.name === "Unteraching"));
         //1. HNL
+        dClubs.find(c => c.name === "Rijeka").addTrophy(dLeagues[4].name+" Champion", 25);
             //relegations
             dLeagues[4].replaceClub(dClubs.find(c => c.name === "Sibenik"), dClubs.find(c => c.name === "Vukovar"));
         //2. HNL
+        dClubs.find(c => c.name === "Vukovar").addTrophy(dLeagues[5].name+" Champion", 25);
             //promotions
             dLeagues[5].replaceClub(dClubs.find(c => c.name === "Vukovar"), dClubs.find(c => c.name === "Sibenik"));
             //relegations
             dLeagues[5].replaceClub(dClubs.find(c => c.name === "Jurjevac"), dClubs.find(c => c.name === "Hrvace"));
         //3. HNL
+        dClubs.find(c => c.name === "Hrvace").addTrophy(dLeagues[6].name+" Champion", 25);
             //promotions
             dLeagues[6].replaceClub(dClubs.find(c => c.name === "Hrvace"), dClubs.find(c => c.name === "Jurjevac"));
         //PRIMERA DIVISION
+        dClubs.find(c => c.name === "Barcelona").addTrophy(dLeagues[7].name+" Champion", 25);
             //relegations
             dLeagues[7].replaceClub(dClubs.find(c => c.name === "Leganes"), dClubs.find(c => c.name === "Levante"));
             dLeagues[7].replaceClub(dClubs.find(c => c.name === "Palmas"), dClubs.find(c => c.name === "Elche"));
             dLeagues[7].replaceClub(dClubs.find(c => c.name === "Valladolid"), dClubs.find(c => c.name === "Oviedo"));
         //SEGUNDA DIVISION
+        dClubs.find(c => c.name === "Levante").addTrophy(dLeagues[8].name+" Champion", 25);
             //promotions
             dLeagues[8].replaceClub(dClubs.find(c => c.name === "Levante"), dClubs.find(c => c.name === "Leganes"));
             dLeagues[8].replaceClub(dClubs.find(c => c.name === "Elche"), dClubs.find(c => c.name === "Palmas"));
             dLeagues[8].replaceClub(dClubs.find(c => c.name === "Oviedo"), dClubs.find(c => c.name === "Valladolid"));
         //PREMIER LEAGUE
+        dClubs.find(c => c.name === "Liverpool").addTrophy(dLeagues[9].name+" Champion", 25);
             //relegations
             dLeagues[9].replaceClub(dClubs.find(c => c.name === "Southampton"), dClubs.find(c => c.name === "Leeds"));
             dLeagues[9].replaceClub(dClubs.find(c => c.name === "Leicester"), dClubs.find(c => c.name === "Burnley"));
             dLeagues[9].replaceClub(dClubs.find(c => c.name === "Ipswich"), dClubs.find(c => c.name === "Sunderland"));
         //CHAMPIONSHIP
+        dClubs.find(c => c.name === "Leeds").addTrophy(dLeagues[10].name+" Champion", 25);
             //promotions
             dLeagues[10].replaceClub(dClubs.find(c => c.name === "Leeds"), dClubs.find(c => c.name === "Southampton"));
             dLeagues[10].replaceClub(dClubs.find(c => c.name === "Burnley"), dClubs.find(c => c.name === "Leicester"));
             dLeagues[10].replaceClub(dClubs.find(c => c.name === "Sunderland"), dClubs.find(c => c.name === "Ipswich"));
             //relegations
-            dLeagues[10].replaceClub(dClubs.find(c => c.name === "Plymouth"), dClubs.find(c => c.name === "Rotherham"));
-            dLeagues[10].replaceClub(dClubs.find(c => c.name === "QPR"), dClubs.find(c => c.name === "Mansfield"));
+            dLeagues[10].replaceClub(dClubs.find(c => c.name === "Plymouth"), dClubs.find(c => c.name === "Birmingham"));
+            dLeagues[10].replaceClub(dClubs.find(c => c.name === "QPR"), dClubs.find(c => c.name === "Wrexham"));
             dLeagues[10].replaceClub(dClubs.find(c => c.name === "Luton"), dClubs.find(c => c.name === "Stockport"));
         //LEAGUE ONE
+        dClubs.find(c => c.name === "Birmingham").addTrophy(dLeagues[11].name+" Champion", 25);
             //promotions
-            dLeagues[11].replaceClub(dClubs.find(c => c.name === "Rotherham"), dClubs.find(c => c.name === "Plymouth"));
-            dLeagues[11].replaceClub(dClubs.find(c => c.name === "Mansfield"), dClubs.find(c => c.name === "QPR"));
+            dLeagues[11].replaceClub(dClubs.find(c => c.name === "Birmingham"), dClubs.find(c => c.name === "Plymouth"));
+            dLeagues[11].replaceClub(dClubs.find(c => c.name === "Wrexham"), dClubs.find(c => c.name === "QPR"));
             dLeagues[11].replaceClub(dClubs.find(c => c.name === "Stockport"), dClubs.find(c => c.name === "Luton"));
         //SERIE A
+        dClubs.find(c => c.name === "Neapel").addTrophy(dLeagues[12].name+" Champion", 25);
             //relegations
             dLeagues[12].replaceClub(dClubs.find(c => c.name === "Empoli"), dClubs.find(c => c.name === "Sassuolo"));
             dLeagues[12].replaceClub(dClubs.find(c => c.name === "Venedig"), dClubs.find(c => c.name === "Pisa"));
             dLeagues[12].replaceClub(dClubs.find(c => c.name === "Monza"), dClubs.find(c => c.name === "Cremonese"));
         //SERIE B
+        dClubs.find(c => c.name === "Sassuolo").addTrophy(dLeagues[13].name+" Champion", 25);
             //promotions
             dLeagues[13].replaceClub(dClubs.find(c => c.name === "Sassuolo"), dClubs.find(c => c.name === "Empoli"));
             dLeagues[13].replaceClub(dClubs.find(c => c.name === "Pisa"), dClubs.find(c => c.name === "Venedig"));
@@ -785,27 +809,32 @@ function onStartYearUpdated(year){
             dLeagues[14].replaceClub(dClubs.find(c => c.name === "Feralpisalo"), dClubs.find(c => c.name === "Brescia"));
             dLeagues[14].replaceClub(dClubs.find(c => c.name === "Vicenza"), dClubs.find(c => c.name === "Salernitana"));
         //LIGUE 1
+        dClubs.find(c => c.name === "Paris SG").addTrophy(dLeagues[15].name+" Champion", 25);
             //relegations
             dLeagues[15].replaceClub(dClubs.find(c => c.name === "Montpellier"), dClubs.find(c => c.name === "Lorient"));
-            dLeagues[15].replaceClub(dClubs.find(c => c.name === "Le Havre"), dClubs.find(c => c.name === "Metz"));
-            dLeagues[15].replaceClub(dClubs.find(c => c.name === "Clermont"), dClubs.find(c => c.name === "Dunkerque"));
+            dLeagues[15].replaceClub(dClubs.find(c => c.name === "Saint-Etienne"), dClubs.find(c => c.name === "Metz"));
+            dLeagues[15].replaceClub(dClubs.find(c => c.name === "Reims"), dClubs.find(c => c.name === "Paris FC"));
         //LIGUE 2
+        dClubs.find(c => c.name === "Lorient").addTrophy(dLeagues[16].name+" Champion", 25);
             //promotions
             dLeagues[16].replaceClub(dClubs.find(c => c.name === "Lorient"), dClubs.find(c => c.name === "Montpellier"));
-            dLeagues[16].replaceClub(dClubs.find(c => c.name === "Metz"), dClubs.find(c => c.name === "Le Havre"));
-            dLeagues[16].replaceClub(dClubs.find(c => c.name === "Dunkerque"), dClubs.find(c => c.name === "Clermont"));
+            dLeagues[16].replaceClub(dClubs.find(c => c.name === "Metz"), dClubs.find(c => c.name === "Saint-Etienne"));
+            dLeagues[16].replaceClub(dClubs.find(c => c.name === "Paris FC"), dClubs.find(c => c.name === "Reims"));
             //relegations
             dLeagues[16].replaceClub(dClubs.find(c => c.name === "Bastia"), dClubs.find(c => c.name === "Concarneau"));
             dLeagues[16].replaceClub(dClubs.find(c => c.name === "Quevilly"), dClubs.find(c => c.name === "Nancy"));
         //LIGUE 3
+        dClubs.find(c => c.name === "Nancy").addTrophy(dLeagues[17].name+" Champion", 25);
             //promotions
             dLeagues[17].replaceClub(dClubs.find(c => c.name === "Concarneau"), dClubs.find(c => c.name === "Bastia"));
             dLeagues[17].replaceClub(dClubs.find(c => c.name === "Nancy"), dClubs.find(c => c.name === "Quevilly"));
         //EREDIVISIE
+        dClubs.find(c => c.name === "PSV").addTrophy(dLeagues[18].name+" Champion", 25);
             //relegations
             dLeagues[18].replaceClub(dClubs.find(c => c.name === "Almere"), dClubs.find(c => c.name === "Willem II"));
             dLeagues[18].replaceClub(dClubs.find(c => c.name === "Waalwijk"), dClubs.find(c => c.name === "Heracles"));
         //EERSTE DIVISIE
+        dClubs.find(c => c.name === "Volendam").addTrophy(dLeagues[19].name+" Champion", 25);
             //promotions
             dLeagues[19].replaceClub(dClubs.find(c => c.name === "Willem II"), dClubs.find(c => c.name === "Almere"));
             dLeagues[19].replaceClub(dClubs.find(c => c.name === "Heracles"), dClubs.find(c => c.name === "Waalwijk"));
@@ -813,11 +842,13 @@ function onStartYearUpdated(year){
             dLeagues[19].replaceClub(dClubs.find(c => c.name === "Roda JC"), dClubs.find(c => c.name === "Cambuur"));
             dLeagues[19].replaceClub(dClubs.find(c => c.name === "Jong Utrecht"), dClubs.find(c => c.name === "Telstar"));
         //SÜPERLIG
+        dClubs.find(c => c.name === "Galatasaray").addTrophy(dLeagues[20].name+" Champion", 25);
             //relegations
             dLeagues[20].replaceClub(dClubs.find(c => c.name === "Adanaspor"), dClubs.find(c => c.name === "Bandirmaspor"));
             dLeagues[20].replaceClub(dClubs.find(c => c.name === "Sivasspor"), dClubs.find(c => c.name === "Manisa FK"));
             dLeagues[20].replaceClub(dClubs.find(c => c.name === "Pendikspor"), dClubs.find(c => c.name === "Kocaelispor"));
         //1.LIG
+        dClubs.find(c => c.name === "Kocaelispor").addTrophy(dLeagues[21].name+" Champion", 24);
             //promotions
             dLeagues[21].replaceClub(dClubs.find(c => c.name === "Bandirmaspor"), dClubs.find(c => c.name === "Adanaspor"));
             dLeagues[21].replaceClub(dClubs.find(c => c.name === "Manisa FK"), dClubs.find(c => c.name === "Sivasspor"));
