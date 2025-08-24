@@ -41,6 +41,18 @@ body,html {
   text-align: left;
 }
 
+#clubLogoTable{
+  height: 20px;
+  width: auto;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+#clubLogoInfo{
+  height: 75px;
+  width: auto;
+}
+
 #LeagueTable th {
   background-color: #B0B0B0;
   font-weight: bold;
@@ -178,6 +190,19 @@ body,html {
   display: none;
   width: auto;
   font-size: 16px;
+}
+
+.year-display {
+  background: white;
+  border: 2px inset #c0c0c0;
+  padding: 8px;
+  margin: 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #000080;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  text-align: center;
 }
 
 .win95-checkbox {

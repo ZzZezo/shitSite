@@ -40,11 +40,16 @@ let isSeasonOver = false; //set to true when season is over, but maybe won't be 
 let userRandomness = 13.5;
 
 let currentSeason = 1; // Start with season 1, count +1 every season
-let currentYear = 25; // the year the season started in, so season 24/25 would be currentYear=24
+const earliestYear = 24; //the earliest implemented year. Indicates where player can travel in time to
+const latestYear = 25; //the latest implemented year. Indicates where player can travel in time to
+let currentYear = latestYear; // the year the season started in, so season 24/25 would be currentYear=24
 let firstYear = currentYear; // what year the player is starting the game in
 
 //IS SAVING ENABLED?
 let savingEnabled = false;
+
+//IS LOGOS ENABLED?
+let logosEnabled = true;
 
 //settings or idk
 let show_color_in_match_list = true;
@@ -55,11 +60,14 @@ let debug_console_tables = false; //if true, prints the tables to the console
 let debug_log_everything = false; //if true, a lot more things are being logged in the console
 
 class Club { //all clubs
-    constructor(name,HardcodedRating) {
+    constructor(name,HardcodedRating,logoURL = "EMPTY") {
         this.name = name;
         this.leagueStats = {};  //a list of all leagues it takes part and the points it has in that league
         this.matches=[]; //lists every match the club plays in (or should, i'm not sure if it also tracks cup games etc.)
         this.hardcodedRating = HardcodedRating; //used for simulation^
+
+        if(logosEnabled)this.logoURL = logoURL;
+        else this.logoURL = "EMPTY";
 
         this.highestVictorySpan = 0;
         this.highestVictoryGoals = 0;
@@ -1341,11 +1349,17 @@ function updateTabel(sortedClubs,league){
     theadrow.appendChild(lossesHeader);
     if(!league.isInKnockoutPhase)tableBody.appendChild(theadrow);
     sortedClubs.forEach(club => {
+        let clubObj = findClubObjByName(club.name);
         const row = document.createElement("tr");
         const positionCell = document.createElement("td");
         positionCell.textContent = sortedClubs.indexOf(club)+1;
         const nameCell = document.createElement("td");
-        nameCell.innerHTML = "<b>"+club.name;
+
+        if(clubObj.logoURL != "EMPTY") {
+            nameCell.innerHTML = `<img src="${clubObj.logoURL}" alt="${clubObj.name} logo" id="clubLogoTable">`;
+        }
+        nameCell.innerHTML += "<b>"+club.name;
+
         const playedCell = document.createElement("td");
         playedCell.innerHTML = +league.crntweek;
         const pointsCell = document.createElement("td");
@@ -1439,7 +1453,13 @@ function updateClubInfo(clubSorted) {
     // Club name header
     if(debug_log_everything)console.log("opened menu for "+club.name);
     const clubHeader = document.createElement("h1");
-    clubHeader.textContent = club.name;
+    
+    if(club.logoURL != "EMPTY") {
+            clubHeader.innerHTML = `<img src="${club.logoURL}" id="clubLogoInfo">`;
+    }
+    clubHeader.innerHTML += club.name;
+
+    // clubHeader.textContent = club.name;
     clubHeader.classList.add("win95-window-title");
     clubHeader.style.marginTop = "20px";
 
@@ -2047,6 +2067,7 @@ function serialize_club_array(array) {
         try {
             return {
                 name: club.name,
+                logoURL: club.logoURL,
                 leagueStats: club.leagueStats,
                 matches: club.matches.map(match => ({
                     homeClub: match.homeClub.name,
@@ -2103,6 +2124,7 @@ function unserialize_club_array(array) {
     return array.map(c=> {
         try{
             const club = new Club(c.name, c.hardcodedRating);
+            club.logoURL = c.logoURL;
             club.leagueStats = c.leagueStats;
             club.matches = c.matches; 
 
@@ -2733,9 +2755,44 @@ function showClubProfile(club) {
     const profileContainer = document.createElement('div');
     
     // Club Name
-    const nameHeader = document.createElement('h2');
-    nameHeader.textContent = club.name;
+    const nameHeader = document.createElement('input');
+    nameHeader.value = club.name;
+    nameHeader.classList.add('popup-input');
+    nameHeader.style.width = '95%';
+    nameHeader.onkeyup = function() {club.name = this.value};
     profileContainer.appendChild(nameHeader);
+
+    profileContainer.appendChild(document.createElement('br'));
+    profileContainer.appendChild(document.createElement('br'));
+
+    //Club Logo
+    const logo = document.createElement('img');
+    logo.src = club.logoURL;
+    logo.style.height = '100px';
+    logo.style.width = 'auto';
+    profileContainer.appendChild(logo);
+
+    // Club Logo edit textinput
+    const logoWarning = document.createElement('p');
+    logoWarning.style.color = 'red';
+    logoWarning.textContent = 'Uploading too many custom Logos can break things.';
+    profileContainer.appendChild(logoWarning);
+    const logoInput = document.createElement('input');
+    logoInput.type = 'file';
+    logoInput.classList.add('win95-button');
+    logoInput.accept = 'image/*';
+    logoInput.addEventListener('change', () => {
+        const file = logoInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logo.src = e.target.result;
+                club.logoURL = logo.src;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    profileContainer.appendChild(logoInput);
 
     // Leagues List
     const leaguesHeader = document.createElement('h3');
@@ -2773,23 +2830,7 @@ function showClubProfile(club) {
     profileContainer.appendChild(leaguesList);
 
     closePopup();
-    createPopup("Club Profile", "", 2, ["Rename","Back"], [function(){showClubRename(club)},function(){closePopup();openEditMode();}], [profileContainer]);
-}
-
-function showClubRename(club) {
-    clubObj = dClubs.find(clubObj => clubObj.name === club.name);
-    closePopup();
-    createPrompt(club.name,"Enter the new Name here:",function(newName){
-        //the user input will be saved in the variable "answer"
-        if (newName) {
-            console.log("Renamed "+ club.name + " to " + newName);
-            club.name = newName;
-            clubObj.name = newName;
-            closePopup();
-            showClubProfile(club);
-        }
-    });
-    
+    createPopup("Club Profile", "", 1, ["Back"], [function(){closePopup();openEditMode();}], [profileContainer]);
 }
 
 function simulateMatch(homeTeamName, awayTeamName) {
@@ -3048,6 +3089,32 @@ function showDiagram(list, leagueName, clubname = "Diagram") {
     currentY = rect.top;
 }
 
+function travelInTime() {
+    //create year display
+    const yearDisplay = document.createElement('div');
+    yearDisplay.className = 'year-display';
+    yearDisplay.innerText = "20" + currentYear;
+
+    //create a slider
+    slider = document.createElement("input");
+    slider.type = "range";
+    slider.min = earliestYear;
+    slider.max = latestYear;
+    slider.value = currentYear;
+    slider.classList.add("popup-slider");
+    slider.oninput = function() {
+        yearDisplay.innerText = "20" + this.value;
+        currentYear = this.value;
+    }
+
+    //create a container for the slider
+    sliderContainer = document.createElement("div");
+    sliderContainer.classList.add("popup-slider-container");
+    sliderContainer.appendChild(slider);
+
+    //create popup
+    createPopup("Travel in Time", "Select a year to travel to", 1, ["Done"], [function () {closePopup();}], [yearDisplay,sliderContainer]);
+}
 
 function startGame_saveMode(){
     if(savingEnabled){
@@ -3067,6 +3134,9 @@ function startGame_saveMode(){
 }
 
 function startGame() {
+    //updating the leagues depending on what year it is currently.
+    onStartYearUpdated(currentYear);
+
     if (loadedLeagues.length < 1 && loadedCups.length < 1) return;
 
     loadedLeagues.forEach(league => {
@@ -3155,9 +3225,6 @@ window.onload = function exampleFunction() {
         console.log("EL Initial Clubs:", elLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
         console.log("CoL Initial Clubs:", colLeague.clubs.map(c => `${c.name} (${c.hardcodedRating})`));
     }
-
-    //updating the leagues depending on what year it is currently.
-    onStartYearUpdated(currentYear);
 
     const startButton = document.createElement('button');
     startButton.id="startbutton";

@@ -159,3 +159,38 @@
   font-size: 16px;
   cursor: url('../assets/images/old_pointer.png'), auto;
 }
+
+
+.popup-slider-container {
+  margin: 20px 0;
+  padding: 10px;
+  background: #c0c0c0;
+  border: 2px inset #c0c0c0;
+}
+
+.popup-slider {
+  width: 100%;
+  height: 20px;
+  background: #808080;
+  border: 1px inset #c0c0c0;
+  outline: none;
+  cursor: pointer;
+}
+
+.popup-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 18px;
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  cursor: pointer;
+}
+
+.popup-slider::-moz-range-thumb {
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  cursor: pointer;
+  border-radius: 0;
+}
