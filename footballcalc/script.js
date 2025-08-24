@@ -3148,6 +3148,7 @@ function startGame() {
     document.getElementById('editButton').style.display = "none";
     document.getElementById('savingIndicator').style.display = "none";
     document.getElementById('loadButton').style.display = "none";
+    document.getElementById('timetravelButton').style.display = "none";
     updateDropdownOptions();
 
     // Initialize the calendar with the loaded leagues and cups
