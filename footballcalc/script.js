@@ -1155,8 +1155,8 @@ function showMatches(leagueName) {
 
         if (match) {
             try {
-                t1 = match[0].name;
-                t2 = match[1].name;
+                t1 = findClubObjByDisplayName(match[0].name);
+                t2 = findClubObjByDisplayName(match[1].name);
                 
                 if(debug_log_everything)console.log(`  → Match gefunden: ${t1} vs. ${t2}`);
                 remainingMatches--;
@@ -1187,7 +1187,7 @@ function showMatches(leagueName) {
         //show in html
         const inputT1 = document.createElement("input");
             inputT1.type = "text";
-            inputT1.value = dClubs.find(club => club.name === t1).displayName;
+            inputT1.value = t1.displayName;
             inputT1.disabled = true;
             inputT1.classList.add("teamInput");
             const inputG1 = document.createElement("input");
@@ -1198,7 +1198,7 @@ function showMatches(leagueName) {
             if(debug_fast_skip)inputG1.value = 0;
             const inputT2 = document.createElement("input");
             inputT2.type = "text";
-            inputT2.value = dClubs.find(club => club.name === t2).displayName;
+            inputT2.value = t2.displayName;
             inputT2.disabled = true;
             inputT2.classList.add("teamInput");
             const inputG2 = document.createElement("input");
