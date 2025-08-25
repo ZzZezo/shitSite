@@ -448,8 +448,8 @@ class Cup{
             const name_homeClub = teamInputs[i].value;
             const name_awayClub = teamInputs[i + 1].value;
             //get club obj from club name
-            const homeClub = this.clubs.find(club => club.name === name_homeClub);
-            const awayClub = this.clubs.find(club => club.name === name_awayClub);
+            const homeClub = findClubObjByDisplayName(name_homeClub);
+            const awayClub = findClubObjByDisplayName(name_awayClub);
             //get goals
             const homeGoals = parseInt(goalInputs[i].value);
             const awayGoals = parseInt(goalInputs[i + 1].value);
@@ -1155,8 +1155,8 @@ function showMatches(leagueName) {
 
         if (match) {
             try {
-                t1 = findClubObjByDisplayName(match[0].name);
-                t2 = findClubObjByDisplayName(match[1].name);
+                t1 = findClubObjByName(match[0].name);
+                t2 = findClubObjByName(match[1].name);
                 
                 if(debug_log_everything)console.log(`  → Match gefunden: ${t1} vs. ${t2}`);
                 remainingMatches--;
@@ -1191,7 +1191,7 @@ function showMatches(leagueName) {
             inputT1.disabled = true;
             inputT1.classList.add("teamInput");
             const inputG1 = document.createElement("input");
-            inputG1.type = "text";
+            inputG1.type = "number";
             inputG1.placeholder = "0";
             inputG1.classList.add("goalInput");
             inputG1.onkeyup = function() {switchToNextInput()};
@@ -1202,7 +1202,7 @@ function showMatches(leagueName) {
             inputT2.disabled = true;
             inputT2.classList.add("teamInput");
             const inputG2 = document.createElement("input");
-            inputG2.type = "text";
+            inputG2.type = "number";
             inputG2.placeholder = "0";
             inputG2.classList.add("goalInput");
             inputG2.onkeyup = function() {switchToNextInput()};
@@ -1967,21 +1967,21 @@ function showCupMatches(cup) {
         //show in html
         const inputT1 = document.createElement("input");
         inputT1.type = "text";
-        inputT1.value = home.name;
+        inputT1.value = home.displayName;
         inputT1.disabled = true;
         inputT1.classList.add("teamInput");
         const inputG1 = document.createElement("input");
-        inputG1.type = "text";
+        inputG1.type = "number";
         inputG1.placeholder = "0";
         inputG1.classList.add("goalInput");
         inputG1.onkeyup = function() {switchToNextInput()};
         const inputT2 = document.createElement("input");
         inputT2.type = "text";
-        inputT2.value = away.name;
+        inputT2.value = away.displayName;
         inputT2.disabled = true;
         inputT2.classList.add("teamInput");
         const inputG2 = document.createElement("input");
-        inputG2.type = "text";
+        inputG2.type = "number";
         inputG2.placeholder = "0";
         inputG2.classList.add("goalInput");
         inputG2.onkeyup = function() {switchToNextInput()};

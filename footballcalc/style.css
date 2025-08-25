@@ -69,6 +69,8 @@ body,html {
 
 
 .goalInput{
+  -webkit-appearance: none; /* Add this line */
+  -moz-appearance: textfield; /* For Firefox */
   width: 20px;
   padding: 5px;
   font-size: 14px;
