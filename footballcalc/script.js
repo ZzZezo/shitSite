@@ -62,6 +62,7 @@ let debug_log_everything = false; //if true, a lot more things are being logged 
 class Club { //all clubs
     constructor(name,HardcodedRating,logoURL = "EMPTY") {
         this.name = name;
+        this.displayName = name;
         this.leagueStats = {};  //a list of all leagues it takes part and the points it has in that league
         this.matches=[]; //lists every match the club plays in (or should, i'm not sure if it also tracks cup games etc.)
         this.hardcodedRating = HardcodedRating; //used for simulation^
@@ -478,7 +479,7 @@ class Cup{
                         this.name,
                         "Who wins in Penalty Shootout?",
                         2,
-                        [homeClub.name, awayClub.name],
+                        [homeClub.displayName, awayClub.displayName],
                         [
                             () => resolve(homeClub),
                             () => resolve(awayClub),
@@ -934,29 +935,9 @@ async function calculateInput() { //called when the calculate button is pressed,
         const awayGoals = parseInt(innerContainer.children[4].value);
         
         // Search for clubs in dClubs first, then in the pools if not found
-        let homeClub = dClubs.find(club => club.name === homeClubName);
-        if (!homeClub) {
-            homeClub = clPool.find(club => club.name === homeClubName) ||
-                       elPool.find(club => club.name === homeClubName) ||
-                       colPool.find(club => club.name === homeClubName);
-        }
-        if(!homeClub){
-            homeClub = realChampionsLeagueClubs.find(club => club.name === homeClubName) ||
-                       realEuropaLeagueClubs.find(club => club.name === homeClubName) ||
-                       realConferenceLeagueClubs.find(club => club.name === homeClubName);
-        }
+        let homeClub = findClubObjByDisplayName(homeClubName);
         
-        let awayClub = dClubs.find(club => club.name === awayClubName);
-        if (!awayClub) {
-            awayClub = clPool.find(club => club.name === awayClubName) ||
-                       elPool.find(club => club.name === awayClubName) ||
-                       colPool.find(club => club.name === awayClubName);
-        }
-        if(!awayClub){
-            awayClub = realChampionsLeagueClubs.find(club => club.name === awayClubName) ||
-                       realEuropaLeagueClubs.find(club => club.name === awayClubName) ||
-                       realConferenceLeagueClubs.find(club => club.name === awayClubName);
-        }
+        let awayClub = findClubObjByDisplayName(awayClubName);
 
         if (!homeClub || !awayClub) {
             throw new Error(`One or both clubs (${homeClubName}, ${awayClubName}) not found in dClubs or pools.`);
@@ -986,7 +967,7 @@ async function calculateInput() { //called when the calculate button is pressed,
                     leagueName, // Use leagueName instead of this.name
                     "Who wins in Penalty Shootout?",
                     2,
-                    [homeClub.name, awayClub.name],
+                    [homeClub.displayName, awayClub.displayName],
                     [
                         () => resolve(homeClub),
                         () => resolve(awayClub),
@@ -1206,7 +1187,7 @@ function showMatches(leagueName) {
         //show in html
         const inputT1 = document.createElement("input");
             inputT1.type = "text";
-            inputT1.value = t1;
+            inputT1.value = dClubs.find(club => club.name === t1).displayName;
             inputT1.disabled = true;
             inputT1.classList.add("teamInput");
             const inputG1 = document.createElement("input");
@@ -1217,7 +1198,7 @@ function showMatches(leagueName) {
             if(debug_fast_skip)inputG1.value = 0;
             const inputT2 = document.createElement("input");
             inputT2.type = "text";
-            inputT2.value = t2;
+            inputT2.value = dClubs.find(club => club.name === t2).displayName;
             inputT2.disabled = true;
             inputT2.classList.add("teamInput");
             const inputG2 = document.createElement("input");
@@ -1358,7 +1339,7 @@ function updateTabel(sortedClubs,league){
         if(clubObj.logoURL != "EMPTY") {
             nameCell.innerHTML = `<img src="${clubObj.logoURL}" alt="${clubObj.name} logo" id="clubLogoTable">`;
         }
-        nameCell.innerHTML += "<b>"+club.name;
+        nameCell.innerHTML += "<b>"+clubObj.displayName;
 
         const playedCell = document.createElement("td");
         playedCell.innerHTML = +league.crntweek;
@@ -1457,7 +1438,7 @@ function updateClubInfo(clubSorted) {
     if(club.logoURL != "EMPTY") {
             clubHeader.innerHTML = `<img src="${club.logoURL}" id="clubLogoInfo">`;
     }
-    clubHeader.innerHTML += club.name;
+    clubHeader.innerHTML += club.displayName;
 
     // clubHeader.textContent = club.name;
     clubHeader.classList.add("win95-window-title");
@@ -1585,7 +1566,7 @@ function updateClubInfo(clubSorted) {
                 const row = document.createElement("tr");
                 
                 const homeCell = document.createElement("td");
-                homeCell.textContent = match.homeClub.name;
+                homeCell.textContent = match.homeClub.displayName;
                 if(match.homeClub.name == club.name) homeCell.style.fontWeight = "bold";
                 homeCell.classList.add("win95-table-cell");
                 
@@ -1598,7 +1579,7 @@ function updateClubInfo(clubSorted) {
                 awayGoals.classList.add("win95-table-cell");
                 
                 const awayCell = document.createElement("td");
-                awayCell.textContent = match.awayClub.name;
+                awayCell.textContent = match.awayClub.displayName;
                 if(match.awayClub.name == club.name) awayCell.style.fontWeight = "bold";
                 awayCell.classList.add("win95-table-cell");
 
@@ -1746,7 +1727,7 @@ function updateClubInfo(clubSorted) {
 function formatMatch(match, clubName) {
     if(!match || !match.homeClub || !match.awayClub) return "🔴 Unexpected Error 🔴";
     const isHomeMatch = match.homeClub.name === clubName;
-    const opponent = isHomeMatch ? match.awayClub.name : match.homeClub.name;
+    const opponent = isHomeMatch ? match.awayClub.displayName : match.homeClub.displayName;
     const score = `${match.homeGoals} - ${match.awayGoals}`;
     const result = isHomeMatch 
         ? (match.homeGoals > match.awayGoals ? "Win" : (match.homeGoals < match.awayGoals ? "Loss" : "Draw"))
@@ -2067,6 +2048,7 @@ function serialize_club_array(array) {
         try {
             return {
                 name: club.name,
+                displayName: club.displayName,
                 logoURL: club.logoURL,
                 leagueStats: club.leagueStats,
                 matches: club.matches.map(match => ({
@@ -2572,6 +2554,16 @@ function findClubObjByName(name) {
            realConferenceLeagueClubs.find(c => c.name === name);
 }
 
+function findClubObjByDisplayName(name) {
+    return dClubs.find(c => c.displayName === name) ||
+           clPool.find(c => c.displayName === name) ||
+           elPool.find(c => c.displayName === name) ||
+           colPool.find(c => c.displayName === name) ||
+           realChampionsLeagueClubs.find(c => c.displayName === name) ||
+           realEuropaLeagueClubs.find(c => c.displayName === name) ||
+           realConferenceLeagueClubs.find(c => c.displayName === name);
+}
+
 function showInfo(flag, country) {
     let container = flag.parentElement;
     Array.from(container.children).forEach(child => child.classList.remove("selectedFlag"));
@@ -2709,7 +2701,7 @@ function openEditMode() {
             clubItem.style.padding = '8px';
             clubItem.style.cursor = 'pointer';
             clubItem.style.borderBottom = '1px solid #ddd';
-            clubItem.textContent = club.name;
+            clubItem.textContent = club.displayName;
             clubItem.addEventListener('click', () => showClubProfile(club));
             clubList.appendChild(clubItem);
         });
@@ -2733,7 +2725,7 @@ function openEditMode() {
         clubItem.style.padding = '8px';
         clubItem.style.cursor = 'pointer';
         clubItem.style.borderBottom = '1px solid #ddd';
-        clubItem.textContent = club.name;
+        clubItem.textContent = club.displayName;
         
         clubItem.addEventListener('click', () => showClubProfile(club));
         clubList.appendChild(clubItem);
@@ -2756,10 +2748,10 @@ function showClubProfile(club) {
     
     // Club Name
     const nameHeader = document.createElement('input');
-    nameHeader.value = club.name;
+    nameHeader.value = club.displayName;
     nameHeader.classList.add('popup-input');
     nameHeader.style.width = '95%';
-    nameHeader.onkeyup = function() {club.name = this.value};
+    nameHeader.onkeyup = function() {club.displayName = this.value};
     profileContainer.appendChild(nameHeader);
 
     profileContainer.appendChild(document.createElement('br'));
@@ -2843,8 +2835,8 @@ function simulateMatch(homeTeamName, awayTeamName) {
     const GOAL_CAP = 9; // Maximum goals per team
 
     // Find team objects
-    const homeTeam = findClubObjByName(homeTeamName);
-    const awayTeam = findClubObjByName(awayTeamName);
+    const homeTeam = findClubObjByDisplayName(homeTeamName);
+    const awayTeam = findClubObjByDisplayName(awayTeamName);
     if (!homeTeam || !awayTeam) {
         console.error("Team not found");
         return null;
@@ -2973,7 +2965,7 @@ function showDiagram(list, leagueName, clubname = "Diagram") {
 
     // Title bar with club name
     const clubHeader = document.createElement("h1");
-    clubHeader.textContent = clubname;
+    clubHeader.textContent = findClubObjByName(clubname).displayName;
     clubHeader.classList.add("win95-window-title");
 
     // Close button
