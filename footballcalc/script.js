@@ -2532,6 +2532,7 @@ function loadFromStorage() {
     document.getElementById('editButton').style.display = "none";
     document.getElementById('savingIndicator').style.display = "none";
     document.getElementById('loadButton').style.display = "none";
+    document.getElementById('timetravelButton').style.display = "none";
     if (activeLeague) {
         if (activeLeague instanceof League) {
             showMatches(activeLeague.name);
