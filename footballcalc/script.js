@@ -35,6 +35,9 @@ let finshedLeagues = [];
 let seasonCalendar; //stores the one Object of the Calendar class
 let seasonManager;
 
+//store all trophies that were won over the seasons
+let trophyWinners = {};
+
 let isSeasonOver = false; //set to true when season is over, but maybe won't be needed ?
 
 let userRandomness = 13.5;
@@ -178,10 +181,18 @@ class Club { //all clubs
 
     //award a club a trophy
     addTrophy(trophyName,season){
+        //add trophy to the clubs trophy list:
         if (!this.trophies[trophyName]) {
             this.trophies[trophyName] = [];
         }
         this.trophies[trophyName].push((season-1)+"/"+season);
+
+
+        //add club to trophies club/winners list:
+        if (!trophyWinners[trophyName]) {
+            trophyWinners[trophyName] = [];
+        }
+        trophyWinners[trophyName].push([this.name, season]);
     }
 
     //get trophy count
@@ -1713,6 +1724,11 @@ function updateClubInfo(clubSorted) {
                 trophySeason.textContent = `Season: ${trophy.seasons[seasonIndex]}`;
                 trophySeason.classList.add("trophy-seasons");
 
+                //show all winners when trophy clicked
+                trophyElement.addEventListener("click", () => {
+                    showTrophyWinners(trophy.name);
+                });
+
                 trophyElement.appendChild(trophyImage);
                 trophyElement.appendChild(trophyName);
                 trophyElement.appendChild(trophySeason);
@@ -2235,6 +2251,9 @@ function saveToStorage() {
         console_tables: debug_console_tables,
         log_everything: debug_log_everything
     }));
+
+    //trophy winners
+    localStorage.setItem("FBC_trophyWinners", JSON.stringify(trophyWinners));
 }
 
 function loadFromStorage() {
@@ -2524,6 +2543,9 @@ function loadFromStorage() {
     debug_fast_skip = debugFlags.fast_skip || false;
     debug_console_tables = debugFlags.console_tables || false;
     debug_log_everything = debugFlags.log_everything || false;
+
+    //restore trophy winners
+    trophyWinners = JSON.parse(localStorage.getItem("FBC_trophyWinners") || "{}");
 
     // Initialize UI
     updateDropdownOptions();
@@ -3108,6 +3130,118 @@ function travelInTime() {
     //create popup
     createPopup("Travel in Time", "Select a year to travel to", 1, ["Done"], [function () {closePopup();}], [yearDisplay,sliderContainer]);
 }
+
+//list all the winners of a trophy
+function showTrophyWinners(trophyName){
+    let trophyWinnersList = trophyWinners[trophyName];
+    
+    // Create the popup window
+    const windowDiv = document.createElement('div');
+    windowDiv.className = 'win95-window';
+    windowDiv.style.width = "400px";
+
+    // Title bar with club name
+    const clubHeader = document.createElement("h1");
+    clubHeader.textContent = trophyName+ "s";
+    clubHeader.classList.add("win95-window-title");
+
+    // Close button
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "X";
+    closeButton.classList.add("win95-close");
+    closeButton.onclick = () => {
+        document.body.removeChild(windowDiv);
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', stopDragging);
+    };
+    clubHeader.appendChild(closeButton);
+
+    // Content area
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'win95-content';
+
+    //winners list
+    const winnersListDiv = document.createElement('div');
+    
+    winnersListDiv.style.maxWidth = '800px';
+    winnersListDiv.style.maxHeight = '500px';
+    winnersListDiv.style.overflow = 'auto';
+    winnersListDiv.style.backgroundColor = "#c0c0c0";
+    //centre text
+    winnersListDiv.style.textAlign = "center";
+
+    for (let i = trophyWinnersList.length - 1; i >= 0; i--) {
+        const winner = trophyWinnersList[i];
+        const listItem = document.createElement('div');
+        clubObj = findClubObjByName(winner[0]);
+        if(clubObj.logoURL != "EMPTY") listItem.innerHTML = (parseInt(winner[1])+2000) + ": " + `<img src="${clubObj.logoURL}" alt="${clubObj.name} logo" id="clubLogoTable">` + clubObj.displayName + "<br>";
+        else listItem.innerHTML = (parseInt(winner[1])+2000) + ": " + clubObj.displayName + "<br>";
+        winnersListDiv.appendChild(listItem);
+    }
+
+    // Assemble the popup
+    windowDiv.appendChild(clubHeader);
+    contentDiv.appendChild(winnersListDiv);
+    windowDiv.appendChild(contentDiv);
+    document.body.appendChild(windowDiv);
+
+    
+    // Dragging functionality
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+
+    clubHeader.addEventListener('mousedown', startDragging);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
+
+    function startDragging(e) {
+        // Prevent dragging if clicking the close button
+        if (e.target === closeButton) return;
+
+        initialX = e.clientX - currentX;
+        initialY = e.clientY - currentY;
+
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+        windowDiv.style.left = `${currentX}px`;
+        windowDiv.style.top = `${currentY}px`;
+
+        isDragging = true;
+        windowDiv.style.transform = 'none'; // Remove centering transform during drag
+
+        //set all windowDivs at zIndex 1000
+        const windowDivs = document.querySelectorAll('.win95-window');
+        for (let i = 0; i < windowDivs.length; i++) {
+            windowDivs[i].style.zIndex = '1000';
+        }
+
+        //Set only the current one at z 9999, so its always in foreground
+        windowDiv.style.zIndex = '9999';
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault(); // Prevent text selection
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+            windowDiv.style.left = `${currentX}px`;
+            windowDiv.style.top = `${currentY}px`;
+        }
+    }
+
+    function stopDragging() {
+        isDragging = false;
+    }
+
+    // Initialize position
+    const rect = windowDiv.getBoundingClientRect();
+    currentX = rect.left;
+    currentY = rect.top;
+}
+
 
 function startGame_saveMode(){
     if(savingEnabled){
