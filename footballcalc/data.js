@@ -13,9 +13,9 @@ dClubs = [
     new Club("Heidenheim", 400, "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/1._FC_Heidenheim_1846.svg/1661px-1._FC_Heidenheim_1846.svg.png"),
     new Club("Mainz", 600, "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Logo_Mainz_05.svg/1200px-Logo_Mainz_05.svg.png"),
     new Club("Wolfsburg", 730, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Logo-VfL-Wolfsburg.svg/1200px-Logo-VfL-Wolfsburg.svg.png"),
-    new Club("St. Pauli", 200, "https://upload.wikimedia.org/wikipedia/de/thumb/b/b3/Fc_st_pauli_logo.svg/2048px-Fc_st_pauli_logo.svg.png"),
+    new Club("St. Pauli", 404, "https://upload.wikimedia.org/wikipedia/de/thumb/b/b3/Fc_st_pauli_logo.svg/2048px-Fc_st_pauli_logo.svg.png"),
     new Club("Hoffenheim", 650, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Logo_TSG_Hoffenheim.svg/1716px-Logo_TSG_Hoffenheim.svg.png"),
-    new Club("Kiel", 180, "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Holstein_Kiel_Logo.svg/2048px-Holstein_Kiel_Logo.svg.png"),
+    new Club("Kiel", 320, "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Holstein_Kiel_Logo.svg/2048px-Holstein_Kiel_Logo.svg.png"),
     new Club("Bochum", 320, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/VfL_Bochum_logo.svg/1945px-VfL_Bochum_logo.svg.png"),
     //above is Bundesliga (18 Teams, 0-17)
     //below is LaLiga (20 Teams, 18-37)
@@ -137,26 +137,26 @@ dClubs = [
     new Club("Montpellier", 410),
     //above is Ligue 1 (18 Teams, 106-123)
     //below is 3. Bundesliga (20 Teams, 124-143)
-    new Club("Sandhausen", 320),
+    new Club("Sandhausen", 320, "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/SV_Sandhausen.svg/1200px-SV_Sandhausen.svg.png"),
     new Club("Bielefeld", 380, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Arminia_Bielefeld_Logo_2021%E2%80%93.svg/1200px-Arminia_Bielefeld_Logo_2021%E2%80%93.svg.png"),
     new Club("Dresden", 400, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_SG_Dynamo_Dresden_neu.svg/908px-Logo_SG_Dynamo_Dresden_neu.svg.png"),
-    new Club("Saarbrücken", 390),
-    new Club("Cottbus", 360),
-    new Club("Aue", 340),
-    new Club("Wiesbaden", 320),
-    new Club("Ingolstadt", 300),
-    new Club("V. Köln", 310),
-    new Club("1860", 370),
-    new Club("Dortmund II", 200),
-    new Club("Aachen", 380),
-    new Club("Mannheim", 430),
-    new Club("Verl", 300),
-    new Club("Rostock", 450),
-    new Club("Essen", 350),
-    new Club("Stuttgart II", 210),
-    new Club("Hannover II", 190),
-    new Club("Unteraching", 250),
-    new Club("Osnabrück", 360),
+    new Club("Saarbrücken", 390, "https://upload.wikimedia.org/wikipedia/de/thumb/f/ff/1._FC_Saarbr%C3%BCcken.svg/1200px-1._FC_Saarbr%C3%BCcken.svg.png"),
+    new Club("Cottbus", 360, "https://upload.wikimedia.org/wikipedia/commons/5/55/Logo_Energie_Cottbus.svg"),
+    new Club("Aue", 340, "https://upload.wikimedia.org/wikipedia/de/archive/1/13/20200320083203%21Fc_erzgebirge_aue.svg"),
+    new Club("Wiesbaden", 320, "https://upload.wikimedia.org/wikipedia/de/thumb/3/3d/Logo_SV_Wehen_Wiesbaden.svg/1200px-Logo_SV_Wehen_Wiesbaden.svg.png"),
+    new Club("Ingolstadt", 300, "https://upload.wikimedia.org/wikipedia/de/thumb/5/55/FC-Ingolstadt_logo.svg/1200px-FC-Ingolstadt_logo.svg.png"),
+    new Club("V. Köln", 310, "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/FC_Viktoria_K%C3%B6ln_1904_Logo.svg/1200px-FC_Viktoria_K%C3%B6ln_1904_Logo.svg.png"),
+    new Club("1860", 370, "https://upload.wikimedia.org/wikipedia/commons/4/48/TSV_1860_M%C3%BCnchen.svg"),
+    new Club("Dortmund II", 200, "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Borussia_Dortmund_logo.svg/2048px-Borussia_Dortmund_logo.svg.png"),
+    new Club("Aachen", 380, "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Alemannia_Aachen_2010.svg/1200px-Alemannia_Aachen_2010.svg.png"),
+    new Club("Mannheim", 430, "https://upload.wikimedia.org/wikipedia/commons/1/17/Svwaldhof.svg"),
+    new Club("Verl", 300, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/SC_Verl_Logo.svg/1200px-SC_Verl_Logo.svg.png"),
+    new Club("Rostock", 450, "https://upload.wikimedia.org/wikipedia/de/thumb/a/a6/FC_Hansa_Rostock_Logo.svg/2048px-FC_Hansa_Rostock_Logo.svg.png"),
+    new Club("Essen", 350, "https://upload.wikimedia.org/wikipedia/de/thumb/8/8a/Logo_Rot-Weiss_Essen.svg/2048px-Logo_Rot-Weiss_Essen.svg.png"),
+    new Club("Stuttgart II", 210, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/VfB_Stuttgart_1893_Logo.svg/1200px-VfB_Stuttgart_1893_Logo.svg.png"),
+    new Club("Hannover II", 190, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Hannover_96_Logo.svg/1200px-Hannover_96_Logo.svg.png"),
+    new Club("Unteraching", 250, "https://upload.wikimedia.org/wikipedia/de/thumb/1/1f/SpVgg_Unterhaching_Logo_2012.svg/1200px-SpVgg_Unterhaching_Logo_2012.svg.png"),
+    new Club("Osnabrück", 360, "https://upload.wikimedia.org/wikipedia/commons/4/4e/VfL_Osnabrueck_Logo_2021%E2%80%93.svg"),
     //above is 3. Bundesliga (20 Teams, 124-143)
     //below is Eredivisie (18 Teams, 144-161)
     new Club("PSV", 880),
@@ -199,24 +199,24 @@ dClubs = [
     new Club("Hatay", 160),
     //above is Süper Lig(18 Teams, 162-179)
     //below are some lower clubs from Germany (for DFB Pokal+ 3. division relegation) (18 Teams, 180-197)
-    new Club("Offenbach", 100),
-    new Club("Villingen Schwenningen", 50),
-    new Club("Duigsburg", 140),
-    new Club("Lotte", 100),
-    new Club("Halle", 80),
-    new Club("Jena", 100),
-    new Club("Erfurt", 50),
-    new Club("Chemnitz", 40),
-    new Club("Meppen", 30),
-    new Club("Lübeck", 30),
-    new Club("Schweinfurt", 90),
-    new Club("Bayreuth", 60),
-    new Club("Aschaffenburg", 10),
-    new Club("Würzburg", 20),
-    new Club("Trier", 10),
-    new Club("Gießen", 10),
-    new Club("Heidelberg", 10),
-    new Club("Offenburg", 10),
+    new Club("Offenbach", 100, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBsJRhsBgcv6jXlbqYSLshGJhVT6qIIRjZzQ&s"),
+    new Club("Villingen Schwenningen", 50, "https://fcvillingen.de/wp-content/uploads/2018/08/FC_08.png"),
+    new Club("Duigsburg", 140, "https://upload.wikimedia.org/wikipedia/de/thumb/2/28/MSV_Duisburg.svg/2048px-MSV_Duisburg.svg.png"),
+    new Club("Lotte", 100, "https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_SF_Lotte.svg"),
+    new Club("Halle", 80, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Hallescher_FC_Logo_2012.svg/1200px-Hallescher_FC_Logo_2012.svg.png"),
+    new Club("Jena", 100, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Logo_FC_Carl_Zeiss_Jena.svg/1557px-Logo_FC_Carl_Zeiss_Jena.svg.png"),
+    new Club("Erfurt", 50, "https://upload.wikimedia.org/wikipedia/de/thumb/4/41/Rot_Weiss_Erfurt_Logo.svg/1297px-Rot_Weiss_Erfurt_Logo.svg.png"),
+    new Club("Chemnitz", 40, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Chemnitzer_FC_Logo.svg/1200px-Chemnitzer_FC_Logo.svg.png"),
+    new Club("Meppen", 30, "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/SV_Meppen_Logo.svg/1200px-SV_Meppen_Logo.svg.png"),
+    new Club("Lübeck", 30, "https://upload.wikimedia.org/wikipedia/de/8/86/VfB_L%C3%BCbeck.svg"),
+    new Club("Schweinfurt", 90, "https://upload.wikimedia.org/wikipedia/de/thumb/7/7c/1._FC_Schweinfurt_05.svg/1200px-1._FC_Schweinfurt_05.svg.png"),
+    new Club("Bayreuth", 60, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIESluC4TTeF-vdhDIX3eFJJe0ttNCoEr85w&s"),
+    new Club("Aschaffenburg", 10, "https://upload.wikimedia.org/wikipedia/de/thumb/2/27/Logo_SV_Viktoria_Aschaffenburg.svg/1200px-Logo_SV_Viktoria_Aschaffenburg.svg.png"),
+    new Club("Würzburg", 20, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/W%C3%BCrzburger_Kickers_Logo.svg/1200px-W%C3%BCrzburger_Kickers_Logo.svg.png"),
+    new Club("Trier", 10, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Eintracht_Trier_2023.svg/1200px-Eintracht_Trier_2023.svg.png"),
+    new Club("Gießen", 10, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuIlISJhxXIqEhPynawIrhUnLu854YDzUxeA&s"),
+    new Club("Heidelberg", 10, "https://upload.wikimedia.org/wikipedia/commons/f/fa/HeidelbergerSC.svg"),
+    new Club("Offenburg", 10, "https://upload.wikimedia.org/wikipedia/de/1/1e/Offenburger_FV.gif"),
     //above are some lower clubs from Germany (for DFB Pokal+ 3. division relegation) (18 Teams, 180-197)
     //below are 2.nd hnl (12 Teams, 198-209)
     new Club("Bijelo Brdo", 150, "https://upload.wikimedia.org/wikipedia/en/thumb/1/16/NK_BSK_Bijelo_Brdo_Logo.svg/1200px-NK_BSK_Bijelo_Brdo_Logo.svg.png"),
@@ -453,8 +453,8 @@ dClubs = [
     new Club("Yeni Malatyas...", 300),
     //above is 1. Lig (Turkey, second tier) (20 Teams, 388-407)
     //below are additional teams (no league, that ever got promoted into a playable league nd before didnt exist in database)
-    new Club("Hoffenheim II", 100),
-    new Club("Havelse", 100)
+    new Club("Hoffenheim II", 100, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Logo_TSG_Hoffenheim.svg/1716px-Logo_TSG_Hoffenheim.svg.png"),
+    new Club("Havelse", 100, "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/TSV_Havelse_logo.svg/640px-TSV_Havelse_logo.svg.png")
 ]
 
 dLeagues=[
@@ -462,7 +462,7 @@ dLeagues=[
     new League("1.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i]),0,[],[],[17,18],[16],[1,2,3,4],[5],[6],"DFB",1),
     new League("2.Bundesliga", Array.from({ length: 18 }, (_, i) => dClubs[i + 88]),0,[1,2],[3],[17,18],[16],[],[],[],"DFB",2),
     new League("3.Bundesliga", Array.from({ length: 20 }, (_, i) => dClubs[i + 124]),0,[1,2],[3],[17,18,19,20],[],[],[],[],"DFB",3),
-    new League("Regionalligen", Array.from({ length: 18 }, (_, i) => dClubs[i + 180]),0,[1,2,3,4],[],[17,18],[],[],[],[],"DFB",4,false,2,false), //unplayable
+    new League("Regionalligen", Array.from({ length: 18 }, (_, i) => dClubs[i + 180]),0,[1,2,3,4],[],[17,18],[],[],[],[],"DFB",4,false,2,true), //unplayable
     new League("1.HNL", Array.from({ length: 10 }, (_, i) => dClubs[i + 78]),0,[],[],[10],[],[1],[2],[3,4],"HNS",1,true,4),
     new League("2.HNL", Array.from({ length: 12 }, (_, i) => dClubs[i + 198]),0,[1],[],[12],[],[],[],[],"HNS",2,true,4),
     new League("3.HNL", Array.from({ length: 16 }, (_, i) => dClubs[i + 210]),0,[1],[],[16],[],[],[],[],"HNS",3,true,2,false), //unplayable
