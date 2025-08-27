@@ -3119,7 +3119,7 @@ function travelInTime() {
     slider.classList.add("popup-slider");
     slider.oninput = function() {
         yearDisplay.innerText = "20" + this.value;
-        currentYear = this.value;
+        currentYear = parseInt(this.value);
     }
 
     //create a container for the slider
