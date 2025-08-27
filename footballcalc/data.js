@@ -19,67 +19,67 @@ dClubs = [
     new Club("Bochum", 320, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/VfL_Bochum_logo.svg/1945px-VfL_Bochum_logo.svg.png"),
     //above is Bundesliga (18 Teams, 0-17)
     //below is LaLiga (20 Teams, 18-37)
-    new Club("Barcelona", 1000),
-    new Club("R. Madrid", 990),
-    new Club("A. Madrid", 920),
-    new Club("Villareal", 800),
-    new Club("Osasuna", 480),
-    new Club("Atl. Bilbao", 750),
-    new Club("R. Betis", 740),
-    new Club("Mallorca", 400),
-    new Club("R. Vallecano", 390),
-    new Club("Celta", 580),
-    new Club("R. Sociedad", 810),
-    new Club("Girona", 360),
-    new Club("Sevilla", 860),
-    new Club("Alaves", 270),
-    new Club("Leganes", 140),
-    new Club("Getafe", 460),
-    new Club("Espanyol", 500),
-    new Club("Palmas", 280),
-    new Club("Valladolid", 320),
-    new Club("Valencia", 870),
+    new Club("Barcelona", 1000,"https://upload.wikimedia.org/wikipedia/de/thumb/a/aa/Fc_barcelona.svg/1200px-Fc_barcelona.svg.png"),
+    new Club("R. Madrid", 990, "https://upload.wikimedia.org/wikipedia/de/thumb/3/3f/Real_Madrid_Logo.svg/1200px-Real_Madrid_Logo.svg.png"),
+    new Club("A. Madrid", 920, "https://upload.wikimedia.org/wikipedia/en/thumb/f/f9/Atletico_Madrid_Logo_2024.svg/1200px-Atletico_Madrid_Logo_2024.svg.png"),
+    new Club("Villareal", 800, "https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Villarreal_CF_logo-en.svg/1200px-Villarreal_CF_logo-en.svg.png"),
+    new Club("Osasuna", 480, "https://upload.wikimedia.org/wikipedia/en/thumb/3/38/CA_Osasuna_2024_crest.svg/1200px-CA_Osasuna_2024_crest.svg.png"),
+    new Club("Atl. Bilbao", 750, "https://upload.wikimedia.org/wikipedia/de/thumb/7/7f/Athletic_Club_Bilbao.svg/1200px-Athletic_Club_Bilbao.svg.png"),
+    new Club("R. Betis", 740, "https://upload.wikimedia.org/wikipedia/en/thumb/1/13/Real_betis_logo.svg/1200px-Real_betis_logo.svg.png"),
+    new Club("Mallorca", 400, "https://upload.wikimedia.org/wikipedia/de/thumb/e/e0/Rcd_mallorca.svg/1200px-Rcd_mallorca.svg.png"),
+    new Club("R. Vallecano", 390, "https://upload.wikimedia.org/wikipedia/en/thumb/d/d8/Rayo_Vallecano_logo.svg/1200px-Rayo_Vallecano_logo.svg.png"),
+    new Club("Celta", 580, "https://upload.wikimedia.org/wikipedia/en/thumb/1/12/RC_Celta_de_Vigo_logo.svg/1200px-RC_Celta_de_Vigo_logo.svg.png"),
+    new Club("R. Sociedad", 810, "https://upload.wikimedia.org/wikipedia/en/thumb/f/f1/Real_Sociedad_logo.svg/1200px-Real_Sociedad_logo.svg.png"),
+    new Club("Girona", 360, "https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/Girona_FC_Logo.svg/1200px-Girona_FC_Logo.svg.png"),
+    new Club("Sevilla", 860, "https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Sevilla_FC_logo.svg/1200px-Sevilla_FC_logo.svg.png"),
+    new Club("Alaves", 270, "https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Deportivo_Alaves_logo_%282020%29.svg/1200px-Deportivo_Alaves_logo_%282020%29.svg.png"),
+    new Club("Leganes", 140, "https://upload.wikimedia.org/wikipedia/en/thumb/b/b8/Club_Deportivo_Legan%C3%A9s_logo.svg/1200px-Club_Deportivo_Legan%C3%A9s_logo.svg.png"),
+    new Club("Getafe", 460, "https://upload.wikimedia.org/wikipedia/en/thumb/b/b8/Club_Deportivo_Legan%C3%A9s_logo.svg/1200px-Club_Deportivo_Legan%C3%A9s_logo.svg.png"),
+    new Club("Espanyol", 500, "https://upload.wikimedia.org/wikipedia/de/thumb/a/a7/RCD_Espanyol_De_Barcelona.svg/1200px-RCD_Espanyol_De_Barcelona.svg.png"),
+    new Club("Palmas", 280, "https://upload.wikimedia.org/wikipedia/en/thumb/2/20/UD_Las_Palmas_logo.svg/1200px-UD_Las_Palmas_logo.svg.png"),
+    new Club("Valladolid", 320, "https://upload.wikimedia.org/wikipedia/de/thumb/6/6e/Real_Valladolid_Logo.svg/1200px-Real_Valladolid_Logo.svg.png"),
+    new Club("Valencia", 870, "https://upload.wikimedia.org/wikipedia/de/thumb/7/75/FC_Valencia.svg/1200px-FC_Valencia.svg.png"),
     //above is LaLiga (20 Teams, 18-37)
     //below is Premier League (20 Teams, 38-57)
-    new Club("Liverpool", 980),
-    new Club("Manchester C.", 1000),
-    new Club("Nottingham", 520),
-    new Club("Chelsea", 940),
-    new Club("Arsenal", 970),
-    new Club("Aston V.", 840),
-    new Club("Tottenham", 930),
-    new Club("Brighton", 840),
-    new Club("Fulham", 560),
-    new Club("Bournemouth", 430),
-    new Club("Newcastle", 910),
-    new Club("Brentford", 600),
-    new Club("Manchester U.", 970),
-    new Club("West Hammers", 680),
-    new Club("Leicester", 540),
-    new Club("Everton", 580),
-    new Club("Southampton", 520),
-    new Club("Wolves", 600),
-    new Club("Ipswich", 280),
-    new Club("Crystal Palace", 490),
+    new Club("Liverpool", 980, "https://upload.wikimedia.org/wikipedia/de/thumb/0/0a/FC_Liverpool.svg/1200px-FC_Liverpool.svg.png"),
+    new Club("Manchester C.", 1000, "https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Manchester_City_FC_badge.svg/1200px-Manchester_City_FC_badge.svg.png"),
+    new Club("Nottingham", 520, "https://upload.wikimedia.org/wikipedia/en/thumb/e/e5/Nottingham_Forest_F.C._logo.svg/1200px-Nottingham_Forest_F.C._logo.svg.png"),
+    new Club("Chelsea", 940, "https://upload.wikimedia.org/wikipedia/de/thumb/5/5c/Chelsea_crest.svg/1200px-Chelsea_crest.svg.png"),
+    new Club("Arsenal", 970, "https://upload.wikimedia.org/wikipedia/de/thumb/3/32/FC_Arsenal_%28seit_2002%29.svg/1200px-FC_Arsenal_%28seit_2002%29.svg.png"),
+    new Club("Aston V.", 840, "https://upload.wikimedia.org/wikipedia/en/thumb/9/9a/Aston_Villa_FC_new_crest.svg/1200px-Aston_Villa_FC_new_crest.svg.png"),
+    new Club("Tottenham", 930, "https://upload.wikimedia.org/wikipedia/en/thumb/b/b4/Tottenham_Hotspur.svg/1200px-Tottenham_Hotspur.svg.png"),
+    new Club("Brighton", 840, "https://upload.wikimedia.org/wikipedia/de/thumb/b/bf/Brighton_and_hove_albion.svg/1200px-Brighton_and_hove_albion.svg.png"),
+    new Club("Fulham", 560, "https://upload.wikimedia.org/wikipedia/de/thumb/a/a8/Fulham_fc.svg/1200px-Fulham_fc.svg.png"),
+    new Club("Bournemouth", 430, "https://upload.wikimedia.org/wikipedia/en/thumb/e/e5/AFC_Bournemouth_%282013%29.svg/1200px-AFC_Bournemouth_%282013%29.svg.png"),
+    new Club("Newcastle", 910, "https://upload.wikimedia.org/wikipedia/de/thumb/5/56/Newcastle_United_Logo.svg/1200px-Newcastle_United_Logo.svg.png"),
+    new Club("Brentford", 600, "https://upload.wikimedia.org/wikipedia/en/thumb/2/2a/Brentford_FC_crest.svg/1200px-Brentford_FC_crest.svg.png"),
+    new Club("Manchester U.", 970, "https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/640px-Manchester_United_FC_crest.svg.png"),
+    new Club("West Hammers", 680, "https://upload.wikimedia.org/wikipedia/en/thumb/c/c2/West_Ham_United_FC_logo.svg/1200px-West_Ham_United_FC_logo.svg.png"),
+    new Club("Leicester", 540, "https://upload.wikimedia.org/wikipedia/en/thumb/2/2d/Leicester_City_crest.svg/1200px-Leicester_City_crest.svg.png"),
+    new Club("Everton", 580, "https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/Everton_FC_logo.svg/1200px-Everton_FC_logo.svg.png"),
+    new Club("Southampton", 520, "https://upload.wikimedia.org/wikipedia/de/thumb/c/c9/FC_Southampton.svg/1200px-FC_Southampton.svg.png"),
+    new Club("Wolves", 600, "https://upload.wikimedia.org/wikipedia/de/thumb/1/1d/Wolverhampton_wanderers.svg/1200px-Wolverhampton_wanderers.svg.png"),
+    new Club("Ipswich", 280, "https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Ipswich_Town.svg/1200px-Ipswich_Town.svg.png"),
+    new Club("Crystal Palace", 490, "https://upload.wikimedia.org/wikipedia/de/b/bf/Crystal_Palace_F.C._logo_%282013%29.png"),
     //above is Premier League (20 Teams, 38-57)
     //below is Serie A (20 Teams, 58-77)
-    new Club("Neapel", 950),
-    new Club("I. Mailand", 970),
-    new Club("A. Bergamo", 750),
-    new Club("Florenz", 720),
-    new Club("L. Rom", 770),
-    new Club("Juve", 980),
-    new Club("Milan", 950),
-    new Club("Udine", 680),
-    new Club("Bologna", 640),
-    new Club("Turin", 610),
-    new Club("Empoli", 460),
-    new Club("Roma", 870),
-    new Club("Verona", 400),
-    new Club("Como", 180),
-    new Club("Genua", 500),
-    new Club("Parma", 300),
-    new Club("Cagliari", 290),
+    new Club("Neapel", 980, "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/SSC_Neapel.svg/1200px-SSC_Neapel.svg.png"),
+    new Club("I. Mailand", 970, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/FC_Internazionale_Milano_2021.svg/1200px-FC_Internazionale_Milano_2021.svg.png"),
+    new Club("A. Bergamo", 750, "https://upload.wikimedia.org/wikipedia/de/thumb/2/28/Atalanta_BC.svg/250px-Atalanta_BC.svg.png"),
+    new Club("Florenz", 720, "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/ACF_Fiorentina_-_logo_%28Italy%2C_2022%29.svg/1200px-ACF_Fiorentina_-_logo_%28Italy%2C_2022%29.svg.png"),
+    new Club("L. Rom", 770, "https://upload.wikimedia.org/wikipedia/de/thumb/4/47/Lazio_Rom.svg/1024px-Lazio_Rom.svg.png"),
+    new Club("Juve", 950, "https://upload.wikimedia.org/wikipedia/commons/5/51/Juventus_FC_2017_logo.png"),
+    new Club("Milan", 950, "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/1200px-Logo_of_AC_Milan.svg.png"),
+    new Club("Udine", 680, "https://upload.wikimedia.org/wikipedia/commons/5/5a/Udinese_Calcio_2010.svg"),
+    new Club("Bologna", 640, "https://upload.wikimedia.org/wikipedia/de/thumb/8/89/Bologna_FC.svg/1200px-Bologna_FC.svg.png"),
+    new Club("Turin", 610, "https://upload.wikimedia.org/wikipedia/de/thumb/d/da/Torino_FC.svg/1200px-Torino_FC.svg.png"),
+    new Club("Empoli", 460, "https://upload.wikimedia.org/wikipedia/en/thumb/f/fb/Empoli_FC_crest.svg/1200px-Empoli_FC_crest.svg.png"),
+    new Club("Roma", 920, "https://upload.wikimedia.org/wikipedia/de/thumb/0/0e/AS_Roma_Logo_2017.svg/800px-AS_Roma_Logo_2017.svg.png"),
+    new Club("Verona", 400, "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD_vQ6rGBPxg9WMjAvvXvpWp15b-V9qrkBGA&s"),
+    new Club("Como", 180, "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Calcio_Como_-_logo_%28Italy%2C_2019-%29.svg/640px-Calcio_Como_-_logo_%28Italy%2C_2019-%29.svg.png"),
+    new Club("Genua", 500, "https://upload.wikimedia.org/wikipedia/de/d/d2/Genoa_CFC_Logo_2022.png"),
+    new Club("Parma", 300, "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Logo_Parma_Calcio_1913_%28adozione_2016%29.svg/1200px-Logo_Parma_Calcio_1913_%28adozione_2016%29.svg.png"),
+    new Club("Cagliari", 290, "https://upload.wikimedia.org/wikipedia/en/thumb/6/61/Cagliari_Calcio_1920.svg/1200px-Cagliari_Calcio_1920.svg.png"),
     new Club("Monza", 340),
     new Club("Venedig", 160),
     new Club("Lecce", 380),
@@ -117,17 +117,17 @@ dClubs = [
     new Club("Regensburg", 200, "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/SSV_Jahn_Regensburg.svg/1848px-SSV_Jahn_Regensburg.svg.png"),
     //above is 2. Buli (18 Teams, 88-105)
     //below is Ligue 1 (18 Teams, 106-123)
-    new Club("Paris SG", 950),
-    new Club("Monaco", 920),
-    new Club("Marseille", 900),
-    new Club("Lille", 780),
-    new Club("Lyon", 830),
-    new Club("Nizza", 760),
-    new Club("Reims", 520),
-    new Club("Lens", 780),
+    new Club("Paris SG", 950, "https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Paris_Saint-Germain_F.C..svg/1200px-Paris_Saint-Germain_F.C..svg.png"),
+    new Club("Monaco", 920, "https://upload.wikimedia.org/wikipedia/en/thumb/c/cf/LogoASMonacoFC2021.svg/1200px-LogoASMonacoFC2021.svg.png"),
+    new Club("Marseille", 900, "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Olympique_Marseille_logo.svg/1582px-Olympique_Marseille_logo.svg.png"),
+    new Club("Lille", 780, "https://upload.wikimedia.org/wikipedia/en/thumb/3/3f/Lille_OSC_2018_logo.svg/250px-Lille_OSC_2018_logo.svg.png"),
+    new Club("Lyon", 830, "https://upload.wikimedia.org/wikipedia/de/f/f1/Olympique_Lyon.svg"),
+    new Club("Nizza", 760, "https://upload.wikimedia.org/wikipedia/en/thumb/2/2e/OGC_Nice_logo.svg/1200px-OGC_Nice_logo.svg.png"),
+    new Club("Reims", 520, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Stade_Reims.svg/800px-Stade_Reims.svg.png"),
+    new Club("Lens", 780, "https://upload.wikimedia.org/wikipedia/de/thumb/d/d7/RC_Lens_Logo.svg/1200px-RC_Lens_Logo.svg.png"),
     new Club("Auxerre", 400),
     new Club("Toulouse", 340),
-    new Club("Straßburg", 440),
+    new Club("Straßburg", 540, "https://upload.wikimedia.org/wikipedia/als/thumb/2/2d/Racing_Club_de_Strasbourg_Alsace_logo.svg/1200px-Racing_Club_de_Strasbourg_Alsace_logo.svg.png"),
     new Club("Brest", 280),
     new Club("Rennes", 620),
     new Club("Nantes", 500),
@@ -159,12 +159,12 @@ dClubs = [
     new Club("Osnabrück", 360, "https://upload.wikimedia.org/wikipedia/commons/4/4e/VfL_Osnabrueck_Logo_2021%E2%80%93.svg"),
     //above is 3. Bundesliga (20 Teams, 124-143)
     //below is Eredivisie (18 Teams, 144-161)
-    new Club("PSV", 880),
-    new Club("Utrecht", 600),
-    new Club("Ajax", 960),
-    new Club("Feyenoord", 900),
-    new Club("Twente", 680),
-    new Club("Alkmaar", 720),
+    new Club("PSV", 880, "https://upload.wikimedia.org/wikipedia/en/thumb/0/05/PSV_Eindhoven.svg/1200px-PSV_Eindhoven.svg.png"),
+    new Club("Utrecht", 600, "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Logo_FC_Utrecht.svg/1898px-Logo_FC_Utrecht.svg.png"),
+    new Club("Ajax", 960, "https://upload.wikimedia.org/wikipedia/sco/thumb/7/79/Ajax_Amsterdam.svg/1200px-Ajax_Amsterdam.svg.png"),
+    new Club("Feyenoord", 900, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Feyenoord_logo_since_2024.svg/1200px-Feyenoord_logo_since_2024.svg.png"),
+    new Club("Twente", 680, "https://upload.wikimedia.org/wikipedia/en/thumb/e/e3/FC_Twente.svg/1200px-FC_Twente.svg.png"),
+    new Club("Alkmaar", 720, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/AZ_Alkmaar.svg/1200px-AZ_Alkmaar.svg.png"),
     new Club("Sittard", 340),
     new Club("NEC", 260),
     new Club("Willem II", 360),
@@ -175,23 +175,23 @@ dClubs = [
     new Club("Zwolle", 200),
     new Club("Heracles", 240),
     new Club("Sparta", 300),
-    new Club("Almere", 110),
+    new Club("Almere", 110, "https://upload.wikimedia.org/wikipedia/en/thumb/8/86/Almere_City_FC_logo.PNG/250px-Almere_City_FC_logo.PNG"),
     new Club("Waalwijk", 130),
     //above is Eredivisie (18 Teams, 144-161)
     //below is Süper Lig(18 Teams, 162-179)
-    new Club("Galatasaray", 850),
-    new Club("Fenerbahce", 800),
+    new Club("Galatasaray", 850, "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Galatasaray_Sports_Club_Logo.svg/1200px-Galatasaray_Sports_Club_Logo.svg.png"),
+    new Club("Fenerbahce", 800, "https://upload.wikimedia.org/wikipedia/en/thumb/3/39/Fenerbah%C3%A7e.svg/1200px-Fenerbah%C3%A7e.svg.png"),
     new Club("Samsuns", 520),
-    new Club("Eyuupsultan", 400),
-    new Club("Besiktas", 780),
-    new Club("Göztepe", 320),
+    new Club("Eyuupsultan", 400, "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Ey%C3%BCpspor_Logosu.png/250px-Ey%C3%BCpspor_Logosu.png"),
+    new Club("Besiktas", 780, "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/BesiktasJK-Logo.svg/1200px-BesiktasJK-Logo.svg.png"),
+    new Club("Göztepe", 320, "https://upload.wikimedia.org/wikipedia/de/thumb/1/13/G%C3%B6ztepe.svg/1200px-G%C3%B6ztepe.svg.png"),
     new Club("Sivasspor", 280),
-    new Club("Basaksehir", 600),
+    new Club("Basaksehir", 600, "https://upload.wikimedia.org/wikipedia/de/thumb/5/52/Istanbul_Basaksehir_FK_Logo.svg/1200px-Istanbul_Basaksehir_FK_Logo.svg.png"),
     new Club("Kasimpasa", 300),
     new Club("Konya", 320),
-    new Club("Antalya", 260),
+    new Club("Antalya", 260, "https://upload.wikimedia.org/wikipedia/en/8/83/Antalyaspor_logo.svg"),
     new Club("Rize", 180),
-    new Club("Trabzon", 650),
+    new Club("Trabzon", 650, "https://upload.wikimedia.org/wikipedia/en/thumb/d/de/Trabzonspor_Amblem.svg/1200px-Trabzonspor_Amblem.svg.png"),
     new Club("Gazian", 140),
     new Club("Kayseri", 180),
     new Club("Bodrum", 100),
@@ -253,11 +253,11 @@ dClubs = [
     //below are segunda division (22 Teams, 226-247)
     new Club("Zaragoza", 700),     // Real Zaragoza
     new Club("Gijon", 680),       // Sporting Gijón
-    new Club("Oviedo", 670),      // Real Oviedo
+    new Club("Oviedo", 670, "https://upload.wikimedia.org/wikipedia/de/thumb/a/a9/Real_Oviedo.svg/247px-Real_Oviedo.svg.png"),      // Real Oviedo
     new Club("Eibar", 690),       // SD Eibar
     new Club("Mirandes", 550),    // CD Mirandés
     new Club("Eldense", 530),     // CD Eldense
-    new Club("Levante", 710),     // Levante UD
+    new Club("Levante", 710, "https://upload.wikimedia.org/wikipedia/en/thumb/7/7b/Levante_Uni%C3%B3n_Deportiva%2C_S.A.D._logo.svg/1200px-Levante_Uni%C3%B3n_Deportiva%2C_S.A.D._logo.svg.png"),     // Levante UD
     new Club("Santander", 660),   // Racing Santander
     new Club("Castellon", 620),   // CD Castellón
     new Club("Cordoba", 650),     // Córdoba CF
@@ -269,16 +269,16 @@ dClubs = [
     new Club("Ferrol", 600),      // Racing Club Ferrol
     new Club("Albacete", 680),    // Albacete Balompié
     new Club("Burgos", 630),      // Burgos CF
-    new Club("Elche", 700),       // Elche CF
+    new Club("Elche", 700, "https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Elche_CF_logo.svg/1200px-Elche_CF_logo.svg.png"),       // Elche CF
     new Club("Almeria", 700),      
     new Club("Granada", 700),       
     new Club("Cadiz", 700),       
     //above are segunda division (22 Teams, 226-247)
     //below is english championchip (2.nd league) (24 Teams, 248-271)
-    new Club("Leeds", 780),
-    new Club("Sheffield", 760),
-    new Club("Burnley", 770),
-    new Club("Sunderland", 750),
+    new Club("Leeds", 780, "https://upload.wikimedia.org/wikipedia/en/thumb/5/54/Leeds_United_F.C._logo.svg/1200px-Leeds_United_F.C._logo.svg.png"),
+    new Club("Sheffield", 760, "https://upload.wikimedia.org/wikipedia/en/thumb/9/9c/Sheffield_United_FC_logo.svg/1200px-Sheffield_United_FC_logo.svg.png"),
+    new Club("Burnley", 770, "https://upload.wikimedia.org/wikipedia/en/thumb/6/6d/Burnley_FC_Logo.svg/1200px-Burnley_FC_Logo.svg.png"),
+    new Club("Sunderland", 750, "https://upload.wikimedia.org/wikipedia/de/thumb/6/60/AFC_Sunderland.svg/1200px-AFC_Sunderland.svg.png"),
     new Club("Coventry", 740),
     new Club("West Brom", 730),
     new Club("Bristol", 720),
@@ -372,7 +372,7 @@ dClubs = [
     //above is Serie C (20 Teams, 316-335)
     //below is ligue 2 (18 Teams, 336-353)
     new Club("Lorient", 650),
-    new Club("Paris FC", 640),
+    new Club("Paris FC", 640, "https://upload.wikimedia.org/wikipedia/de/b/be/Logo_ParisFC_2011.png"),
     new Club("Dunkerque", 630),
     new Club("Metz", 620),
     new Club("Guingamp", 610),
@@ -507,24 +507,24 @@ dTournaments = [
 ];
 
 clPool = [
-    new Club("Porto", 800), new Club("Benfica", 920), new Club("Sporting CP", 880), // Portugal
+    new Club("Porto", 800, "https://upload.wikimedia.org/wikipedia/en/thumb/f/f1/FC_Porto.svg/1200px-FC_Porto.svg.png"), new Club("Benfica", 920, "https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/SL_Benfica_logo.svg/1200px-SL_Benfica_logo.svg.png"), new Club("Sporting CP", 880, "https://upload.wikimedia.org/wikipedia/de/thumb/8/80/Sporting_Lissabon.svg/1200px-Sporting_Lissabon.svg.png"), // Portugal
     new Club("Zenit", 770), new Club("Spartak Moscow", 850), new Club("CSKA Moscow", 860), // Russia
-    new Club("Salzburg", 780), new Club("Rapid Wien", 820), // Austria
+    new Club("Salzburg", 780, "https://upload.wikimedia.org/wikipedia/en/thumb/7/77/FC_Red_Bull_Salzburg_logo.svg/1200px-FC_Red_Bull_Salzburg_logo.svg.png"), new Club("Rapid Wien", 820, "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/SK_Rapid_Wien_Logo.svg/1200px-SK_Rapid_Wien_Logo.svg.png"), // Austria
     new Club("Shakhtar Donetsk", 790), new Club("Dynamo Kyiv", 870), // Ukraine
-    new Club("Club Brugge", 740), new Club("Anderlecht", 830), // Belgium
-    new Club("Celtic", 760), new Club("Rangers", 850), // Scotland
-    new Club("Olympiacos", 730), new Club("PAOK", 820), // Greece
-    new Club("Crvena Zvezda", 770), new Club("Partizan", 860), // Serbia
-    new Club("Ludogorets", 740), new Club("Levski Sofia", 810), // Bulgaria
-    new Club("Slovan Bratislava", 730), // Slovakia
+    new Club("Club Brugge", 740, "https://upload.wikimedia.org/wikipedia/de/thumb/d/d0/Club_Brugge_KV_logo.svg/1200px-Club_Brugge_KV_logo.svg.png"), new Club("Anderlecht", 830, "https://upload.wikimedia.org/wikipedia/en/thumb/7/77/R.S.C._Anderlecht.svg/250px-R.S.C._Anderlecht.svg.png"), // Belgium
+    new Club("Celtic", 820, "https://upload.wikimedia.org/wikipedia/de/thumb/f/f2/Celtic_fc.svg/1200px-Celtic_fc.svg.png"), new Club("Rangers", 850, "https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Rangers_FC.svg/1200px-Rangers_FC.svg.png"), // Scotland
+    new Club("Olympiacos", 730, "https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Olympiacos_FC_crest.svg/250px-Olympiacos_FC_crest.svg.png"), new Club("PAOK", 820, "https://upload.wikimedia.org/wikipedia/en/e/e6/PAOK_FC_EMBLEM.png"), // Greece
+    new Club("Crvena Zvezda", 770, "https://upload.wikimedia.org/wikipedia/de/thumb/5/52/FK_Crvena_Zvezda.svg/1735px-FK_Crvena_Zvezda.svg.png"), new Club("Partizan", 860, "https://upload.wikimedia.org/wikipedia/de/thumb/e/ed/FK_Partizan.svg/1200px-FK_Partizan.svg.png"), // Serbia
+    new Club("Ludogorets", 740, "https://upload.wikimedia.org/wikipedia/en/e/eb/PFC_Ludogorets_Razgrad_logo.png"), new Club("Levski Sofia", 810), // Bulgaria
+    new Club("Slovan Bratislava", 730, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/SK_Slovan_Bratislava_logo.svg/1200px-SK_Slovan_Bratislava_logo.svg.png"), // Slovakia
     new Club("Ferencváros", 720), // Hungary
-    new Club("Maribor",710), // Slovenia
+    new Club("Maribor",710, "https://upload.wikimedia.org/wikipedia/en/thumb/e/ee/NK_Maribor.svg/1200px-NK_Maribor.svg.png"), // Slovenia
     new Club("Dinamo Minsk", 700), // Belarus
     new Club("Sheriff Tiraspol", 690), // Moldova
-    new Club("HJK Helsinki", 680), // Finland
-    new Club("Rosenborg", 700), // Norway
-    new Club("Copenhagen", 750), // Denmark
-    new Club("Malmo FF", 740) // Sweden
+    new Club("HJK Helsinki", 680, "https://upload.wikimedia.org/wikipedia/de/thumb/4/46/HJK_Helsinki.svg/1200px-HJK_Helsinki.svg.png"), // Finland
+    new Club("Rosenborg", 700, "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Rosenborg_Trondheim_logo.svg/960px-Rosenborg_Trondheim_logo.svg.png"), // Norway
+    new Club("Copenhagen", 750, "https://upload.wikimedia.org/wikipedia/en/thumb/2/26/FC_Copenhagen_logo.svg/1200px-FC_Copenhagen_logo.svg.png"), // Denmark
+    new Club("Malmo FF", 740, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Malmo_FF_logo.svg/1200px-Malmo_FF_logo.svg.png") // Sweden
 ];
 
 elPool = [
@@ -603,11 +603,11 @@ realChampionsLeagueClubs = [
     dClubs.find(c => c.name === "R. Madrid"), // Real Madrid
     clPool.find(c => c.name === "Shakhtar Donetsk"), // Shakhtar Donetsk
     clPool.find(c => c.name === "Slovan Bratislava"), // Slovan Bratislava
-    new Club("Sparta Prague", 820), // Not in dClubs or clPool
+    new Club("Sparta Prague", 820, "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/AC-Sparta-LOGO2021.svg/1200px-AC-Sparta-LOGO2021.svg.png"), // Not in dClubs or clPool
     clPool.find(c => c.name === "Sporting CP"), // Sporting CP
     elPool.find(c => c.name === "Sturm Graz"), // Sturm Graz
     dClubs.find(c => c.name === "Stuttgart"), // VfB Stuttgart
-    new Club("Young Boys", 800) // Not in dClubs or clPool
+    new Club("Young Boys", 800, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/BSC_Young_Boys.svg/800px-BSC_Young_Boys.svg.png") // Not in dClubs or clPool
 ].filter(Boolean); // Remove any undefined entries
 
 // Europa League Participants (36 clubs)

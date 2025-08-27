@@ -3242,6 +3242,19 @@ function showTrophyWinners(trophyName){
     currentY = rect.top;
 }
 
+function getLocalStorageUsage() {
+  let total = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const value = localStorage.getItem(key);
+    total += key.length + value.length;
+  }
+  // Each character is 2 bytes (UTF-16)
+  const bytes = total * 2;
+  const kb = bytes / 1024;
+  const mb = kb / 1024;
+  return { bytes, kb, mb };
+}
 
 function startGame_saveMode(){
     if(savingEnabled){
