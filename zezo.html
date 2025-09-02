@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="zezoStyle.css">
+    <title>Zezo</title>
+</head>
+
+<body>
+    <div class="desktop">
+        <!-- Main Profile Window -->
+        <div class="window main-window" data-window="main">
+            <div class="window-header">
+                <span class="window-title">📁 zezo.exe - Profile</span>
+                <div class="window-controls">
+                    <div class="window-button" onclick="closeWindow('main')">×</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="profile-pic">
+                    <img src="assets/images/socials/me.png" alt="Profile Picture" style="width: 65px; height: 65px;">
+                </div>
+                <div class="name">zezo</div>
+                <div class="bio">ʙʀᴏᴋᴇ ᴀs ᴄᴀɴ ʙᴇ</div>
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">69.420</div>
+                        <div>visitors</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">♡</div>
+                        <div>mood</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">online</div>
+                        <div>status</div>
+                    </div>
+                </div>
+                <div class="social-icons">
+                    <a url="https://www.github.com/ZzZezo" class="social-icon" title="GitHub">
+                        <img src="assets/images/socials/git.png" alt="GitHub" style="height: 80%; width: 80%;">
+                    </a>
+                    <a href="#" class="social-icon" title="Spotify">🎵</a>
+                    <a href="#" class="social-icon" title="GitHub">💻</a>
+                    <a href="#" class="social-icon" title="Discord">💬</a>
+                    <a href="#" class="social-icon" title="Twitter">🐦</a>
+                    <a href="#" class="social-icon" title="Website" onclick="showContactPopup()">🌐</a>
+                </div>
+                <div class="visitor-counter">
+                    You are visitor #<span class="blink">2776</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Links Window -->
+        <div class="window links-window" data-window="links">
+            <div class="window-header">
+                <span class="window-title">🔗 My Links</span>
+                <div class="window-controls">
+                    <div class="window-button" onclick="closeWindow('links')">×</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <a href="#" class="link-item">
+                    <div class="link-icon">🎵</div>
+                    <span>My Spotify Playlist</span>
+                </a>
+                <a href="#" class="link-item">
+                    <div class="link-icon">📷</div>
+                    <span>Photography Portfolio</span>
+                </a>
+                <a href="#" class="link-item">
+                    <div class="link-icon">💻</div>
+                    <span>GitHub Projects</span>
+                </a>
+                <a href="#" class="link-item">
+                    <div class="link-icon">📝</div>
+                    <span>Blog</span>
+                </a>
+                <a href="#" class="link-item" onclick="showContactPopup()">
+                    <div class="link-icon">💌</div>
+                    <span>Contact Me</span>
+                </a>
+                <a href="#" class="link-item">
+                    <div class="link-icon">☕</div>
+                    <span>Buy Me a Coffee</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Music Player Window -->
+        <div class="window music-window" data-window="music">
+            <div class="window-header">
+                <span class="window-title">🎵 WinAmp 95</span>
+                <div class="window-controls">
+                    <div class="window-button" onclick="closeWindow('music')">×</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="music-player">
+                    <div class="now-playing">♪ NOW PLAYING ♪</div>
+                    <div class="song-info">Cinderella Man - Eminem</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div>02:31 / 04:38</div>
+                </div>
+                <div class="popup-slider-container">
+                    <label class="form-label">Volume:</label>
+                    <input type="range" class="popup-slider" min="0" max="100" value="75">
+                </div>
+            </div>
+        </div>
+
+        <!-- About Window -->
+        <div class="window about-window" data-window="about">
+            <div class="window-header">
+                <span class="window-title">📖 About Me</span>
+                <div class="window-controls">
+                    <div class="window-button" onclick="closeWindow('about')">×</div>
+                </div>
+            </div>
+            <div class="window-content">
+                <p style="font-size: 11px; line-height: 1.4;">
+                    Hey there! I'm zezo, a creative soul from Hamburg, Germany.
+                    I love coding, music, and everything retro.
+                    Currently vibing to some classic Eminem while working on personal projects.
+                </p>
+                <br>
+                <p style="font-size: 11px; line-height: 1.4;">
+                    <strong>Interests:</strong> Web Development, Photography, Vintage Computing, Synthwave
+                </p>
+                <br>
+                <p style="font-size: 11px; line-height: 1.4;">
+                    <strong>Currently:</strong> Building cool stuff and being my own inspiration! ♡
+                </p>
+
+                <div class="form-group">
+                    <label class="form-label">Favorite OS:</label>
+                    <div class="radio-container">
+                        <div class="radio checked" onclick="toggleRadio(this)"></div>
+                        <span>Windows 95</span>
+                    </div>
+                    <div class="radio-container">
+                        <div class="radio" onclick="toggleRadio(this)"></div>
+                        <span>Windows 98</span>
+                    </div>
+                </div>
+
+                <div class="checkbox-container">
+                    <div class="checkbox checked" onclick="toggleCheckbox(this)"></div>
+                    <span>Enable retro mode</span>
+                </div>
+            </div>
+            <div class="status-bar">Ready</div>
+        </div>
+    </div>
+
+    <!-- Contact Popup -->
+    <div class="popup" id="contactPopup">
+        <div class="popup-title-bar">
+            <h3 class="popup-title">Contact Me</h3>
+            <button class="popup-close" onclick="closePopup('contactPopup')">×</button>
+        </div>
+        <div class="popup-text">
+            Want to get in touch? Fill out the form below and I'll get back to you!
+        </div>
+        <div style="padding: 0 10px;">
+            <div class="form-group">
+                <label class="form-label">Name:</label>
+                <input type="text" class="popup-input" placeholder="Your name">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email:</label>
+                <input type="email" class="popup-input" placeholder="your.email@example.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Message:</label>
+                <textarea class="popup-input" rows="3" placeholder="Your message here..."></textarea>
+            </div>
+        </div>
+        <div class="button-container">
+            <button class="popup-button" onclick="sendMessage()">Send</button>
+            <button class="popup-button" onclick="closePopup('contactPopup')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="start-button" onclick="toggleStartMenu()">
+            <span>🪟</span>
+            <span>Start</span>
+        </div>
+        <div class="taskbar-items">
+            <div class="taskbar-item active" onclick="focusWindow('main')">zezo.exe</div>
+            <div class="taskbar-item" onclick="focusWindow('links')">My Links</div>
+            <div class="taskbar-item" onclick="focusWindow('music')">WinAmp 95</div>
+            <div class="taskbar-item" onclick="focusWindow('about')">About Me</div>
+        </div>
+        <div class="system-tray">
+            <div class="tray-icon" title="Volume">🔊</div>
+            <div class="tray-icon" title="Network">🌐</div>
+            <div class="clock" id="clock">12:34 PM</div>
+        </div>
+    </div>
+</body>
+
+
+
+<script>
+    // Clock functionality
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+        document.getElementById('clock').textContent = timeString;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Window dragging functionality
+    let isDragging = false;
+    let currentWindow = null;
+    let offset = { x: 0, y: 0 };
+
+    document.querySelectorAll('.window-header').forEach(header => {
+        header.addEventListener('mousedown', startDragging);
+    });
+
+    function startDragging(e) {
+        isDragging = true;
+        currentWindow = e.target.closest('.window');
+        const rect = currentWindow.getBoundingClientRect();
+        offset.x = e.clientX - rect.left;
+        offset.y = e.clientY - rect.top;
+        currentWindow.classList.add('dragging');
+        currentWindow.style.zIndex = 1000;
+        //all other windows ZIndex 100
+        document.querySelectorAll('.window').forEach(window => {
+            if (window !== currentWindow) {
+                window.style.zIndex = 100;
+            }
+        });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging || !currentWindow) return;
+
+        const x = e.clientX - offset.x;
+        const y = e.clientY - offset.y;
+
+        currentWindow.style.left = Math.max(0, x) + 'px';
+        currentWindow.style.top = Math.max(0, y) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (currentWindow) {
+            currentWindow.classList.remove('dragging');
+        }
+        isDragging = false;
+        currentWindow = null;
+    });
+
+    // Window controls
+    function closeWindow(windowId) {
+        const window = document.querySelector(`[data-window="${windowId}"]`);
+        window.style.display = 'none';
+        updateTaskbar();
+    }
+
+    function focusWindow(windowId) {
+        const window = document.querySelector(`[data-window="${windowId}"]`);
+        if (window.style.display === 'none') {
+            window.style.display = 'block';
+        }
+        window.style.zIndex = 999;
+        //all other windows ZIndex 100
+        document.querySelectorAll('.window').forEach(window => {
+            if (window !== currentWindow) {
+                window.style.zIndex = 100;
+            }
+        });
+        updateTaskbar();
+    }
+
+    function updateTaskbar() {
+        document.querySelectorAll('.taskbar-item').forEach(item => {
+            const windowId = item.textContent === 'zezo.exe' ? 'main' :
+                item.textContent === 'My Links' ? 'links' :
+                    item.textContent === 'WinAmp 95' ? 'music' : 'about';
+            const window = document.querySelector(`[data-window="${windowId}"]`);
+
+            if (window.style.display === 'none') {
+                item.classList.remove('active');
+            } else {
+                item.classList.add('active');
+            }
+        });
+    }
+
+    function toggleStartMenu() {
+        alert('Start menu clicked! You can customize this to show a menu.');
+    }
+
+    // Popup functionality
+    function showContactPopup() {
+        document.getElementById('contactPopup').style.display = 'block';
+    }
+
+    function closePopup(popupId) {
+        document.getElementById(popupId).style.display = 'none';
+    }
+
+    function sendMessage() {
+        alert('Message sent! (This is just a demo)');
+        closePopup('contactPopup');
+    }
+
+    // Form controls
+    function toggleCheckbox(checkbox) {
+        checkbox.classList.toggle('checked');
+    }
+
+    function toggleRadio(radio) {
+        // Clear all radio buttons in the same group
+        const radioContainer = radio.closest('.form-group');
+        radioContainer.querySelectorAll('.radio').forEach(r => r.classList.remove('checked'));
+        // Set this one as checked
+        radio.classList.add('checked');
+    }
+
+    // Music player progress animation
+    setInterval(() => {
+        const progressBar = document.querySelector('.progress-fill');
+        let currentWidth = parseInt(progressBar.style.width) || 45;
+        currentWidth += 0.5;
+        if (currentWidth > 100) currentWidth = 0;
+        progressBar.style.width = currentWidth + '%';
+    }, 1000);
+
+    // Add some window focus management
+    document.querySelectorAll('.window').forEach(window => {
+        window.addEventListener('mousedown', () => {
+            window.style.zIndex = 999;
+            //all other windows ZIndex 100
+        document.querySelectorAll('.window').forEach(window => {
+            if (window !== currentWindow) {
+                window.style.zIndex = 100;
+            }
+        });
+        });
+    });
+
+    // Dragging for popup
+    let isDraggingPopup = false;
+    let currentPopup = null;
+    let popupOffset = { x: 0, y: 0 };
+
+    document.querySelectorAll('.popup-title-bar').forEach(titleBar => {
+        titleBar.addEventListener('mousedown', startDraggingPopup);
+    });
+
+    function startDraggingPopup(e) {
+        isDraggingPopup = true;
+        currentPopup = e.target.closest('.popup');
+        const rect = currentPopup.getBoundingClientRect();
+        popupOffset.x = e.clientX - rect.left;
+        popupOffset.y = e.clientY - rect.top;
+        currentPopup.style.transform = 'none';
+        currentPopup.style.position = 'fixed';
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDraggingPopup || !currentPopup) return;
+
+        const x = e.clientX - popupOffset.x;
+        const y = e.clientY - popupOffset.y;
+
+        currentPopup.style.left = Math.max(0, Math.min(window.innerWidth - currentPopup.offsetWidth, x)) + 'px';
+        currentPopup.style.top = Math.max(0, Math.min(window.innerHeight - currentPopup.offsetHeight, y)) + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (currentPopup) {
+            // Reset transform if needed
+            if (!currentPopup.style.left) {
+                currentPopup.style.transform = 'translate(-50%, -50%)';
+            }
+        }
+        isDraggingPopup = false;
+        currentPopup = null;
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Alt + F4 to close active window
+        if (e.altKey && e.key === 'F4') {
+            e.preventDefault();
+            const activeWindow = document.querySelector('.window:not([style*="display: none"])');
+            if (activeWindow) {
+                const windowId = activeWindow.getAttribute('data-window');
+                closeWindow(windowId);
+            }
+        }
+
+        // Ctrl + Alt + Delete for system info
+        if (e.ctrlKey && e.altKey && e.key === 'Delete') {
+            e.preventDefault();
+            alert('Windows 95 System\nUser: zezo\nSystem Time: ' + new Date().toLocaleString());
+        }
+    });
+
+    // Easter eggs
+    let clickCount = 0;
+    document.querySelector('.profile-pic').addEventListener('click', () => {
+        clickCount++;
+        if (clickCount === 5) {
+            alert('🎉 You found the secret! 🎉\nWelcome to the retro web!');
+            clickCount = 0;
+        }
+    });
+
+    // Auto-save form data (in memory only)
+    const formData = {};
+    document.querySelectorAll('.popup-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+            formData[e.target.placeholder] = e.target.value;
+        });
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+        // Add some random visitors to make it more dynamic
+        setInterval(() => {
+            const visitorSpan = document.querySelector('.blink');
+            let current = parseInt(visitorSpan.textContent);
+            if (Math.random() < 0.1) { // 10% chance every second
+                visitorSpan.textContent = current + 1;
+            }
+        }, 1000);
+    });
+</script>
+
+
+</html>

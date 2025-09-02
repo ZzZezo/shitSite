@@ -1,0 +1,652 @@
+@font-face {
+    font-family: 'Old Sans Serif';
+    src: url('data:font/woff;base64,') format('woff');
+    /* You'll need to add your actual font file here */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Old Sans Serif', 'MS Sans Serif', sans-serif;
+    background: #008080;
+    background-image:
+        radial-gradient(circle at 25% 25%, #00a0a0 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, #006060 0%, transparent 50%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: url('data:image/png;base64,'), auto;
+}
+
+.desktop {
+    min-height: 100vh;
+    position: relative;
+    padding: 20px;
+}
+
+.window {
+    background: #c0c0c0;
+    border: 2px solid #000000;
+    box-shadow: 5px 5px 5px #888888;
+    position: absolute;
+    min-width: 300px;
+}
+
+.window-header {
+    background-color: #000080;
+    color: #ffffff;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+}
+
+.window-title {
+    margin: 0;
+    margin-left: 2px;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: "Old Sans Serif";
+}
+
+.window-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.window-button {
+    padding: 5px 10px;
+    background-color: #c0c0c0;
+    border: 1px outset #e0dbdb;
+    color: #000;
+    font-family: "Arial";
+    font-weight: bolder;
+    font-size: 12px;
+    cursor: pointer;
+    min-width: 20px;
+    text-align: center;
+}
+
+.window-button:hover {
+    background-color: #d3d3d3;
+}
+
+.window-button:active {
+    border-style: inset;
+}
+
+.window-content {
+    padding: 10px;
+    background: #c0c0c0;
+    font-family: "Old Sans Serif";
+}
+
+.main-window {
+    top: 50px;
+    left: 50px;
+    width: 400px;
+    z-index: 10;
+}
+
+.profile-pic {
+    width: 80px;
+    height: 80px;
+    border: 2px inset #808080;
+    margin: 0 auto 10px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.name {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-family: "Old Sans Serif";
+}
+
+.bio {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #333;
+    font-family: "Old Sans Serif";
+    word-wrap: break-word;
+    overflow: hidden;
+    white-space: normal;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+    font-size: 11px;
+    font-family: "Old Sans Serif";
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-value {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.links-window {
+    top: 120px;
+    left: 480px;
+    width: 250px;
+    z-index: 9;
+}
+
+.link-item {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    margin: 2px 0;
+    background: #ffffff;
+    border: 2px inset #808080;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    font-size: 11px;
+    font-family: "Old Sans Serif";
+}
+
+.link-item:hover {
+    background: #0000ff;
+    color: white;
+}
+
+.link-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-window {
+    top: 200px;
+    left: 100px;
+    width: 300px;
+    z-index: 8;
+}
+
+.music-player {
+    background: #000000;
+    color: #00ff00;
+    padding: 10px;
+    font-family: "Old Sans Serif";
+    font-size: 10px;
+    border: 2px inset #808080;
+}
+
+.now-playing {
+    margin-bottom: 5px;
+}
+
+.song-info {
+    color: #ffffff;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #404040;
+    margin: 5px 0;
+    position: relative;
+    border: 1px inset #c0c0c0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #00ff00;
+    width: 45%;
+}
+
+.about-window {
+    top: 350px;
+    left: 450px;
+    width: 280px;
+    z-index: 7;
+}
+
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: #c0c0c0;
+    border-top: 2px outset #c0c0c0;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    z-index: 100;
+}
+
+.start-button {
+    background-color: #c0c0c0;
+    border: 2px outset #808080;
+    color: #000;
+    font-family: 'Old Sans Serif';
+    font-size: 12px;
+    padding: 5px 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: bold;
+}
+
+.start-button:hover {
+    background-color: #d3d3d3;
+}
+
+.start-button:active {
+    border-style: inset;
+}
+
+.taskbar-items {
+    flex: 1;
+    display: flex;
+    gap: 2px;
+    margin-left: 10px;
+}
+
+.taskbar-item {
+    background-color: #c0c0c0;
+    border: 2px outset #808080;
+    color: #000;
+    font-family: 'Old Sans Serif';
+    font-size: 12px;
+    padding: 5px 25px;
+    cursor: pointer;
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.taskbar-item:hover {
+    background-color: #d3d3d3;
+}
+
+.taskbar-item:active {
+    border-style: inset;
+}
+
+.taskbar-item.active {
+    border: 2px inset #808080;
+    background: #dfdfdf;
+}
+
+.system-tray {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+}
+
+.tray-icon {
+    width: 20px;
+    height: 20px;
+    background-color: #c0c0c0;
+    border: 2px outset #808080;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.tray-icon:hover {
+    background-color: #d3d3d3;
+}
+
+.tray-icon:active {
+    border-style: inset;
+}
+
+.clock {
+    background-color: #c0c0c0;
+    border: 2px inset #808080;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-family: "Old Sans Serif";
+}
+
+.social-icons {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    background-color: #c0c0c0;
+    border: 2px outset #808080;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+}
+
+.social-icon:hover {
+    background-color: #d3d3d3;
+}
+
+.social-icon:active {
+    border-style: inset;
+}
+
+.dragging {
+    cursor: move !important;
+    z-index: 1000 !important;
+}
+
+.status-bar {
+    height: 18px;
+    background: #c0c0c0;
+    border-top: 2px inset #c0c0c0;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 10px;
+    font-family: "Old Sans Serif";
+}
+
+.visitor-counter {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 10px;
+    color: #666;
+    font-family: "Old Sans Serif";
+}
+
+/* Popup styles from your stylesheet */
+.popup {
+    background-color: #c0c0c0;
+    border: 2px solid #000000;
+    width: 300px;
+    padding: 1px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 5px 5px 5px #888888;
+    display: none;
+    z-index: 9999;
+}
+
+.popup-title-bar {
+    background-color: #000080;
+    color: #ffffff;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-title {
+    margin: 0;
+    margin-left: 2px;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: "Old Sans Serif";
+}
+
+.popup-close {
+    padding: 5px 10px;
+    background-color: #c0c0c0;
+    border: 1px outset #e0dbdb;
+    color: #000;
+    font-family: "Arial";
+    font-weight: bolder;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.popup-close:hover {
+    background-color: #d3d3d3;
+}
+
+.popup-close:active {
+    border-style: inset;
+}
+
+.popup-text {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-family: "Old Sans Serif";
+    word-wrap: break-word;
+    overflow: hidden;
+    white-space: normal;
+    padding: 0 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.popup-button {
+    background-color: #c0c0c0;
+    border: 2px outset #808080;
+    color: #000;
+    font-family: 'Old Sans Serif';
+    font-size: 12px;
+    padding: 5px 25px;
+    cursor: pointer;
+    margin-left: 25px;
+    margin-right: 15px;
+}
+
+.popup-button:hover {
+    background-color: #d3d3d3;
+}
+
+.popup-button:active {
+    border-style: inset;
+}
+
+.popup-input {
+    padding: 5px;
+    border: 2px inset #808080;
+    font-family: "Old Sans Serif";
+    font-size: 16px;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.popup-input:focus {
+    padding: 5px;
+    border: 2px inset #808080;
+    font-family: "Old Sans Serif";
+    outline: none;
+    font-size: 16px;
+}
+
+.popup-slider-container {
+    margin: 20px 0;
+    padding: 10px;
+    background: #c0c0c0;
+    border: 2px inset #c0c0c0;
+}
+
+.popup-slider {
+    width: 100%;
+    height: 20px;
+    background: #808080;
+    border: 1px inset #c0c0c0;
+    outline: none;
+    cursor: pointer;
+}
+
+.popup-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 18px;
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    cursor: pointer;
+}
+
+.popup-slider::-moz-range-thumb {
+    width: 16px;
+    height: 14px;
+    background: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+/* Scrollbar styles from your stylesheet */
+::-webkit-scrollbar {
+    width: 16px;
+}
+
+::-webkit-scrollbar-track {
+    background: #c0c0c0;
+    border-left: 2px solid #808080;
+    border-top: 2px solid #808080;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #dfdfdf;
+    border-left: 2px solid white;
+    border-top: 2px solid white;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+    box-shadow: inset -1px -1px #404040;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #b0b0b0;
+}
+
+::-webkit-scrollbar-button:single-button {
+    background: #c0c0c0;
+    border-left: 2px solid #808080;
+    border-top: 2px solid #808080;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-button:single-button:active {
+    background: #a0a0a0;
+    border-left: 2px solid white;
+    border-top: 2px solid white;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+}
+
+::-webkit-scrollbar-corner {
+    background: #c0c0c0;
+}
+
+@keyframes blink {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
+.blink {
+    animation: blink 1s infinite;
+}
+
+/* Additional form elements in Win95 style */
+.form-group {
+    margin: 15px 0;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-family: "Old Sans Serif";
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.checkbox {
+    width: 13px;
+    height: 13px;
+    border: 2px inset #808080;
+    background: #ffffff;
+    margin-right: 8px;
+    cursor: pointer;
+    position: relative;
+}
+
+.checkbox.checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 1px;
+    font-size: 10px;
+    color: black;
+}
+
+.radio-container {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.radio {
+    width: 12px;
+    height: 12px;
+    border: 2px inset #808080;
+    border-radius: 50%;
+    background: #ffffff;
+    margin-right: 8px;
+    cursor: pointer;
+    position: relative;
+}
+
+.radio.checked::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 4px;
+    height: 4px;
+    background: black;
+    border-radius: 50%;
+}

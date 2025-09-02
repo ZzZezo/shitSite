@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Tree Generator</title>
+</head>
+<body>
+    
+</body>
+<script>
+    let contestants = 8;
+
+    let container = document.createElement('div');
+    container.id = 'container';
+    document.body.appendChild(container);
+
+    for (let i = 0; i < contestants; i++) {
+        let contestant = document.createElement('div');
+        contestant.id = 'contestant';
+        contestant.innerText = 'Contestant ' + (i + 1);
+        container.appendChild(contestant);
+    }
+
+</script>
+<style>
+    @font-face {
+        font-family: 'Old Sans Serif';
+        src: url('../assets/font/ms-sans-serif.woff') format('woff');
+    }
+
+    body,html {
+        background-color: teal;
+        font-family: 'Old Sans Serif';
+        cursor: url('../assets/images/old_pointer.png'), auto;
+    }
+
+    #container {
+        display: flex;
+        flex-direction: column;
+        /* go all the way from top to bottom */
+        height: 90vh;
+        justify-content: space-between;
+    }
+
+    #contestant {
+        display: flex;
+        flex-direction: row;
+    }
+</style>
+</html>
