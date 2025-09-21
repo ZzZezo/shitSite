@@ -2851,11 +2851,11 @@ function showClubProfile(club) {
 function simulateMatch(homeTeamName, awayTeamName) {
     // Constants for simulation tuning
     const HOME_ADVANTAGE_MULTIPLIER = 1.25; // 25% boost for home team
-    const BASE_GOAL_RATE = 1.15; // Base goals per team (before ratings)
-    const RED_CARD_CHANCE = 0.03; // 3% chance per team
-    const PENALTY_CHANCE = 0.15; // 15% chance per match
-    const CRAZY_MATCH_CHANCE = 0.03; // 3% chance for wild result
-    const GOAL_CAP = 9; // Maximum goals per team
+    const BASE_GOAL_RATE = 1.4;             // Base goals per team
+    const RED_CARD_CHANCE = 0.03;           // 3% chance per team
+    const PENALTY_CHANCE = 0.15;            // 15% chance per match
+    const CRAZY_MATCH_CHANCE = 0.03;        // 3% chance for wild result
+    const GOAL_CAP = 9;                     // Max goals per team
 
     // Find team objects
     const homeTeam = findClubObjByDisplayName(homeTeamName);
@@ -2865,44 +2865,52 @@ function simulateMatch(homeTeamName, awayTeamName) {
         return null;
     }
 
-    // Calculate effective ratings with home advantage
-    const homeAttack = Math.sqrt(homeTeam.hardcodedRating) * HOME_ADVANTAGE_MULTIPLIER;
-    const homeDefense = Math.sqrt(homeTeam.hardcodedRating) * 0.9;
-    const awayAttack = Math.sqrt(awayTeam.hardcodedRating);
-    const awayDefense = Math.sqrt(awayTeam.hardcodedRating) * 1.1;
+    // Relative strength function
+    function relativeStrength(rating, opponentRating) {
+        return Math.pow(rating / opponentRating, 1.45);
+    }
 
-    // Calculate goal expectations using attack/defense balance
-    let homeLambda = (homeAttack / awayDefense) * BASE_GOAL_RATE;
-    let awayLambda = (awayAttack / homeDefense) * BASE_GOAL_RATE;
+    // Base strength values with home advantage
+    let homeAttack = relativeStrength(homeTeam.hardcodedRating, awayTeam.hardcodedRating) * HOME_ADVANTAGE_MULTIPLIER;
+    let awayAttack = relativeStrength(awayTeam.hardcodedRating, homeTeam.hardcodedRating);
 
-    // Add competitive balance variance
+    // Calculate goal expectations (Poisson means)
+    let homeLambda = BASE_GOAL_RATE * homeAttack;
+    let awayLambda = BASE_GOAL_RATE * awayAttack;
+
+    // Competitive balance variance (random matchday form)
     homeLambda *= 0.9 + Math.random() * 0.3;
     awayLambda *= 0.9 + Math.random() * 0.3;
+
+    // Extra blowout scaling for huge mismatches (>200 rating gap)
+    const ratingGap = homeTeam.hardcodedRating - awayTeam.hardcodedRating;
+    if (Math.abs(ratingGap) > 200) {
+        if (ratingGap > 0) {
+            homeLambda *= 1.2;
+        } else {
+            awayLambda *= 1.2;
+        }
+    }
 
     // Generate base goals using Poisson distribution
     let homeGoals = poisson(homeLambda);
     let awayGoals = poisson(awayLambda);
 
-    // Apply match context effects
+    // Momentum effect (team behind pushes harder)
     const goalDifference = homeGoals - awayGoals;
-    
-    // Momentum effect (team behind gets small boost)
     if (goalDifference > 1) {
-        awayLambda *= 1.2; // Away team pushes harder
         awayGoals += poisson(awayLambda * 0.3);
     } else if (goalDifference < -1) {
-        homeLambda *= 1.2; // Home team pushes harder
         homeGoals += poisson(homeLambda * 0.3);
     }
 
-    // Special match events
-    // Crazy match scenario
+    // Crazy match scenario (high chaos)
     if (Math.random() < CRAZY_MATCH_CHANCE) {
         homeGoals += poisson(2.5);
         awayGoals += poisson(2.5);
     }
 
-    // Red cards
+    // Red cards (random team loses 1–2 goals)
     if (Math.random() < RED_CARD_CHANCE) {
         if (Math.random() < 0.5) {
             homeGoals = Math.max(0, homeGoals - 1 - Math.floor(Math.random() * 2));
@@ -2911,11 +2919,10 @@ function simulateMatch(homeTeamName, awayTeamName) {
         }
     }
 
-    // Penalties
+    // Penalties (favor stronger team slightly)
     if (Math.random() < PENALTY_CHANCE) {
         const strongerTeam = homeTeam.hardcodedRating > awayTeam.hardcodedRating ? 'home' : 'away';
         const successChance = strongerTeam === 'home' ? 0.75 : 0.65;
-        
         if (Math.random() < successChance) {
             strongerTeam === 'home' ? homeGoals++ : awayGoals++;
         }
@@ -2925,15 +2932,21 @@ function simulateMatch(homeTeamName, awayTeamName) {
     homeGoals = Math.min(homeGoals, GOAL_CAP);
     awayGoals = Math.min(awayGoals, GOAL_CAP);
 
-    // Goalkeeper error chance
-    if (homeGoals === 0 && Math.random() < 0.1) homeGoals += Math.random() < 0.3 ? 1 : 0;
-    if (awayGoals === 0 && Math.random() < 0.1) awayGoals += Math.random() < 0.3 ? 1 : 0;
+    // Goalkeeper freak errors (rare extra goal if 0 scored)
+    if (homeGoals === 0 && Math.random() < 0.1) {
+        if (Math.random() < 0.3) homeGoals++;
+    }
+    if (awayGoals === 0 && Math.random() < 0.1) {
+        if (Math.random() < 0.3) awayGoals++;
+    }
 
-    // Ensure non-negative goals
+    // Ensure non-negative
     homeGoals = Math.max(0, homeGoals);
     awayGoals = Math.max(0, awayGoals);
 
-    if(debug_log_everything)console.log("Simulation Result: "+homeTeamName + " " + homeGoals + " - " + awayGoals + " " + awayTeamName);
+    if (debug_log_everything) {
+        console.log("Simulation Result: " + homeTeamName + " " + homeGoals + " - " + awayGoals + " " + awayTeamName);
+    }
 
     // Return match result
     return {
@@ -2943,6 +2956,7 @@ function simulateMatch(homeTeamName, awayTeamName) {
         awayGoals: awayGoals
     };
 }
+
 
 // Poisson distribution implementation
 function poisson(lambda) {
