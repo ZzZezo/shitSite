@@ -88,6 +88,11 @@ class Club { //all clubs
         this.totalDraws = 0;
 
         this.seasonalPositions = {};
+        this.historicalPositions = {};
+
+        //tmp
+        this.justGotPromoted = false;
+        this.justGotRelegated = false;
 
         this.trophies = {};
     }
@@ -210,6 +215,63 @@ class Club { //all clubs
                 ...trophyTypes[name] // Merge with trophy type info
             }))
             .sort((a, b) => a.priority - b.priority);
+    }
+
+    updateRatingByLeagueDevelopment(league) {
+        //check if league exists in clubs historical positions (should always be true)
+        if (!this.historicalPositions[league.name]) {
+            console.warn(`No historical positions found for ${this.name} in league ${league.name}! This should not be possible. Something went wrong.`);
+            return;
+        }
+
+        //get the position the club finished at
+        const currentPosition = this.historicalPositions[league.name].slice(-1)[0];
+
+        //check if the position is 1, if yes, add 10 to rating
+        if (currentPosition === 1) {
+            this.hardcodedRating += 10;
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+10)");
+        }
+        //check if the position is 2, if yes, add 7 to rating
+        else if (currentPosition === 2) {
+            this.hardcodedRating += 7;
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+7)");
+        }
+        //check if the position is 3, if yes, add 5 to rating
+        else if (currentPosition === 3) {
+            this.hardcodedRating += 5;
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+5)");
+        }
+        //check if the position is 4, if yes, add 3 to rating
+        else if (currentPosition === 4) {
+            this.hardcodedRating += 3;
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+3)");
+        }
+        //check if the position is 5, if yes, add 1 to rating
+        else if (currentPosition === 5) {
+            this.hardcodedRating += 1;
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+1)");
+        }
+        else if(debug_log_everything) console.log("rating not updated for " + this.name + " due to normal/bad performance in " + league.name + "! (They ended in position " + currentPosition + ")");
+
+        //check if club already has at least 2 historical position in this league, if not return
+        if (this.historicalPositions[league.name].length <= 1) return;
+
+        //get the average position of the club in the league (Excluding the last season)
+        let averagePosition = this.historicalPositions[league.name].slice(0, -1).reduce((a, b) => a + b, 0) / this.historicalPositions[league.name].slice(0, -1).length;
+        //round it up to the nearest integer
+        averagePosition = Math.ceil(averagePosition);
+
+        //check if both positions are the same, if yes, return
+        if (averagePosition === currentPosition) {
+            return;
+        }
+
+        //check difference between the two positions and add it to rating multiplied by 5
+        //so if a club was 14. last season and now is 9. the difference is 5, so add 25 to rating
+        this.hardcodedRating += (averagePosition - currentPosition) * 5;
+        //if the club got worse than last season, remove a little extra from bonus
+        if (averagePosition > currentPosition) this.hardcodedRating -= 5;
     }
 }
 
@@ -516,6 +578,8 @@ class Cup{
             const winner = this.remainingClubs[0];
             winner.addTrophy(`${this.name} Winner`, currentYear+1);
             console.log(this.remainingClubs[0].name + " wins the cup!");
+            //give rating upgrade to winner #rating_update
+            this.remainingClubs[0].hardcodedRating += 20;
             document.getElementById("LeagueTable").style.display = "block";
             if(debug_log_everything)console.log("CALL B");
             matchesCalculated(this,false);
@@ -702,6 +766,22 @@ class SeasonManager {
             leagueStandings[league.name] = [...league.sortedClubs];
         });
 
+        //store all club standings to their historical positions so you can track their development
+        dLeagues.forEach(league => {
+            league.clubs.forEach(club => {
+                if (!club.historicalPositions[league.name]) {
+                    club.historicalPositions[league.name] = [];
+                }
+                if(club.seasonalPositions[league.name]){
+                    club.historicalPositions[league.name].push(club.seasonalPositions[league.name][club.seasonalPositions[league.name].length-1]);
+                }
+                else{
+                    //get current position from sorted clubs list in the league instead
+                    club.historicalPositions[league.name].push(league.sortedClubs.findIndex(c => c.name === club.name) + parseInt(1));
+                }
+            })
+        })
+        
         // Group leagues by association
         const leaguesByAssociation = {};
         dLeagues.forEach(league => {
@@ -750,6 +830,9 @@ class SeasonManager {
                         console.log(club.name);
                         currentLeague.removeClub(club);
                         higherLeague.addClub(club);
+                        //give the club a rating upgrade, as e.g. new sponsors might be interested in it or whatever #rating_update
+                        club.hardcodedRating+=7;
+                        club.justGotPromoted = true;
                     });
                 }
 
@@ -760,10 +843,23 @@ class SeasonManager {
                         console.log(club.name);
                         currentLeague.removeClub(club);
                         lowerLeague.addClub(club);
+                        //give the club a rating downgrade, as e.g. players leave, sponsors jump off or whatever #rating_update
+                        club.hardcodedRating-=14;
+                        club.justGotRelegated = true;
                     });
                 }
             }
         }
+
+        //update club ratings
+        //note this is not the only place where the rating gets updated. search for "rating_update" to find all places
+        dLeagues.forEach(league => {
+            league.clubs.forEach(club => {
+                if(league.association != "UCL" && league.association != "UEL" && league.association != "UCoL" &! club.justGotPromoted && !club.justGotRelegated) club.updateRatingByLeagueDevelopment(league);
+                club.justGotPromoted = false;
+                club.justGotRelegated = false;
+            })
+        })
 
         // Reset league statistics for the new season after all promotions/relegations are done
         this.resetLeagueStats();
@@ -808,6 +904,14 @@ class SeasonManager {
                         lowerLeague.addClub(clubA);
                         currentLeague.addClub(clubB);
                         lowerLeague.removeClub(clubB);
+
+                        //give the promoting club a rating upgrade, as e.g. new sponsors might be interested in it or whatever #rating_update
+                        clubB.hardcodedRating+=7;
+                        clubB.justGotPromoted = true;
+                        //give the relegated club a rating downgrade, as e.g. players leave, sponsors jump off or whatever #rating_update
+                        clubA.hardcodedRating-=14;
+                        clubA.justGotRelegated = true;
+                        
                         console.log("%c"+clubB.name + " won the playoffs. " + clubA.name + " was relegated.","color:cyan")
                         closePopup();
                     }
@@ -1051,6 +1155,10 @@ async function calculateInput() { //called when the calculate button is pressed,
             if (advancingTeams.length === 1) {
                 const LeagueChampion = findClubObjByName(advancingTeams[0]);
                 LeagueChampion.addTrophy(`${league.name} Winner`, currentYear+1);
+                //give champion a rating upgrade #rating_update
+                if(league.name == "Champions League") LeagueChampion.hardcodedRating+=30;
+                else if(league.name == "Europa League") LeagueChampion.hardcodedRating+=20;
+                else LeagueChampion.hardcodedRating+=10;
                 console.log(LeagueChampion + " has won " + league.name);
             }
             let index = league.matchplan.findIndex(item => item[0] === null && item[1] === null);
@@ -2107,7 +2215,8 @@ function serialize_club_array(array) {
                 totalDefeats: club.totalDefeats,
                 totalDraws: club.totalDraws,
 
-                seasonalPositions: club.seasonalPositions
+                seasonalPositions: club.seasonalPositions,
+                historicalPositions: club.historicalPositions
             };
         } catch (error) {
             console.error(`Error in club at index ${index}:`, club);
@@ -2143,6 +2252,7 @@ function unserialize_club_array(array) {
             club.totalDraws = c.totalDraws;
 
             club.seasonalPositions = c.seasonalPositions;
+            club.historicalPositions = c.historicalPositions;
             return club;
 
         }catch (error){
@@ -3268,6 +3378,16 @@ function getLocalStorageUsage() {
   const kb = bytes / 1024;
   const mb = kb / 1024;
   return { bytes, kb, mb };
+}
+
+function getTopRatedClubs(n){
+    //look thru all of dClubs rating and print out the top n clubs
+    let topRatedClubs = [];
+    for (let i = 0; i < dClubs.length; i++) {
+        topRatedClubs.push([dClubs[i].name,dClubs[i].hardcodedRating]);
+    }
+    topRatedClubs.sort((a,b) => b[1] - a[1]);
+    return topRatedClubs.slice(0,n);
 }
 
 function startGame_saveMode(){
