@@ -224,27 +224,30 @@ class Club { //all clubs
             return;
         }
 
+        //remove 2% off rating per default --> ANti-Inflation
+        this.hardcodedRating = Math.ceil(this.hardcodedRating * 0.98);
+
         //get the position the club finished at
         const currentPosition = this.historicalPositions[league.name].slice(-1)[0];
 
-        //check if the position is 1, if yes, add 10 to rating
+        //check if the position is 1, if yes, add 5 to rating
         if (currentPosition === 1) {
-            this.hardcodedRating += 10;
+            this.hardcodedRating += 5;
             console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+10)");
         }
-        //check if the position is 2, if yes, add 7 to rating
+        //check if the position is 2, if yes, add 4 to rating
         else if (currentPosition === 2) {
-            this.hardcodedRating += 7;
+            this.hardcodedRating += 4;
             console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+7)");
         }
-        //check if the position is 3, if yes, add 5 to rating
+        //check if the position is 3, if yes, add 3 to rating
         else if (currentPosition === 3) {
-            this.hardcodedRating += 5;
+            this.hardcodedRating += 3;
             console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+5)");
         }
-        //check if the position is 4, if yes, add 3 to rating
+        //check if the position is 4, if yes, add 2 to rating
         else if (currentPosition === 4) {
-            this.hardcodedRating += 3;
+            this.hardcodedRating += 2;
             console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+3)");
         }
         //check if the position is 5, if yes, add 1 to rating
@@ -267,11 +270,12 @@ class Club { //all clubs
             return;
         }
 
-        //check difference between the two positions and add it to rating multiplied by 5
-        //so if a club was 14. last season and now is 9. the difference is 5, so add 25 to rating
-        this.hardcodedRating += (averagePosition - currentPosition) * 5;
+        //check difference between the two positions and add it to rating multiplied by 3,5
+        //so if a club was avg.14. last seasons and now is 9. the difference is 5, so add 17,5 to rating --> rounded up: 18
+        this.hardcodedRating += (averagePosition - currentPosition) * 3.5;
         //if the club got worse than last season, remove a little extra from bonus
         if (averagePosition > currentPosition) this.hardcodedRating -= 5;
+        this.hardcodedRating = Math.ceil(this.hardcodedRating);
     }
 }
 
@@ -579,7 +583,7 @@ class Cup{
             winner.addTrophy(`${this.name} Winner`, currentYear+1);
             console.log(this.remainingClubs[0].name + " wins the cup!");
             //give rating upgrade to winner #rating_update
-            this.remainingClubs[0].hardcodedRating += 20;
+            this.remainingClubs[0].hardcodedRating += 10;
             document.getElementById("LeagueTable").style.display = "block";
             if(debug_log_everything)console.log("CALL B");
             matchesCalculated(this,false);

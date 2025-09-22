@@ -7,7 +7,7 @@ dClubs = [
     new Club("Freiburg", 850, "https://upload.wikimedia.org/wikipedia/de/thumb/b/bf/SC_Freiburg_Logo.svg/1200px-SC_Freiburg_Logo.svg.png"),
     new Club("U. Berlin", 813, "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/1._FC_Union_Berlin_Logo.svg/2560px-1._FC_Union_Berlin_Logo.svg.png"),
     new Club("Stuttgart", 840, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/VfB_Stuttgart_1893_Logo.svg/640px-VfB_Stuttgart_1893_Logo.svg.png"),
-    new Club("Mönchengladbach", 872, "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Borussia_M%C3%B6nchengladbach_logo.svg/1200px-Borussia_M%C3%B6nchengladbach_logo.svg.png"),
+    new Club("Mönchengladbach", 827, "https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Borussia_M%C3%B6nchengladbach_logo.svg/1200px-Borussia_M%C3%B6nchengladbach_logo.svg.png"),
     new Club("Bremen", 848, "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/SV-Werder-Bremen-Logo.svg/1200px-SV-Werder-Bremen-Logo.svg.png"),
     new Club("Augsburg", 820, "https://upload.wikimedia.org/wikipedia/de/thumb/b/b5/Logo_FC_Augsburg.svg/1200px-Logo_FC_Augsburg.svg.png"),
     new Club("Heidenheim", 790, "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/1._FC_Heidenheim_1846.svg/1661px-1._FC_Heidenheim_1846.svg.png"),
