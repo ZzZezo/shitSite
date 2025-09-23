@@ -3670,6 +3670,8 @@ function showTrophyWinners(trophyName){
         clubObj = findClubObjByName(winner[0]);
         if(clubObj.logoURL != "EMPTY") listItem.innerHTML = (parseInt(winner[1])+2000) + ": " + `<img src="${clubObj.logoURL}" alt="${clubObj.name} logo" id="clubLogoTable">` + clubObj.displayName + "<br>";
         else listItem.innerHTML = (parseInt(winner[1])+2000) + ": " + clubObj.displayName + "<br>";
+        listItem.value=clubObj.displayName;
+        listItem.onclick = () => {showHistoricalDiagram(findClubObjByDisplayName(listItem.value));};
         winnersListDiv.appendChild(listItem);
     }
 
