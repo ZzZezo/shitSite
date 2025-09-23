@@ -56,6 +56,7 @@ let logosEnabled = true;
 
 //settings or idk
 let show_color_in_match_list = true;
+let diagram_dividing_lines = "horizontal";
 
 //debug variables
 let debug_fast_skip = false; //if true, fills out every game with 1-1
@@ -87,8 +88,11 @@ class Club { //all clubs
         this.totalDefeats = 0;
         this.totalDraws = 0;
 
+        this.currentLeagueLevel = -1;
+
         this.seasonalPositions = {};
         this.historicalPositions = {};
+        this.historicalPositionsMainLeague = [];
 
         //tmp
         this.justGotPromoted = false;
@@ -323,7 +327,13 @@ class League {
         this.playable = playable;
 
         //init league stats for all clubs (is not done for uefa leagues cuz they are populated later on)
-        if(this.name != "Champions League" && this.name != "Europa League" && this.name != "Conference League") clubs.forEach(club => club.initializeLeagueStats(this.name));
+        if(this.name != "Champions League" && this.name != "Europa League" && this.name != "Conference League"){
+            clubs.forEach(club => {
+                club.initializeLeagueStats(this.name);
+                club.currentLeagueLevel = this.level;
+            })
+        }
+
     }
 
     addMatch(match) {
@@ -430,6 +440,7 @@ class League {
         let index = this.clubs.indexOf(oldClub);
         this.clubs[index] = newClub;
         newClub.initializeLeagueStats(this.name);
+        newClub.currentLeagueLevel = this.level;
         this.matchplan = this.generateMatchplan();//this line probably should be done somewhere else later
         this.sortedClubs = this.init_sortedClubs(this.clubs);//so should this
         if(debug_log_everything)console.log(this.name+": Replaced "+oldClub.name + " with "+newClub.name);
@@ -773,15 +784,23 @@ class SeasonManager {
         //store all club standings to their historical positions so you can track their development
         dLeagues.forEach(league => {
             league.clubs.forEach(club => {
+                let posAtSeasonEnd = -69;
                 if (!club.historicalPositions[league.name]) {
                     club.historicalPositions[league.name] = [];
                 }
                 if(club.seasonalPositions[league.name]){
-                    club.historicalPositions[league.name].push(club.seasonalPositions[league.name][club.seasonalPositions[league.name].length-1]);
+                    posAtSeasonEnd = club.seasonalPositions[league.name][club.seasonalPositions[league.name].length-1];
                 }
                 else{
                     //get current position from sorted clubs list in the league instead
-                    club.historicalPositions[league.name].push(league.sortedClubs.findIndex(c => c.name === club.name) + parseInt(1));
+                    posAtSeasonEnd = league.sortedClubs.findIndex(c => c.name === club.name) + parseInt(1);
+                }
+
+                club.historicalPositions[league.name].push(posAtSeasonEnd);
+
+                //MAIN LEAGUE
+                if (league.association != "UCL" && league.association != "UEL" && league.association != "UCoL") {
+                    club.historicalPositionsMainLeague.push([club.currentLeagueLevel, posAtSeasonEnd]);
                 }
             })
         })
@@ -836,6 +855,7 @@ class SeasonManager {
                         higherLeague.addClub(club);
                         //give the club a rating upgrade, as e.g. new sponsors might be interested in it or whatever #rating_update
                         club.hardcodedRating+=7;
+                        club.currentLeagueLevel--;
                         club.justGotPromoted = true;
                     });
                 }
@@ -849,6 +869,7 @@ class SeasonManager {
                         lowerLeague.addClub(club);
                         //give the club a rating downgrade, as e.g. players leave, sponsors jump off or whatever #rating_update
                         club.hardcodedRating-=14;
+                        club.currentLeagueLevel++;
                         club.justGotRelegated = true;
                     });
                 }
@@ -911,9 +932,11 @@ class SeasonManager {
 
                         //give the promoting club a rating upgrade, as e.g. new sponsors might be interested in it or whatever #rating_update
                         clubB.hardcodedRating+=7;
+                        clubB.currentLeagueLevel--;
                         clubB.justGotPromoted = true;
                         //give the relegated club a rating downgrade, as e.g. players leave, sponsors jump off or whatever #rating_update
                         clubA.hardcodedRating-=14;
+                        clubA.currentLeagueLevel++;
                         clubA.justGotRelegated = true;
                         
                         console.log("%c"+clubB.name + " won the playoffs. " + clubA.name + " was relegated.","color:cyan")
@@ -1745,18 +1768,47 @@ function updateClubInfo(clubSorted) {
     const statsContainer = document.createElement("div");
     statsContainer.classList.add("win95-stats-container");
 
-    const developmentButton = document.createElement("button");
-    developmentButton.textContent = "📈 Development 📉";
-    developmentButton.classList.add("win95-button");
-    developmentButton.style.backgroundColor = "#DDDDDD";
-    developmentButton.style.padding = "12px";
-    developmentButton.addEventListener("click", () => {
+    //development header
+    const devHeader = document.createElement("text");
+    devHeader.textContent = "📈 Development 📉";
+    statsContainer.appendChild(devHeader);
+    //development buttons
+    const devButtonsWrapper = document.createElement("div");
+    devButtonsWrapper.style.display = "flex";
+    devButtonsWrapper.style.gap = "12px"; // spacing between the buttons
+
+    const developmentButton_seasonal = document.createElement("button");
+    developmentButton_seasonal.textContent = "Seasonal Development";
+    developmentButton_seasonal.classList.add("win95-button");
+    developmentButton_seasonal.style.backgroundColor = "#DDDDDD";
+    developmentButton_seasonal.style.padding = "12px";
+    developmentButton_seasonal.style.width = "100%";
+    developmentButton_seasonal.addEventListener("click", () => {
         let leagueData = club.seasonalPositions[activeLeague.name];
-        showDiagram(leagueData, activeLeague.name, club.name);
+        showSeasonalDiagram(leagueData, activeLeague.name, club.name);
     });
 
-    statsContainer.appendChild(developmentButton);
+    const development2Button_historical = document.createElement("button");
+    development2Button_historical.textContent = "Historical Development";
+    development2Button_historical.classList.add("win95-button");
+    development2Button_historical.style.backgroundColor = "#DDDDDD";
+    development2Button_historical.style.padding = "12px";
+    development2Button_historical.style.width = "100%";
+    development2Button_historical.addEventListener("click", () => {
+        let clubData = club.historicalPositionsMainLeague;
+        showHistoricalDiagram(club);
+    });
+
+    devButtonsWrapper.appendChild(developmentButton_seasonal);
+    devButtonsWrapper.appendChild(development2Button_historical);
+
+    statsContainer.appendChild(devButtonsWrapper);
     
+    //stats header
+    const statsHeader = document.createElement("text");
+    statsHeader.textContent = "📋 Statistics 🧮";
+    statsContainer.appendChild(statsHeader);
+
     // Create stats cards
     const statsData = [
         { 
@@ -2219,8 +2271,11 @@ function serialize_club_array(array) {
                 totalDefeats: club.totalDefeats,
                 totalDraws: club.totalDraws,
 
+                currentLeagueLevel: club.currentLeagueLevel,
+
                 seasonalPositions: club.seasonalPositions,
-                historicalPositions: club.historicalPositions
+                historicalPositions: club.historicalPositions,
+                historicalPositionsMainLeague: club.historicalPositionsMainLeague
             };
         } catch (error) {
             console.error(`Error in club at index ${index}:`, club);
@@ -2255,8 +2310,11 @@ function unserialize_club_array(array) {
             club.totalDefeats = c.totalDefeats;
             club.totalDraws = c.totalDraws;
 
+            club.currentLeagueLevel = c.currentLeagueLevel;
+
             club.seasonalPositions = c.seasonalPositions;
             club.historicalPositions = c.historicalPositions;
+            club.historicalPositionsMainLeague = c.historicalPositionsMainLeague;
             return club;
 
         }catch (error){
@@ -3101,7 +3159,7 @@ function simulateAll(){
 }
 
 
-function showDiagram(list, leagueName, clubname = "Diagram") {
+function showSeasonalDiagram(list, leagueName, clubname = "Diagram") {
     // Create the popup window
     const windowDiv = document.createElement('div');
     windowDiv.className = 'win95-window';
@@ -3231,6 +3289,314 @@ function showDiagram(list, leagueName, clubname = "Diagram") {
     currentX = rect.left;
     currentY = rect.top;
 }
+
+function showHistoricalDiagram(club) {
+    // Create the popup window
+    const windowDiv = document.createElement('div');
+    windowDiv.className = 'win95-window';
+
+    // Title bar with club name
+    const clubHeader = document.createElement("h1");
+    clubHeader.textContent = club.displayName;
+    clubHeader.classList.add("win95-window-title");
+
+    // Close button
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "X";
+    closeButton.classList.add("win95-close");
+    closeButton.onclick = () => {
+        document.body.removeChild(windowDiv);
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', stopDragging);
+    };
+    clubHeader.appendChild(closeButton);
+
+    // Content area
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'win95-content';
+
+    // Canvas for line diagram
+    const canvas = document.createElement('canvas');
+    canvas.width = 700;
+    canvas.height = 400;
+    canvas.style.display = 'block';
+    canvas.style.margin = '0 auto';
+    
+    //line start
+    function drawLineDiagram(values, canvasElement) {
+        const ctx = canvasElement.getContext('2d');
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        
+        if (values.length === 0) return;
+        
+        // Set up dimensions and padding
+        const padding = 30;
+        const width = canvasElement.width - 2 * padding;
+        const height = canvasElement.height - 2 * padding;
+        
+        // Find min and max values for scaling
+        const minValue = Math.min(...values);
+        const maxValue = Math.max(...values);
+        const valueRange = maxValue - minValue || 1; // Avoid division by zero
+        
+        // Calculate positions
+        const stepX = width / (values.length - 1 || 1);
+        
+        // Draw grid lines
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.lineWidth = 1;
+        
+        // Horizontal grid lines
+        for (let i = 0; i <= 5; i++) {
+            const y = padding + (height * i) / 5;
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(canvasElement.width - padding, y);
+            ctx.stroke();
+        }
+        
+        // Vertical grid lines
+        for (let i = 0; i < values.length; i++) {
+            const x = padding + stepX * i;
+            ctx.beginPath();
+            ctx.moveTo(x, padding);
+            ctx.lineTo(x, canvasElement.height - padding);
+            ctx.stroke();
+        }
+        
+        // Draw axes
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        
+        // Y-axis
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, canvasElement.height - padding);
+        ctx.stroke();
+        
+        // X-axis
+        ctx.beginPath();
+        ctx.moveTo(padding, canvasElement.height - padding);
+        ctx.lineTo(canvasElement.width - padding, canvasElement.height - padding);
+        ctx.stroke();
+        
+        if(diagram_dividing_lines=="horizontal"){
+            //draw division lines between league levels
+            //Get highest rawData[][1] value to every rawData[][0] value
+            const maxByGroup = {};
+            rawData.forEach(([first, second]) => {
+                if (!maxByGroup[first] || second > maxByGroup[first]) {
+                    maxByGroup[first] = second;
+                }
+            });
+            //same for lowest
+            const minByGroup = {};
+            rawData.forEach(([first, second]) => {
+                if (!minByGroup[first] || second < minByGroup[first]) {
+                    minByGroup[first] = second;
+                }
+            });
+            //draw horizontal lines between highest and lowest values
+            ctx.strokeStyle = '#e0a4a4ff';
+            const sortedGroups = Object.keys(maxByGroup).sort((a, b) => a - b); // or sort as strings if needed
+            //for loop for how many different "first" values there are
+            sortedGroups.forEach((group, index) => {
+                const max = maxByGroup[group];
+                const nextGroup = sortedGroups[index + 1];
+                const prevGroup = sortedGroups[index - 1];
+                
+                const min = nextGroup ? minByGroup[nextGroup] : null;
+                const prevMax = prevGroup ? maxByGroup[prevGroup] : null;
+                if(min === null || max === null) return;
+                //draw
+                let y = max+min/2+prevMax;
+                y = padding + ((y - minValue) / valueRange) * height;
+                //draw the line
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvasElement.width, y);
+                ctx.stroke();
+            });
+            ctx.strokeStyle = '#0066cc';
+        }
+        else if(diagram_dividing_lines=="vertical"){
+            //draw dividing lines if rawData[i][0] is different from rawData[i-1][0]
+            ctx.strokeStyle = '#e0a4a4ff';
+            for (let i = 1; i < rawData.length; i++) {
+                if (rawData[i][0] !== rawData[i-1][0]) {
+                    //get x of the point
+                    let x = padding + stepX * i;
+                    //move x in between the two points
+                    x -= stepX / 2;
+                    //draw the line
+                    ctx.beginPath();
+                    ctx.moveTo(x, padding);
+                    ctx.lineTo(x, canvasElement.height - padding);
+                    ctx.stroke();
+                }
+            }
+            ctx.strokeStyle = '#0066cc';
+        }
+            
+
+        // Draw line
+        ctx.strokeStyle = '#0066cc';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        
+        for (let i = 0; i < values.length; i++) {
+            const x = padding + stepX * i;
+            const y = padding + ((values[i] - minValue) / valueRange) * height;
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+        
+        // Draw points
+        ctx.fillStyle = '#0066cc';
+        for (let i = 0; i < values.length; i++) {
+            const x = padding + stepX * i;
+            const y = padding + ((values[i] - minValue) / valueRange) * height;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Draw value labels
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(rawData[i][1].toString(), x, y - 15);
+            ctx.fillStyle = '#0066cc';
+        }
+        
+        // Draw axis labels
+        ctx.fillStyle = '#333';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+        
+        // X-axis labels (index numbers)
+        ctx.textAlign = 'center';
+        for (let i = 0; i < values.length; i++) {
+            const x = padding + stepX * i;
+            const text = i+1;
+            ctx.fillText(text, x, canvasElement.height - padding + 20);
+        }
+    }
+    
+    // const rawData = [[3,4],[3,1],[2,1],[1,10],[1,12],[1,17],[2,3],[1,15],[1,18],[2,5],[2,13],[2,16],[3,1],[2,18],[3,3],[3,3],[3,6]];
+    // const rawData = [[2,10],[2,11],[2,15],[2,7],[1,16]]
+    const rawData = club.historicalPositionsMainLeague;
+    const data = transformHistoricalArray(rawData);
+    console.log(data);
+    
+    // Draw the line diagram
+    drawLineDiagram(data, canvas);
+    //line end
+    
+    // Assemble the popup
+    windowDiv.appendChild(clubHeader);
+    contentDiv.appendChild(canvas);
+    windowDiv.appendChild(contentDiv);
+    document.body.appendChild(windowDiv);
+
+    // Dragging functionality
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+
+    clubHeader.addEventListener('mousedown', startDragging);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
+
+    function startDragging(e) {
+        // Prevent dragging if clicking the close button
+        if (e.target === closeButton) return;
+
+        initialX = e.clientX - currentX;
+        initialY = e.clientY - currentY;
+
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+        windowDiv.style.left = `${currentX}px`;
+        windowDiv.style.top = `${currentY}px`;
+
+        isDragging = true;
+        windowDiv.style.transform = 'none'; // Remove centering transform during drag
+
+        //set all windowDivs at zIndex 1000
+        const windowDivs = document.querySelectorAll('.win95-window');
+        for (let i = 0; i < windowDivs.length; i++) {
+            windowDivs[i].style.zIndex = '1000';
+        }
+
+        //Set only the current one at z 9999, so its always in foreground
+        windowDiv.style.zIndex = '9999';
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault(); // Prevent text selection
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+            windowDiv.style.left = `${currentX}px`;
+            windowDiv.style.top = `${currentY}px`;
+        }
+    }
+
+    function stopDragging() {
+        isDragging = false;
+    }
+
+    // Initialize position
+    const rect = windowDiv.getBoundingClientRect();
+    currentX = rect.left;
+    currentY = rect.top;
+}
+
+function transformHistoricalArray(arr) {
+    // Group by first value and find max second value for each group
+    const maxByGroup = {};
+    
+    // First pass: find max raw values for each group
+    arr.forEach(([first, second]) => {
+        if (!maxByGroup[first] || second > maxByGroup[first]) {
+            maxByGroup[first] = second;
+        }
+    });
+    
+    // Second pass: calculate cumulative max values
+    const cumulativeMax = {};
+    const sortedKeys = Object.keys(maxByGroup).map(Number).sort((a, b) => a - b);
+    
+    sortedKeys.forEach(key => {
+        if (key === 1) {
+            cumulativeMax[key] = maxByGroup[key];
+        } else {
+            const prevMax = cumulativeMax[key - 1] || 0;
+            cumulativeMax[key] = maxByGroup[key] + prevMax;
+        }
+    });
+    
+    // Transform each element
+    return arr.map(([first, second]) => {
+        if (first === 1) {
+            return second;
+        } else {
+            const prevGroupCumulativeMax = cumulativeMax[first - 1] || 0;
+            return second + prevGroupCumulativeMax;
+        }
+    });
+}
+
 
 function travelInTime() {
     //create year display
