@@ -453,7 +453,7 @@ dClubs = [
     new Club("Yeni Malatyas...", 300),
     //above is 1. Lig (Turkey, second tier) (20 Teams, 388-407)
     //below are additional teams (no league, that ever got promoted into a playable league nd before didnt exist in database)
-    new Club("Hoffenheim II", 100, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Logo_TSG_Hoffenheim.svg/1716px-Logo_TSG_Hoffenheim.svg.png"),
+    new Club("Hoffenheim II", 600, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Logo_TSG_Hoffenheim.svg/1716px-Logo_TSG_Hoffenheim.svg.png"),
     new Club("Havelse", 100, "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/TSV_Havelse_logo.svg/640px-TSV_Havelse_logo.svg.png")
 ]
 

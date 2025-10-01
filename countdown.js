@@ -227,6 +227,16 @@ function updateDayBadges() {
         }
     } 
 
+    //craftattack13
+    if(now.getMonth() === 9 && now.getDate() === 26 && now.getHours()===12 && now.getMinutes()===0){
+        const badgeElement = document.getElementById("craftattack13");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("craftattack13","CRAFT ATTACK <3", "twitch.tv/stegi (haha)\nYou opened the Countdown exactly when Craft Attack 13 started!");
+            triggerBadgeAnimation(badgeElement);
+        }
+    } 
+
     //Croatia
     if (Intl.DateTimeFormat().resolvedOptions().timeZone.split("/")[1] === "Zagreb") {
         const badgeElement = document.getElementById("HR");
