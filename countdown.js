@@ -1,5 +1,6 @@
 var secondsLeft = 1337;
 var secondsWatching = 0;
+var country = "backrooms";
 var now = new Date();
 var endTime = new Date();
 endTime.setFullYear(now.getFullYear() + 1);
@@ -8,7 +9,6 @@ endTime.setDate(1);
 endTime.setHours(0);
 endTime.setMinutes(0);
 endTime.setSeconds(0);
-
 
 function updateCountdown() {
     secondsLeft = calculateTimeSeconds();
@@ -238,14 +238,17 @@ function updateDayBadges() {
     } 
 
     //Croatia
-    if (Intl.DateTimeFormat().resolvedOptions().timeZone.split("/")[1] === "Zagreb") {
-        const badgeElement = document.getElementById("HR");
-        if (badgeElement && badgeElement.style.display !== "block") {
-            badgeElement.style.display = "block";
-            saveBadge("HR","Boli me kurac 🇭🇷", "For opening the countdown while in Croatia.");
-            triggerBadgeAnimation(badgeElement);
+    fetch('https://ipapi.co/json/').then(res => res.json()).then(data => {
+        country = data.country_name;
+        if (country=="Croatia") {
+            const badgeElement = document.getElementById("HR");
+            if (badgeElement && badgeElement.style.display !== "block") {
+                badgeElement.style.display = "block";
+                saveBadge("HR","Boli me kurac 🇭🇷", "For opening the countdown while in Croatia.");
+                triggerBadgeAnimation(badgeElement);
+            }
         }
-    }
+    });
 }
 
 function triggerBadgeAnimation(badgeElement) {
