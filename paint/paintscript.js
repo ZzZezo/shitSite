@@ -177,44 +177,65 @@ for (var i = 0; i < sliderElements.length; i++) {
   });
 }
 
-function floodFill(x, y, targetColor, newColor) { //fill all close pixels
+function floodFill(startX, startY, targetColor, newColorString) {
   var ctx = canvas.getContext("2d");
-  const stack = [
-    [x, y]
-  ];
-  const visited = new Array(canvas.width);
-  for (let i = 0; i < canvas.width; i++) {
-    visited[i] = new Array(canvas.height).fill(false);
-  }
+  const width = canvas.width;
+  const height = canvas.height;
 
-  let i = 0;
+  const imgData = ctx.getImageData(0, 0, width, height);
+  const data = imgData.data;
+
+  const fillColor = getRGBAFromString(newColorString);
+
+  if (colorsMatch(targetColor, fillColor)) return;
+  const stack = [[startX, startY]];
+
   while (stack.length > 0) {
     const [x, y] = stack.pop();
-    if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) {
-      continue;
-    }
-    if (visited[x][y]) {
-      continue;
-    }
-    const pixelData = ctx.getImageData(x, y, 1, 1).data; //get color of pixel
+    
+    let pixelPos = (y * width + x) * 4;
 
-    if (colorsMatch(pixelData, targetColor)) { //check if color of pixel matches color of origin
-      visited[x][y] = true;
-      //a bit of recursion
-      ctx.beginPath();
-      ctx.rect(x, y, 1, 1);
-      ctx.fillStyle = newColor;
-      ctx.fill();
+    if (x < 0 || x >= width || y < 0 || y >= height) continue;
+
+    //check if current pixel matches targetColor
+    if (
+      data[pixelPos] === targetColor[0] &&
+      data[pixelPos + 1] === targetColor[1] &&
+      data[pixelPos + 2] === targetColor[2] &&
+      data[pixelPos + 3] === targetColor[3]
+    ) {
+      //change the color in buffer
+      data[pixelPos] = fillColor[0];
+      data[pixelPos + 1] = fillColor[1];
+      data[pixelPos + 2] = fillColor[2];
+      data[pixelPos + 3] = 255; // Alpha
+
+      //push neighbors (up, down, left, right)
       stack.push([x + 1, y]);
       stack.push([x - 1, y]);
       stack.push([x, y + 1]);
       stack.push([x, y - 1]);
     }
   }
+
+  //load image to canvas
+  ctx.putImageData(imgData, 0, 0);
 }
 
 function colorsMatch(color1, color2) { //check if 2 colors are the same
   return color1[0] === color2[0] && color1[1] === color2[1] && color1[2] === color2[2] && color1[3] === color2[3];
+}
+
+function getRGBAFromString(colorString) {
+  // Extracts numbers from "rgb(x, y, z)"
+  const values = colorString
+    .replace("rgb(", "")
+    .replace(")", "")
+    .split(",")
+    .map(Number);
+    
+  // Returns [r, g, b, alpha] (assuming full opacity for brush)
+  return [values[0], values[1], values[2], 255]; 
 }
 
 function moveC(event) { //move canvas to center

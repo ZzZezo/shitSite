@@ -295,6 +295,19 @@ window.addEventListener('load', function() {
     });
     loadBadges();
     updateDayBadges();
+
+    //times opened
+    const timesOpened = parseInt(localStorage.getItem('CD_timesOpened')) || 0;
+    localStorage.setItem('CD_timesOpened', timesOpened + 1);
+
+    if(timesOpened >= 100){
+        const badgeElement = document.getElementById("open100times");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("open100times","100th visit", "Thank you so much for opening the countdown 100 times! <3");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
 });
 
 //initiate that thing
