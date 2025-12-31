@@ -101,6 +101,14 @@ function updateCountdown() {
 
 
     if (secondsLeft <= -1) {
+        const badgeElement = document.getElementById("2026");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("2026","Happy new Year 2026 🗿🗿🗿", "It's so peak, I did NOT forget to add this. \nIt is NOT 11.54pm rn why do u ask haha");
+            triggerBadgeAnimation(badgeElement);
+        }
+    
+
         alert("Happy New Year lol");
         createPopup("Happy New Year!", "happy new year lol", 1, ["Thanks! <3"], [closePopup]);
     }
