@@ -1,132 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AI-Crafted Cosmic Dance</title>
-    <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
-        #info {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            color: white;
-            font-family: Arial;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
-        }
-    </style>
+    <title>TEST</title>
 </head>
-<body>
-    <div id="info">Cosmic Dance - Mouse/Touch to Interact</div>
-    <canvas id="c"></canvas>
+<style>
+        @font-face {
+        font-family: 'Old Sans Serif';
+        src: url('../assets/font/ms-sans-serif.woff') format('woff');
+    }
+
+    body,html {
+        background-color: teal;
+        font-family: 'Old Sans Serif';
+        cursor: url('../assets/images/old_pointer.png'), auto;
+    }
+</style>
+<body style="text-align: center;">
+    <button onclick='readBruno("holyjump_highscore")'>Get Jump highscore</button>
+    <button onclick='readBruno("holyjump_flohighscore")'>Get Jump flohighscore</button>
+    <button onclick='readBruno("luckgame")'>Get luckgame</button>
+</body>
 
 <script>
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-let width, height;
-let particles = [];
-const particleCount = 1500;
-let hue = 0;
+    //create iframe and load bruno page inside
+    const targetOrigin = "https://nichtbruno.de";
+    let iframe = document.createElement('iframe');
+    iframe.src = targetOrigin + "/api/handshake.html";
+    iframe.style.display = "none"; 
+    document.body.appendChild(iframe);
 
-class Particle {
-    constructor() {
-        this.reset(true);
-    }
-    
-    reset(init) {
-        this.x = init ? Math.random() * width : width * 1.1;
-        this.y = Math.random() * height;
-        this.vx = -2 - Math.random() * 2;
-        this.vy = Math.random() * 4 - 2;
-        this.size = Math.random() * 2 + 1;
-        this.hue = (hue + Math.random() * 60) % 360;
-        this.lightness = 50 + Math.random() * 30;
-        this.alpha = Math.random() * 0.5 + 0.5;
-    }
-
-    update() {
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const force = -mouse.radius / dist;
-
-        if (dist < mouse.radius) {
-            const angle = Math.atan2(dy, dx);
-            this.vx += Math.cos(angle) * force;
-            this.vy += Math.sin(angle) * force;
-        }
-
-        this.x += this.vx;
-        this.y += this.vy;
-        
-        if (this.x < -this.size) this.reset();
-        if (this.y < -this.size || this.y > height + this.size) this.vy *= -1;
-        
-        this.vx *= 0.99;
-        this.vy *= 0.99;
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.fillStyle = `hsla(${this.hue}, 100%, ${this.lightness}%, ${this.alpha})`;
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-const mouse = { x: 0, y: 0, radius: 150 };
-canvas.addEventListener('mousemove', e => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-});
-
-canvas.addEventListener('touchmove', e => {
-    e.preventDefault();
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
-}, { passive: false });
-
-function init() {
-    canvas.width = width = window.innerWidth;
-    canvas.height = height = window.innerHeight;
-    particles = [];
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
-}
-
-function animate() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-    ctx.fillRect(0, 0, width, height);
-    
-    particles.forEach(p => {
-        p.update();
-        p.draw();
+    //listener to listen to what bruno says
+    window.addEventListener("message", (event) => {
+        if (event.origin !== targetOrigin) return;
+        alert(event.data);
     });
-    
-    hue = (hue + 0.5) % 360;
-    requestAnimationFrame(animate);
-}
 
-init();
-window.addEventListener('resize', init);
-animate();
-
-// Add cosmic rays
-function createRay() {
-    ctx.beginPath();
-    ctx.strokeStyle = `hsla(${Math.random() * 360}, 100%, 80%, 0.2)`;
-    ctx.lineWidth = Math.random() * 3;
-    ctx.moveTo(Math.random() * width, Math.random() * height);
-    ctx.lineTo(Math.random() * width, Math.random() * height);
-    ctx.stroke();
-    setTimeout(createRay, Math.random() * 500);
-}
-createRay();
-
-// Add glowing effect
-ctx.shadowColor = 'white';
-ctx.shadowBlur = 15;
-ctx.globalCompositeOperation = 'lighter';
+    function readBruno(category) {
+        iframe.contentWindow.postMessage(category, targetOrigin);
+    }
 </script>
-</body>
+
 </html>
