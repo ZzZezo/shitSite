@@ -136,7 +136,7 @@ function calculateTimeSeconds(){
 
 // Helper function to save badge to localStorage
 function saveBadge(badgeId, title, description) {
-    const currentTime = new Date().toLocaleDateString('de-DE', {day: '2-digit',month: '2-digit',year: 'numeric'});
+    const currentTime = new Date().toISOString(); // ISO format for date and time
     const badgeData = {
         id: badgeId,
         title: title,
@@ -171,7 +171,7 @@ function showBadgeDetails(badgeId) {
     
     if (badge) {
         const title = badge.title;
-        const text = `${badge.description}\n\nObtained: ${new Date(badge.obtainedAt).toLocaleString()}`;
+        const text = `${badge.description}\n\nObtained: ${new Date(badge.obtainedAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
         createPopup(title, text, 1, ["Back"], [closePopup]);
     } else {
         createPopup("Badge Info", "This badge has not been unlocked yet or has no details.", 1, ["Back"], [closePopup]);
