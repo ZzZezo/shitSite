@@ -58,5 +58,46 @@
         <div id="TaskArea">Open Applications</div>
     </div> -->
 </body>
+<script>
+    const targetOrigin = "https://nichtbruno.de";
+    let iframe = document.createElement('iframe');
+    iframe.src = targetOrigin + "/api/handshake.html";
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+
+    //ask ONE thing and wait for the reply
+    function askBruno(requestString) {
+        return new Promise((resolve) => {
+            //temporary listener for specific request
+            const listener = (event) => {
+                if (event.origin !== targetOrigin) return;
+                
+                //on response, remove listener so it not listens twice
+                window.removeEventListener("message", listener);
+                
+                resolve(event.data);
+            };
+            
+            //start listening first and THEN send the message
+            window.addEventListener("message", listener);
+            iframe.contentWindow.postMessage(requestString, targetOrigin);
+        });
+    }
+
+    //wait for iframe, then ask sequentially
+    iframe.onload = async () => {
+        let jumpHighscore = await askBruno("holyjump_highscore");
+        console.log("Got Highscore:", jumpHighscore);
+        localStorage.setItem("JNR_highscore", jumpHighscore);
+
+        let jumpFloHighscore = await askBruno("holyjump_flohighscore");
+        console.log("Got Flo Highscore:", jumpFloHighscore);
+        localStorage.setItem("JNR_flohighscore", jumpHighscore);
+
+        let luckgameData = await askBruno("luckgame");
+        console.log("Got Luckgame Data:", luckgameData);
+        localStorage.setItem("holymoly_luckgame", jumpHighscore);
+    };
+</script>
 
 </html>

@@ -136,7 +136,7 @@ function calculateTimeSeconds(){
 
 // Helper function to save badge to localStorage
 function saveBadge(badgeId, title, description) {
-    const currentTime = new Date().toISOString(); // ISO format for date and time
+    const currentTime = new Date().toLocaleDateString('de-DE', {day: '2-digit',month: '2-digit',year: 'numeric'});
     const badgeData = {
         id: badgeId,
         title: title,
@@ -259,6 +259,18 @@ function updateDayBadges() {
             }
         }
     });
+
+    //holyjump
+    holyjumpHighScore = localStorage.getItem("JNR_highscore");
+    holyjumpHighScoreFlo = localStorage.getItem("JNR_flohighscore");
+    if(holyjumpHighScore >= 100 && holyjumpHighScoreFlo >= 100){
+        const badgeElement = document.getElementById("holyjump100");
+        if (badgeElement && badgeElement.style.display !== "block") {
+            badgeElement.style.display = "block";
+            saveBadge("holyjump100","🗿 Holy Jump Master 🗿", "Reach a highscore of 100 in HolyJump (Normal & Flo Mode).\n\nnichtbruno.de/jumpnrun/index.html");
+            triggerBadgeAnimation(badgeElement);
+        }
+    }
 }
 
 function triggerBadgeAnimation(badgeElement) {
