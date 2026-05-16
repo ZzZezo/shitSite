@@ -686,7 +686,6 @@ realConferenceLeagueClubs = [
     clPool.find(c => c.name === "Rapid Wien"), // Rapid Wien
     new Club("Shamrock Rovers", 680), // Not in dClubs or colPool
     new Club("The New Saints", 660), // Not in dClubs or colPool
-    new Club("Víkingur Reykjavík", 670), // Duplicate in list, only add once
     elPool.find(c => c.name === "Vitória Guimarães") // Vitória SC
 ].filter(Boolean);
 
@@ -730,7 +729,7 @@ function onStartYearUpdated(year){
             dLeagues[2].replaceClub(dClubs.find(c => c.name === "Dortmund II"), dClubs.find(c => c.name === "Duisburg"));
             dLeagues[2].replaceClub(dClubs.find(c => c.name === "Hannover II"), dClubs.find(c => c.name === "Hoffenheim II"));
             dLeagues[2].replaceClub(dClubs.find(c => c.name === "Sandhausen"), dClubs.find(c => c.name === "Schweinfurt"));
-            dLeagues[2].replaceClub(dClubs.find(c => c.name === "Untehaching"), dClubs.find(c => c.name === "Havelse"));
+            dLeagues[2].replaceClub(dClubs.find(c => c.name === "Unterhaching"), dClubs.find(c => c.name === "Havelse"));
         //REGIONALLIGEN
             //promotions
             dLeagues[3].replaceClub(dClubs.find(c => c.name === "Duisburg"), dClubs.find(c => c.name === "Dortmund II"));

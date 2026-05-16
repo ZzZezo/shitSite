@@ -126,7 +126,7 @@ class Club { //all clubs
             }
             else if(match.homeGoals-match.awayGoals == this.highestVictorySpan){
                 if(match.homeGoals > this.highestVictoryGoals){
-                    this.highestVictoryMatch = this;
+                    this.highestVictoryMatch = match;
                     this.highestVictoryGoals = match.homeGoals;
                 }
             }
@@ -140,15 +140,10 @@ class Club { //all clubs
             }
             else if(match.awayGoals-match.homeGoals == this.highestVictorySpan){
                 if(match.awayGoals > this.highestVictoryGoals){
-                    this.highestVictoryMatch = this;
+                    this.highestVictoryMatch = match;
                     this.highestVictoryGoals = match.awayGoals;
                 }
-            }   
-        }
-
-        if(this.highestVictoryMatch == {}){
-            console.log("JESUS!");
-            console.log(this);
+            }
         }
     }
 
@@ -162,7 +157,7 @@ class Club { //all clubs
             }
             else if(match.awayGoals-match.homeGoals == this.highestLossSpan){
                 if(match.awayGoals > this.highestLossGoals){
-                    this.highestLossMatch = this;
+                    this.highestLossMatch = match;
                     this.highestLossGoals = match.awayGoals;
                 }
             }
@@ -176,15 +171,10 @@ class Club { //all clubs
             }
             else if(match.homeGoals-match.awayGoals == this.highestLossSpan){
                 if(match.homeGoals > this.highestLossGoals){
-                    this.highestLossMatch = this;
+                    this.highestLossMatch = match;
                     this.highestLossGoals = match.homeGoals;
                 }
             }
-        }
-
-        if(this.highestLossMatch == {}){
-            console.log("JESUS!");
-            console.log(this);
         }
     }
 
@@ -237,22 +227,22 @@ class Club { //all clubs
         //check if the position is 1, if yes, add 5 to rating
         if (currentPosition === 1) {
             this.hardcodedRating += 5;
-            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+10)");
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+5)");
         }
         //check if the position is 2, if yes, add 4 to rating
         else if (currentPosition === 2) {
             this.hardcodedRating += 4;
-            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+7)");
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+4)");
         }
         //check if the position is 3, if yes, add 3 to rating
         else if (currentPosition === 3) {
             this.hardcodedRating += 3;
-            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+5)");
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+3)");
         }
         //check if the position is 4, if yes, add 2 to rating
         else if (currentPosition === 4) {
             this.hardcodedRating += 2;
-            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+3)");
+            console.log("rating updated for " + this.name + " to " + this.hardcodedRating+ " due to good performance in " + league.name + "! (+2)");
         }
         //check if the position is 5, if yes, add 1 to rating
         else if (currentPosition === 5) {
@@ -589,7 +579,7 @@ class Cup{
             if(debug_log_everything)console.log("CALL A");
             matchesCalculated(this,false);
         }
-        else if(this.remainingClubs.length=1){
+        else if(this.remainingClubs.length === 1){
             const winner = this.remainingClubs[0];
             winner.addTrophy(`${this.name} Winner`, currentYear+1);
             console.log(this.remainingClubs[0].name + " wins the cup!");
@@ -690,9 +680,6 @@ class Calendar{
     }
       
       initCalendar() {
-        if(this.partakingLeagues.length == 0) return [];
-        console.log(this.partakingLeagues.length);
-        console.log(this.partakingLeagues);
         if(this.partakingLeagues.length == 0) return [];
         const leagues = this.partakingLeagues.map(league => ({
             name: league.name,
@@ -880,7 +867,7 @@ class SeasonManager {
         //note this is not the only place where the rating gets updated. search for "rating_update" to find all places
         dLeagues.forEach(league => {
             league.clubs.forEach(club => {
-                if(league.association != "UCL" && league.association != "UEL" && league.association != "UCoL" &! club.justGotPromoted && !club.justGotRelegated) club.updateRatingByLeagueDevelopment(league);
+                if(league.association != "UCL" && league.association != "UEL" && league.association != "UCoL" && !club.justGotPromoted && !club.justGotRelegated) club.updateRatingByLeagueDevelopment(league);
                 club.justGotPromoted = false;
                 club.justGotRelegated = false;
             })
@@ -1174,7 +1161,7 @@ async function calculateInput() { //called when the calculate button is pressed,
             console.log("okay so we just played a knockout round for " + league.name);
             const advancingTeams = todaysWinnerNames;
             if(debug_log_everything)console.log("Advancing Teams: " + advancingTeams); //DEBUG
-            league.knockoutTeamsList = advancingTeams.map(team => team.name);
+            league.knockoutTeamsList = [...advancingTeams];
             if(debug_log_everything)console.log("Teams Left: " +league.knockoutTeamsList); //DEBUG
             advancingTeams.sort(() => Math.random() - 0.5);
             if(debug_log_everything)console.log("Shuffled List of Advancing Teams: " + advancingTeams); //DEBUG
@@ -1255,6 +1242,43 @@ function matchesCalculated(lastLeague,leagueDone=false) {
     if(savingEnabled) saveToStorage();
 }
 
+function createMatchInputRow(homeClub, awayClub, homeDefaultGoals = 0, awayDefaultGoals = 0) {
+    const inputT1 = document.createElement("input");
+    inputT1.type = "text";
+    inputT1.value = homeClub.displayName;
+    inputT1.disabled = true;
+    inputT1.classList.add("teamInput");
+
+    const inputG1 = document.createElement("input");
+    inputG1.type = "number";
+    inputG1.placeholder = "0";
+    inputG1.classList.add("goalInput");
+    inputG1.onkeyup = function() { switchToNextInput(); };
+    if (debug_fast_skip) inputG1.value = homeDefaultGoals;
+
+    const inputT2 = document.createElement("input");
+    inputT2.type = "text";
+    inputT2.value = awayClub.displayName;
+    inputT2.disabled = true;
+    inputT2.classList.add("teamInput");
+
+    const inputG2 = document.createElement("input");
+    inputG2.type = "number";
+    inputG2.placeholder = "0";
+    inputG2.classList.add("goalInput");
+    inputG2.onkeyup = function() { switchToNextInput(); };
+    if (debug_fast_skip) inputG2.value = awayDefaultGoals;
+
+    const row = document.createElement("div");
+    row.classList.add("inputContainer");
+    row.appendChild(inputT1);
+    row.appendChild(inputG1);
+    row.appendChild(document.createElement("br"));
+    row.appendChild(inputT2);
+    row.appendChild(inputG2);
+    return row;
+}
+
 function showMatches(leagueName) {
     const league = dLeagues.find(leagueObj => leagueObj.name === leagueName);
 
@@ -1330,40 +1354,7 @@ function showMatches(leagueName) {
 //-------------NEW MATCHMAKING--------------
 
         league.lastShownMatchIndex+=1;
-        //show in html
-        const inputT1 = document.createElement("input");
-            inputT1.type = "text";
-            inputT1.value = t1.displayName;
-            inputT1.disabled = true;
-            inputT1.classList.add("teamInput");
-            const inputG1 = document.createElement("input");
-            inputG1.type = "number";
-            inputG1.placeholder = "0";
-            inputG1.classList.add("goalInput");
-            inputG1.onkeyup = function() {switchToNextInput()};
-            if(debug_fast_skip)inputG1.value = 0;
-            const inputT2 = document.createElement("input");
-            inputT2.type = "text";
-            inputT2.value = t2.displayName;
-            inputT2.disabled = true;
-            inputT2.classList.add("teamInput");
-            const inputG2 = document.createElement("input");
-            inputG2.type = "number";
-            inputG2.placeholder = "0";
-            inputG2.classList.add("goalInput");
-            inputG2.onkeyup = function() {switchToNextInput()};
-            if(debug_fast_skip)inputG2.value = 0;
-
-        let innerContainer = document.createElement("div");
-        //add to container
-        innerContainer.classList.add("inputContainer");
-        innerContainer.appendChild(inputT1);
-        innerContainer.appendChild(inputG1);
-        innerContainer.appendChild(document.createElement("br"));
-        innerContainer.appendChild(inputT2);
-        innerContainer.appendChild(inputG2);
-        //add inner container to container
-        container.appendChild(innerContainer);
+        container.appendChild(createMatchInputRow(t1, t2));
     }
     league.matchdaysPlayed+=1;
     container.appendChild(document.createElement("br"));
@@ -2144,41 +2135,7 @@ function showCupMatches(cup) {
         const home = match[0];
         const away = match[1];
 
-        //show in html
-        const inputT1 = document.createElement("input");
-        inputT1.type = "text";
-        inputT1.value = home.displayName;
-        inputT1.disabled = true;
-        inputT1.classList.add("teamInput");
-        const inputG1 = document.createElement("input");
-        inputG1.type = "number";
-        inputG1.placeholder = "0";
-        inputG1.classList.add("goalInput");
-        inputG1.onkeyup = function() {switchToNextInput()};
-        const inputT2 = document.createElement("input");
-        inputT2.type = "text";
-        inputT2.value = away.displayName;
-        inputT2.disabled = true;
-        inputT2.classList.add("teamInput");
-        const inputG2 = document.createElement("input");
-        inputG2.type = "number";
-        inputG2.placeholder = "0";
-        inputG2.classList.add("goalInput");
-        inputG2.onkeyup = function() {switchToNextInput()};
-
-        if(debug_fast_skip)inputG1.value=0;
-        if(debug_fast_skip)inputG2.value=3;
-
-        let innerContainer = document.createElement("div");
-        //add to container
-        innerContainer.classList.add("inputContainer");
-        innerContainer.appendChild(inputT1);
-        innerContainer.appendChild(inputG1);
-        innerContainer.appendChild(document.createElement("br"));
-        innerContainer.appendChild(inputT2);
-        innerContainer.appendChild(inputG2);
-        //add inner container to container
-        inputContainer.appendChild(innerContainer);
+        inputContainer.appendChild(createMatchInputRow(home, away, 0, 3));
     })
 
     const submitButton = document.createElement("button");
@@ -2412,7 +2369,7 @@ function saveToStorage() {
     //season state
     localStorage.setItem("FBC_currentSeason", currentSeason.toString());
     localStorage.setItem("FBC_currentYear", currentYear.toString());
-    localStorage.setItem("FCB_firstYear", firstYear.toString());
+    localStorage.setItem("FBC_firstYear", firstYear.toString());
     
     // Settings and game state
     localStorage.setItem("FBC_isSeasonOver", isSeasonOver);
@@ -2546,7 +2503,7 @@ function loadFromStorage() {
     });
 
     //OKAY STOP CTRL Z ING HERE PLS PLS PLS PLS STOP
-    dClubs2 = [...dClubs, ...clPool, ...elPool, ...colPool, ...realChampionsLeagueClubs, ...realEuropaLeagueClubs, ...realConferenceLeagueClubs];
+    let dClubs2 = [...dClubs, ...clPool, ...elPool, ...colPool, ...realChampionsLeagueClubs, ...realEuropaLeagueClubs, ...realConferenceLeagueClubs];
     // I SAID STOP
 
     //RESTORING MATCEHS (try 37) try number 11 might be the one fr || nevermind 💀 but 18 is actually the one i believe || idk maybe its gonna be try 26 well see but i wouldt have my hopes up || YEAAAHHHHH TRY 37 SEEMS TO HAVE WORKED OMG YESYESYSESYES (surely i will never encounter another bug that shows me this was wrong again right) || well well well... guess what? I'm back here || 2 days later and i am still here btw || i lost count ig we are at try 400 or something
@@ -2555,7 +2512,7 @@ function loadFromStorage() {
 
     // Modified restoration with extra debugging
     dClubs2.forEach((club) => {
-        if(club.matches>0)console.log(`Before processing ${club.name} - current matches:`, club.matches);
+        if(club.matches.length>0)console.log(`Before processing ${club.name} - current matches:`, club.matches);
 
         const matchSignatures = new Set();
         const restoredMatches = [];
@@ -2914,18 +2871,6 @@ function openEditMode() {
     searchContainer.appendChild(searchInput);
     searchContainer.appendChild(clubList);
 
-    //add clickable club items
-    sortedClubs.forEach(club => {
-        const clubItem = document.createElement('div');
-        clubItem.style.padding = '8px';
-        clubItem.style.cursor = 'pointer';
-        clubItem.style.borderBottom = '1px solid #ddd';
-        clubItem.textContent = club.displayName;
-        
-        clubItem.addEventListener('click', () => showClubProfile(club));
-        clubList.appendChild(clubItem);
-    });
-
     //show popup with club list
     createPopup(
         "Edit Mode - Select Club",
@@ -3159,6 +3104,49 @@ function simulateAll(){
 }
 
 
+function makeDraggable(windowDiv, headerEl, closeButton) {
+    let isDragging = false;
+    let currentX, currentY, initialX, initialY;
+
+    const rect = windowDiv.getBoundingClientRect();
+    currentX = rect.left;
+    currentY = rect.top;
+
+    function onMousedown(e) {
+        if (e.target === closeButton) return;
+        initialX = e.clientX - currentX;
+        initialY = e.clientY - currentY;
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+        windowDiv.style.left = `${currentX}px`;
+        windowDiv.style.top = `${currentY}px`;
+        isDragging = true;
+        windowDiv.style.transform = 'none';
+        document.querySelectorAll('.win95-window').forEach(w => w.style.zIndex = '1000');
+        windowDiv.style.zIndex = '9999';
+    }
+
+    function onMousemove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+        windowDiv.style.left = `${currentX}px`;
+        windowDiv.style.top = `${currentY}px`;
+    }
+
+    function onMouseup() { isDragging = false; }
+
+    headerEl.addEventListener('mousedown', onMousedown);
+    document.addEventListener('mousemove', onMousemove);
+    document.addEventListener('mouseup', onMouseup);
+
+    return () => {
+        document.removeEventListener('mousemove', onMousemove);
+        document.removeEventListener('mouseup', onMouseup);
+    };
+}
+
 function showSeasonalDiagram(list, leagueName, clubname = "Diagram") {
     // Create the popup window
     const windowDiv = document.createElement('div');
@@ -3181,11 +3169,6 @@ function showSeasonalDiagram(list, leagueName, clubname = "Diagram") {
     const closeButton = document.createElement("button");
     closeButton.textContent = "X";
     closeButton.classList.add("win95-close");
-    closeButton.onclick = () => {
-        document.body.removeChild(windowDiv);
-        document.removeEventListener('mousemove', drag);
-        document.removeEventListener('mouseup', stopDragging);
-    };
     clubHeader.appendChild(closeButton);
 
     // Content area
@@ -3233,61 +3216,11 @@ function showSeasonalDiagram(list, leagueName, clubname = "Diagram") {
     windowDiv.appendChild(contentDiv);
     document.body.appendChild(windowDiv);
 
-    
-    // Dragging functionality
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-
-    clubHeader.addEventListener('mousedown', startDragging);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', stopDragging);
-
-    function startDragging(e) {
-        // Prevent dragging if clicking the close button
-        if (e.target === closeButton) return;
-
-        initialX = e.clientX - currentX;
-        initialY = e.clientY - currentY;
-
-        currentX = e.clientX - initialX;
-        currentY = e.clientY - initialY;
-        windowDiv.style.left = `${currentX}px`;
-        windowDiv.style.top = `${currentY}px`;
-
-        isDragging = true;
-        windowDiv.style.transform = 'none'; // Remove centering transform during drag
-
-        //set all windowDivs at zIndex 1000
-        const windowDivs = document.querySelectorAll('.win95-window');
-        for (let i = 0; i < windowDivs.length; i++) {
-            windowDivs[i].style.zIndex = '1000';
-        }
-
-        //Set only the current one at z 9999, so its always in foreground
-        windowDiv.style.zIndex = '9999';
-    }
-
-    function drag(e) {
-        if (isDragging) {
-            e.preventDefault(); // Prevent text selection
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
-            windowDiv.style.left = `${currentX}px`;
-            windowDiv.style.top = `${currentY}px`;
-        }
-    }
-
-    function stopDragging() {
-        isDragging = false;
-    }
-
-    // Initialize position
-    const rect = windowDiv.getBoundingClientRect();
-    currentX = rect.left;
-    currentY = rect.top;
+    const cleanupDrag = makeDraggable(windowDiv, clubHeader, closeButton);
+    closeButton.onclick = () => {
+        document.body.removeChild(windowDiv);
+        cleanupDrag();
+    };
 }
 
 function showHistoricalDiagram(club) {
@@ -3304,11 +3237,6 @@ function showHistoricalDiagram(club) {
     const closeButton = document.createElement("button");
     closeButton.textContent = "X";
     closeButton.classList.add("win95-close");
-    closeButton.onclick = () => {
-        document.body.removeChild(windowDiv);
-        document.removeEventListener('mousemove', drag);
-        document.removeEventListener('mouseup', stopDragging);
-    };
     clubHeader.appendChild(closeButton);
 
     // Content area
@@ -3506,60 +3434,11 @@ function showHistoricalDiagram(club) {
     windowDiv.appendChild(contentDiv);
     document.body.appendChild(windowDiv);
 
-    // Dragging functionality
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-
-    clubHeader.addEventListener('mousedown', startDragging);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', stopDragging);
-
-    function startDragging(e) {
-        // Prevent dragging if clicking the close button
-        if (e.target === closeButton) return;
-
-        initialX = e.clientX - currentX;
-        initialY = e.clientY - currentY;
-
-        currentX = e.clientX - initialX;
-        currentY = e.clientY - initialY;
-        windowDiv.style.left = `${currentX}px`;
-        windowDiv.style.top = `${currentY}px`;
-
-        isDragging = true;
-        windowDiv.style.transform = 'none'; // Remove centering transform during drag
-
-        //set all windowDivs at zIndex 1000
-        const windowDivs = document.querySelectorAll('.win95-window');
-        for (let i = 0; i < windowDivs.length; i++) {
-            windowDivs[i].style.zIndex = '1000';
-        }
-
-        //Set only the current one at z 9999, so its always in foreground
-        windowDiv.style.zIndex = '9999';
-    }
-
-    function drag(e) {
-        if (isDragging) {
-            e.preventDefault(); // Prevent text selection
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
-            windowDiv.style.left = `${currentX}px`;
-            windowDiv.style.top = `${currentY}px`;
-        }
-    }
-
-    function stopDragging() {
-        isDragging = false;
-    }
-
-    // Initialize position
-    const rect = windowDiv.getBoundingClientRect();
-    currentX = rect.left;
-    currentY = rect.top;
+    const cleanupDrag = makeDraggable(windowDiv, clubHeader, closeButton);
+    closeButton.onclick = () => {
+        document.body.removeChild(windowDiv);
+        cleanupDrag();
+    };
 }
 
 function transformHistoricalArray(arr) {
@@ -3643,11 +3522,6 @@ function showTrophyWinners(trophyName){
     const closeButton = document.createElement("button");
     closeButton.textContent = "X";
     closeButton.classList.add("win95-close");
-    closeButton.onclick = () => {
-        document.body.removeChild(windowDiv);
-        document.removeEventListener('mousemove', drag);
-        document.removeEventListener('mouseup', stopDragging);
-    };
     clubHeader.appendChild(closeButton);
 
     // Content area
@@ -3681,61 +3555,11 @@ function showTrophyWinners(trophyName){
     windowDiv.appendChild(contentDiv);
     document.body.appendChild(windowDiv);
 
-    
-    // Dragging functionality
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-
-    clubHeader.addEventListener('mousedown', startDragging);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', stopDragging);
-
-    function startDragging(e) {
-        // Prevent dragging if clicking the close button
-        if (e.target === closeButton) return;
-
-        initialX = e.clientX - currentX;
-        initialY = e.clientY - currentY;
-
-        currentX = e.clientX - initialX;
-        currentY = e.clientY - initialY;
-        windowDiv.style.left = `${currentX}px`;
-        windowDiv.style.top = `${currentY}px`;
-
-        isDragging = true;
-        windowDiv.style.transform = 'none'; // Remove centering transform during drag
-
-        //set all windowDivs at zIndex 1000
-        const windowDivs = document.querySelectorAll('.win95-window');
-        for (let i = 0; i < windowDivs.length; i++) {
-            windowDivs[i].style.zIndex = '1000';
-        }
-
-        //Set only the current one at z 9999, so its always in foreground
-        windowDiv.style.zIndex = '9999';
-    }
-
-    function drag(e) {
-        if (isDragging) {
-            e.preventDefault(); // Prevent text selection
-            currentX = e.clientX - initialX;
-            currentY = e.clientY - initialY;
-            windowDiv.style.left = `${currentX}px`;
-            windowDiv.style.top = `${currentY}px`;
-        }
-    }
-
-    function stopDragging() {
-        isDragging = false;
-    }
-
-    // Initialize position
-    const rect = windowDiv.getBoundingClientRect();
-    currentX = rect.left;
-    currentY = rect.top;
+    const cleanupDrag = makeDraggable(windowDiv, clubHeader, closeButton);
+    closeButton.onclick = () => {
+        document.body.removeChild(windowDiv);
+        cleanupDrag();
+    };
 }
 
 function getLocalStorageUsage() {
